@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기상요소 룰렛 — 오늘의 날씨 만들기</title>
+<style>
+  :root{
+    --ink:#16212B;
+    --ink-soft:#5A6B79;
+    --paper:#F2F5F8;
+    --card:#FFFFFF;
+    --line:#D6DEE6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;padding:22px 20px 56px;
+    background:var(--paper);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:1360px;margin:0 auto;}
+  h1{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-0.6px;}
+  .sub{margin:0 0 20px;color:var(--ink-soft);font-size:16px;}
+
+  .screen{display:none;}
+  .screen.on{display:block;animation:rise .35s ease both;}
+  @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+
+  .wheels{
+    display:flex;flex-wrap:wrap;gap:26px;justify-content:center;
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:26px 20px;margin-bottom:18px;
+  }
+  .wheel-box{width:318px;text-align:center;}
+  .wheel-name{font-size:22px;font-weight:800;margin-bottom:8px;}
+  .wheel-box svg{cursor:pointer;display:block;margin:0 auto;width:308px;max-width:100%;}
+  .wheel-out{margin-top:10px;font-size:29px;font-weight:800;min-height:40px;letter-spacing:-0.5px;}
+  .wheel-feel{font-size:16px;color:var(--ink-soft);min-height:24px;}
+
+  .bar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  button{
+    font-family:inherit;font-size:17px;font-weight:700;
+    padding:14px 34px;border-radius:999px;cursor:pointer;
+    border:2px solid var(--ink);background:var(--ink);color:#fff;
+    transition:transform .08s ease;
+  }
+  button.ghost{background:transparent;color:var(--ink);}
+  button:hover{opacity:.88;}
+  button:active{transform:scale(.97);}
+  button:focus-visible{outline:3px solid #2E6FDB;outline-offset:3px;}
+
+  .gate{
+    background:var(--card);border:2px solid var(--ink);border-radius:18px;
+    padding:22px;margin-bottom:18px;text-align:center;display:none;
+  }
+  .gate.on{display:block;}
+  .gate p{margin:0 0 14px;font-size:21px;font-weight:700;}
+  .gate .note{font-size:15px;font-weight:400;color:var(--ink-soft);margin-bottom:16px;}
+  .save-row{
+    display:flex;gap:10px;justify-content:center;align-items:center;
+    flex-wrap:wrap;margin-bottom:14px;
+  }
+  .save-row input{
+    font-family:inherit;font-size:18px;font-weight:700;text-align:center;
+    width:200px;padding:14px;border:2px solid var(--line);
+    border-radius:999px;background:var(--card);color:var(--ink);
+  }
+  .save-row input:focus{outline:3px solid #2E6FDB;outline-offset:2px;}
+  .playing{
+    text-align:center;font-size:21px;font-weight:700;margin-bottom:12px;
+  }
+  .savemsg{text-align:center;font-size:16px;font-weight:700;color:#2C7A4B;min-height:24px;margin-bottom:8px;}
+  .log-card{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px;margin-bottom:18px;overflow-x:auto;
+  }
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:16px;}
+  th,td{border-bottom:1px solid var(--line);padding:11px 10px;text-align:center;}
+  th{background:var(--paper);font-weight:700;font-size:15px;}
+  td.team{font-weight:700;text-align:left;}
+  tr.row{cursor:pointer;}
+  tr.row:hover td{background:#EAF1F8;}
+  td.del button{font-size:13px;padding:5px 12px;border-width:1px;
+                background:transparent;color:var(--ink-soft);border-color:var(--line);}
+  .empty{text-align:center;color:var(--ink-soft);font-size:17px;padding:26px 0;}
+
+  #reveal{font-size:21px;padding:16px 44px;}
+  .lock{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;}
+  .lock input{
+    font-family:inherit;font-size:20px;font-weight:700;text-align:center;
+    width:190px;padding:15px 14px;letter-spacing:2px;border:2px solid var(--line);
+    border-radius:999px;background:var(--paper);color:var(--ink);
+  }
+  .lock input:focus{outline:3px solid #2E6FDB;outline-offset:2px;}
+  .loggate{
+    display:none;background:var(--card);border:2px solid var(--ink);
+    border-radius:18px;padding:18px;margin-top:14px;text-align:center;
+  }
+  .loggate.on{display:block;}
+  .pwmsg{margin-top:10px;font-size:16px;font-weight:700;color:#C4362C;min-height:24px;}
+
+  .recap{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;
+  }
+  .chip{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:10px 16px;font-size:17px;font-weight:700;
+  }
+  .chip span{display:block;font-size:13px;font-weight:400;color:var(--ink-soft);}
+
+  .scene-card{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:16px;overflow:hidden;margin-bottom:18px;
+  }
+  .scene-card svg{display:block;width:100%;border-radius:12px;}
+  .verdict{margin-top:16px;font-size:26px;font-weight:700;text-align:center;}
+  .hint{margin-top:8px;text-align:center;color:var(--ink-soft);font-size:17px;}
+
+  @media (max-width:560px){
+    h1{font-size:23px;}
+    .wheel-box{width:260px;}
+    .wheel-box svg{width:252px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen.on{animation:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>기상요소 룰렛</h1>
+  <p class="sub">룰렛을 돌려 수치를 정하고, 어떤 날씨일지 예상한 뒤 확인해 봅시다.</p>
+
+  <!-- 1단계: 룰렛 화면 -->
+  <section class="screen on" id="screen1">
+    <div class="wheels" id="wheels"></div>
+
+    <div class="gate" id="gate">
+      <p>다섯 가지 수치가 모두 정해졌습니다</p>
+      <div class="note">어떤 날씨일지 먼저 이야기해 봅시다. 밖에 나가도 될까요?</div>
+      <div class="save-row" id="saveRow">
+        <input id="team" type="text" placeholder="이름" aria-label="이름" autocomplete="off">
+        <button id="save">이름 적고 기록하기</button>
+      </div>
+      <div class="savemsg" id="savemsg"></div>
+      <div class="lock">
+        <input id="pw" type="password" placeholder="비밀번호"
+               aria-label="날씨 확인 비밀번호" autocomplete="off" spellcheck="false">
+        <button id="reveal">날씨 확인하기</button>
+      </div>
+      <div class="pwmsg" id="pwmsg"></div>
+    </div>
+
+    <div class="bar">
+      <button id="spinAll">다섯 개 모두 돌리기</button>
+      <button id="reset" class="ghost">처음으로</button>
+      <button id="openLog" class="ghost">기록 보기</button>
+      <button id="mute" class="ghost">소리 끄기</button>
+    </div>
+
+    <div class="loggate" id="logGate">
+      <div class="lock">
+        <input id="logpw" type="password" placeholder="비밀번호"
+               aria-label="기록 보기 비밀번호" autocomplete="off" spellcheck="false">
+        <button id="logGo">기록 열기</button>
+        <button id="logCancel" class="ghost">닫기</button>
+      </div>
+      <div class="pwmsg" id="logpwmsg"></div>
+    </div>
+  </section>
+
+  <!-- 2단계: 날씨 확인 화면 -->
+  <section class="screen" id="screen2">
+    <div class="playing" id="playing"></div>
+    <div class="recap" id="recap"></div>
+    <div class="scene-card">
+      <svg id="scene" viewBox="0 0 900 380" role="img"
+           aria-label="정해진 기상요소 수치에 따라 그려진 날씨 풍경">
+        <defs><clipPath id="frame"><rect x="0" y="0" width="900" height="380" rx="12"/></clipPath></defs>
+        <g clip-path="url(#frame)">
+          <rect id="sky" x="0" y="0" width="900" height="380" fill="#9ACDEF"/>
+          <circle id="sun" cx="740" cy="80" r="40" fill="#FBC55B"/>
+          <g id="clouds"></g>
+          <rect id="haze" x="0" y="0" width="900" height="380" fill="#FFFFFF" opacity="0"/>
+          <rect id="ground" x="0" y="286" width="900" height="94" fill="#79A24B"/>
+          <g id="house">
+            <rect x="600" y="206" width="130" height="80" fill="#E8E2D6"/>
+            <path d="M588,206 L665,158 L742,206 Z" fill="#B4553C"/>
+            <rect x="645" y="240" width="34" height="46" fill="#8A6A4A"/>
+          </g>
+          <g id="tree">
+            <path d="M170,286 L170,190" stroke="#6B4A2F" stroke-width="14"
+                  stroke-linecap="round" fill="none"/>
+            <circle id="leafA" cx="170" cy="176" r="44" fill="#4A7C2F"/>
+            <circle id="leafB" cx="136" cy="198" r="30" fill="#589035"/>
+            <circle id="leafC" cx="204" cy="198" r="30" fill="#589035"/>
+          </g>
+          <g id="person">
+            <circle cx="400" cy="232" r="13" fill="#3C3226"/>
+            <path d="M400,245 L400,278" stroke="#3C3226" stroke-width="11" stroke-linecap="round"/>
+            <path d="M400,278 L389,300 M400,278 L411,300" stroke="#3C3226"
+                  stroke-width="9" stroke-linecap="round"/>
+            <path id="arms" d="M400,256 L381,268 M400,256 L419,268" stroke="#3C3226"
+                  stroke-width="9" stroke-linecap="round"/>
+            <g id="umbrella" opacity="0">
+              <path d="M362,214 a38,30 0 0,1 76,0 Z" fill="#E5453A"/>
+              <path d="M400,214 L400,262" stroke="#3C3226" stroke-width="4"/>
+            </g>
+          </g>
+          <g id="precip"></g>
+          <g id="gusts"></g>
+          <rect id="fog" x="0" y="150" width="900" height="230" fill="#E4EBEF" opacity="0"/>
+        </g>
+      </svg>
+      <div class="verdict" id="verdict"></div>
+      <div class="hint" id="hint"></div>
+    </div>
+
+    <div class="bar">
+      <button id="back" class="ghost">룰렛으로 돌아가기</button>
+      <button id="again">새로 돌리기</button>
+    </div>
+  </section>
+
+  <!-- 3단계: 기록 모아보기 -->
+  <section class="screen" id="screen3">
+    <div class="log-card">
+      <div id="logBody"></div>
+    </div>
+    <div class="bar">
+      <button id="logBack" class="ghost">돌아가기</button>
+      <button id="csv">엑셀로 저장</button>
+      <button id="printLog" class="ghost">인쇄</button>
+      <button id="clearLog" class="ghost">전체 지우기</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===== 비밀번호 설정 =====
+     아래 따옴표 안의 값을 바꾸면 비밀번호가 바뀝니다. (대소문자 구분) */
+  var PASSWORD = "weather";
+  /* ======================== */
+
+  var COLORS = ["#CE3423","#9A6300","#26722B","#1550B5"];
+  var NS = "http://www.w3.org/2000/svg";
+
+  var ELEMENTS = [
+    { key:"temp", name:"기온", size:23,
+      segs:[
+        {label:"-20℃", v:-20, feel:"살을 에는 한파"},
+        {label:"-10℃", v:-10, feel:"매서운 추위"},
+        {label:"0℃",   v:0,   feel:"물이 어는 추위"},
+        {label:"10℃",  v:10,  feel:"선선한 봄가을"},
+        {label:"20℃",  v:20,  feel:"가장 쾌적함"},
+        {label:"30℃",  v:30,  feel:"한여름 더위"},
+        {label:"40℃",  v:40,  feel:"폭염, 위험"},
+        {label:"50℃",  v:50,  feel:"견디기 힘든 더위"}
+      ]},
+    { key:"wind", name:"바람", size:23,
+      segs:[
+        {label:"0m/s",  v:0,  feel:"바람 없음"},
+        {label:"5m/s",  v:5,  feel:"나뭇잎이 흔들림"},
+        {label:"10m/s", v:10, feel:"우산 쓰기 힘듦"},
+        {label:"20m/s", v:20, feel:"걷기 힘듦"},
+        {label:"30m/s", v:30, feel:"간판이 날아감"},
+        {label:"40m/s", v:40, feel:"나무가 뽑힘"},
+        {label:"50m/s", v:50, feel:"태풍급, 지붕이 날아감"}
+      ]},
+    { key:"rain", name:"강수량", size:17,
+      segs:[
+        {label:"1일 30mm",    v:30,  feel:"하루 종일 내리는 보통 비"},
+        {label:"3시간 100mm", v:100, feel:"물폭탄, 도로 침수"},
+        {label:"1일 250mm",   v:250, feel:"하천 범람 위험"},
+        {label:"1일 400mm",   v:400, feel:"큰 홍수"}
+      ]},
+    { key:"hum", name:"습도", size:19,
+      segs:[
+        {label:"15~30%", v:22,  feel:"사막처럼 건조"},
+        {label:"40~60%", v:50,  feel:"보통"},
+        {label:"55~65%", v:60,  feel:"가장 쾌적"},
+        {label:"60~70%", v:65,  feel:"조금 눅눅함"},
+        {label:"100%",   v:100, feel:"숨 막히고 안개"}
+      ]},
+    { key:"cloud", name:"구름량", size:23,
+      segs:[
+        {label:"0%",   v:0,   feel:"구름 한 점 없음"},
+        {label:"50%",  v:50,  feel:"구름이 절반"},
+        {label:"60%",  v:60,  feel:"구름이 조금 많음"},
+        {label:"80%",  v:80,  feel:"구름이 많음"},
+        {label:"100%", v:100, feel:"온통 흐림"}
+      ]}
+  ];
+
+  var state = { temp:null, wind:null, rain:null, hum:null, cloud:null };
+  var wheels = {};
+  var REDUCED = window.matchMedia &&
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function g(id){ return document.getElementById(id); }
+
+  function el(tag, attrs){
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+
+  function buildWheel(config){
+    var box = document.createElement("div");
+    box.className = "wheel-box";
+
+    var title = document.createElement("div");
+    title.className = "wheel-name";
+    title.textContent = config.name;
+    box.appendChild(title);
+
+    var R = 112, CX = 124, CY = 124;
+    var svg = el("svg", {viewBox:"0 0 268 252", role:"button", tabindex:"0",
+                         "aria-label":config.name + " 룰렛 돌리기"});
+
+    var rotor = el("g", {transform:"rotate(0," + CX + "," + CY + ")"});
+    rotor.appendChild(el("circle", {cx:CX, cy:CY, r:R+7, fill:"#2B3946"}));
+
+    var n = config.segs.length, step = 360 / n, rad = Math.PI / 180;
+    config.segs.forEach(function(seg, i){
+      var a1 = i * step, a2 = a1 + step, mid = a1 + step / 2;
+      var x1 = CX + R*Math.cos(a1*rad), y1 = CY + R*Math.sin(a1*rad);
+      var x2 = CX + R*Math.cos(a2*rad), y2 = CY + R*Math.sin(a2*rad);
+      rotor.appendChild(el("path", {
+        d:"M"+CX+","+CY+" L"+x1.toFixed(2)+","+y1.toFixed(2)+
+          " A"+R+","+R+" 0 "+(step > 180 ? 1 : 0)+",1 "+x2.toFixed(2)+","+y2.toFixed(2)+" Z",
+        fill:COLORS[i % COLORS.length], stroke:"#FFFFFF", "stroke-width":"3"
+      }));
+      var flip = (mid > 90 && mid < 270);
+      var tx = CX + (R*0.62)*Math.cos(mid*rad);
+      var ty = CY + (R*0.62)*Math.sin(mid*rad);
+      var t = el("text", {
+        x:tx.toFixed(2), y:ty.toFixed(2),
+        transform:"rotate("+(flip ? mid+180 : mid)+","+tx.toFixed(2)+","+ty.toFixed(2)+")",
+        "text-anchor":"middle", "dominant-baseline":"central",
+        fill:"#FFFFFF", "font-size":config.size, "font-weight":"800", "font-family":"inherit",
+        stroke:"rgba(0,0,0,0.55)", "stroke-width":"3.2", "paint-order":"stroke fill"
+      });
+      t.textContent = seg.label;
+      rotor.appendChild(t);
+    });
+
+    rotor.appendChild(el("circle", {cx:CX, cy:CY, r:27, fill:"#FFFFFF", stroke:"#2B3946", "stroke-width":"3"}));
+    svg.appendChild(rotor);
+    var ptr = el("path", {
+      d:"M"+(CX+R+22)+","+CY+" L"+(CX+R-10)+","+(CY-18)+" L"+(CX+R-10)+","+(CY+18)+" Z",
+      fill:"#16212B", stroke:"#FFFFFF", "stroke-width":"3", "stroke-linejoin":"round"
+    });
+    svg.appendChild(ptr);
+    box.appendChild(svg);
+
+    var out = document.createElement("div");
+    out.className = "wheel-out";
+    out.textContent = "?";
+    box.appendChild(out);
+
+    var feel = document.createElement("div");
+    feel.className = "wheel-feel";
+    box.appendChild(feel);
+
+    var w = { config:config, rotor:rotor, out:out, feel:feel, ptr:ptr,
+              rot:0, busy:false, cx:CX, cy:CY, px:CX + R - 10 };
+
+    function go(){ spin(w); }
+    svg.addEventListener("click", go);
+    svg.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); }
+    });
+
+    g("wheels").appendChild(box);
+    wheels[config.key] = w;
+  }
+
+  var EP = 0.07, EK = 3.0;
+  var EC = EK / (EP * (1 - EP) * 2 + EP * EP * EK);
+  var EA = EC * EP * EP;
+
+  var actx = null, muted = false, lastTick = 0;
+
+  function click(vol){
+    if (muted) return;
+    var now = Date.now();
+    if (now - lastTick < 45) return;
+    lastTick = now;
+    try {
+      if (!actx){
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        actx = new AC();
+      }
+      if (actx.state === "suspended") actx.resume();
+      var osc = actx.createOscillator(), amp = actx.createGain();
+      osc.type = "square";
+      osc.frequency.value = 1200 + Math.random() * 200;
+      amp.gain.setValueAtTime(0.045 * (vol || 1), actx.currentTime);
+      amp.gain.exponentialRampToValueAtTime(0.0008, actx.currentTime + 0.045);
+      osc.connect(amp);
+      amp.connect(actx.destination);
+      osc.start();
+      osc.stop(actx.currentTime + 0.05);
+    } catch (err){}
+  }
+
+  // 다섯 개 룰렛을 하나의 루프에서 함께 그립니다 (프레임 밀림 방지)
+  var running = [], looping = false;
+  var SETTLE = 300, OVER = 6;
+
+  function place(w, ang){
+    w.rotor.setAttribute("transform",
+      "rotate(" + ang.toFixed(2) + "," + w.cx + "," + w.cy + ")");
+  }
+
+  function land(w){
+    place(w, w.to);
+    w.ptr.removeAttribute("transform");
+    var seg = w.config.segs[w.pick];
+    w.out.textContent = seg.label;
+    w.feel.textContent = seg.feel;
+    state[w.config.key] = seg;
+    w.busy = false;
+    checkGate();
+  }
+
+  function advance(w, now){
+    if (w.t0 === null) w.t0 = now;
+    var ms = now - w.t0, ang;
+
+    if (ms < w.dur){
+      var t = ms / w.dur;
+      var e = t < EP ? EC * t * t
+                     : 1 - (1 - EA) * Math.pow((1 - t) / (1 - EP), EK);
+      ang = w.from + (w.to + OVER - w.from) * e;
+    } else if (ms < w.dur + SETTLE){
+      var u = (ms - w.dur) / SETTLE;
+      ang = (w.to + OVER) - OVER * (1 - Math.pow(1 - u, 3));
+    } else {
+      land(w);
+      return false;
+    }
+
+    var idx = Math.floor(ang / w.step);
+    if (w.seen === null) w.seen = idx;
+    else if (idx !== w.seen){
+      w.seen = idx;
+      w.flick = 1;
+      click(ms < w.dur * 0.6 ? 1 : 0.7);
+    }
+
+    if (w.flick > 0.03){
+      w.ptr.setAttribute("transform",
+        "rotate(" + (-12 * w.flick).toFixed(2) + "," + w.px + "," + w.cy + ")");
+      w.flick *= 0.78;
+    } else if (w.flick !== 0){
+      w.flick = 0;
+      w.ptr.removeAttribute("transform");
+    }
+
+    place(w, ang);
+    return true;
+  }
+
+  function engine(now){
+    var still = [];
+    for (var i = 0; i < running.length; i++){
+      if (advance(running[i], now)) still.push(running[i]);
+    }
+    running = still;
+    if (running.length) requestAnimationFrame(engine);
+    else looping = false;
+  }
+
+  function spin(w){
+    if (w.busy) return;
+    w.busy = true;
+    w.out.textContent = "…";
+    w.feel.textContent = "";
+    state[w.config.key] = null;
+    checkGate();
+
+    var n = w.config.segs.length, step = 360 / n;
+    var i = Math.floor(Math.random() * n);
+    var mid = i * step + step / 2 + (Math.random() - 0.5) * step * 0.5;
+    var target = ((-mid) % 360 + 360) % 360;
+    var cur = ((w.rot % 360) + 360) % 360;
+
+    w.pick = i;
+    w.step = step;
+    w.from = w.rot;
+    w.to = w.rot + 360 * (4 + Math.floor(Math.random() * 3)) +
+           (((target - cur) % 360) + 360) % 360;
+    w.rot = w.to;
+    w.dur = 2900 + Math.random() * 700;
+    w.t0 = null;
+    w.seen = null;
+    w.flick = 0;
+
+    if (REDUCED){ land(w); return; }
+
+    running.push(w);
+    if (!looping){
+      looping = true;
+      requestAnimationFrame(engine);
+    }
+  }
+
+  function allDone(){
+    return ELEMENTS.every(function(e){ return state[e.key]; });
+  }
+
+  function checkGate(){
+    g("gate").className = allDone() ? "gate on" : "gate";
+  }
+
+  function show(id){
+    if (id !== 2) stop();
+    g("screen1").className = (id === 1) ? "screen on" : "screen";
+    g("screen2").className = (id === 2) ? "screen on" : "screen";
+    g("screen3").className = (id === 3) ? "screen on" : "screen";
+    if (id !== 1) g("savemsg").textContent = "";
+    if (id !== 2 && viewing) liveMode();
+    window.scrollTo(0, 0);
+  }
+
+  var SKY = {"-20":"#BED6E8","-10":"#C8DFED","0":"#D2E5F0","10":"#B0D6F1",
+             "20":"#9ACDEF","30":"#7FC2EC","40":"#E9CD97","50":"#E6B678"};
+  var BEND = {"0":0,"5":3,"10":7,"20":14,"30":22,"40":30,"50":38};
+  var DROPS = {"30":60,"100":170,"250":240,"400":330};
+  var CLOUDN = {"0":0,"50":2,"60":3,"80":4,"100":6};
+
+  function cloudShape(x, y, s, fill, op){
+    return '<g transform="translate('+x+','+y+') scale('+s+')" opacity="'+op+'">' +
+      '<ellipse cx="0" cy="0" rx="52" ry="26" fill="'+fill+'"/>' +
+      '<ellipse cx="-34" cy="9" rx="34" ry="19" fill="'+fill+'"/>' +
+      '<ellipse cx="34" cy="9" rx="36" ry="19" fill="'+fill+'"/>' +
+      '<ellipse cx="4" cy="-18" rx="32" ry="20" fill="'+fill+'"/></g>';
+  }
+
+  function tile(inner, dx1, dx2, dy1, dy2){
+    dy1 = dy1 || 0; dy2 = dy2 || 0;
+    return '<g transform="translate('+dx1+','+dy1+')">' + inner + '</g>' +
+           '<g transform="translate('+(dx2||0)+','+dy2+')">' + inner + '</g>';
+  }
+
+  var anim = { bend:0, slope:0, cloudV:0, gustV:0, precipV:0, windHz:1, sway:0 };
+  var raf = null;
+
+  function frameScene(now){
+    var t = now / 1000;
+
+    var co = (t * anim.cloudV) % 900;
+    g("clouds").setAttribute("transform", "translate(" + co.toFixed(1) + ",0)");
+
+    var go = (t * anim.gustV) % 900;
+    g("gusts").setAttribute("transform", "translate(" + go.toFixed(1) + ",0)");
+
+    var po = anim.precipV ? (t * anim.precipV) % 380 : 0;
+    g("precip").setAttribute("transform",
+      "translate(" + (po * anim.slope).toFixed(1) + "," + po.toFixed(1) + ")");
+
+    var b = anim.bend + anim.sway * Math.sin(t * anim.windHz * 6.283);
+    g("tree").setAttribute("transform",
+      "translate(0,286) skewX(" + (-b).toFixed(2) + ") translate(0,-286)");
+
+    raf = requestAnimationFrame(frameScene);
+  }
+
+  function start(){
+    if (REDUCED){
+      g("tree").setAttribute("transform",
+        "translate(0,286) skewX(" + (-anim.bend) + ") translate(0,-286)");
+      return;
+    }
+    if (raf === null) raf = requestAnimationFrame(frameScene);
+  }
+
+  function stop(){
+    if (raf !== null){ cancelAnimationFrame(raf); raf = null; }
+  }
+
+  function verdictOf(sc){
+    var tv = sc.temp.v, wv = sc.wind.v, rv = sc.rain.v, cv = sc.cloud.v;
+    var snow = tv <= 0;
+    var msg;
+    if (tv <= 0 && rv >= 100) msg = "폭설입니다. 길이 막히고 학교가 쉴 수도 있어요.";
+    else if (rv >= 250 && wv >= 30) msg = "태풍입니다. 밖에 나가면 위험해요.";
+    else if (rv >= 250) msg = "호우경보 수준입니다. 하천 근처는 피해야 해요.";
+    else if (wv >= 30) msg = "강풍경보 수준입니다. 우산은 소용이 없어요.";
+    else if (tv >= 40) msg = "폭염경보 수준입니다. 한낮에는 밖에 있으면 안 돼요.";
+    else if (tv <= -10) msg = "한파경보 수준입니다. 두껍게 껴입어야 해요.";
+    else msg = "밖에 나가도 괜찮은 날씨예요. 우산만 챙기세요.";
+    var title = (snow && rv > 0) ? "눈 오는 날" :
+      (rv >= 250 ? "비가 아주 많이 오는 날" : (rv > 0 ? "비 오는 날" :
+      (cv >= 80 ? "흐린 날" : "맑은 날")));
+    return { title:title, msg:msg };
+  }
+
+  function draw(src){
+    var sc = src || state;
+    var tv = sc.temp.v, wv = sc.wind.v, rv = sc.rain.v;
+    var hv = sc.hum.v,  cv = sc.cloud.v;
+    var heavy = rv >= 250, snow = tv <= 0;
+
+    var sky = SKY[tv] || "#9ACDEF";
+    if (cv >= 80 || heavy) sky = heavy ? "#79858C" : "#9EAAB1";
+    g("sky").setAttribute("fill", sky);
+    g("sun").setAttribute("opacity", (cv <= 50 && rv === 0) ? 1 : 0);
+    g("ground").setAttribute("fill", tv <= 0 ? "#E7EEF2" : (tv >= 40 ? "#C6B079" : "#79A24B"));
+
+    var cf = tv <= 0 ? "#F4F8FA" : (heavy ? "#5E686E" : ((rv > 0 || cv >= 80) ? "#8E999F" : "#FFFFFF"));
+    var cn = CLOUDN[cv] || 0;
+    var px = [110,320,520,720,220,620], py = [66,48,74,54,104,106], html = "";
+    for (var i = 0; i < cn; i++){
+      html += cloudShape(px[i], py[i], cv >= 80 ? 1.2 : 0.95, cf, cv >= 100 ? 1 : 0.92);
+    }
+    if (cv >= 100) html += '<rect x="-4" y="0" width="908" height="150" fill="'+cf+'" opacity="0.85"/>';
+    g("clouds").innerHTML = tile(html, -900, 0);
+
+    var bend = BEND[wv] || 0;
+    var slope = Math.tan(bend * Math.PI / 180);
+    var count = DROPS[rv] || 0, p = "";
+    for (var j = 0; j < count; j++){
+      var x = Math.random()*2000 - 550, y = Math.random()*380;
+      if (snow){
+        p += '<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="3" fill="#FFFFFF" opacity="0.92"/>';
+      } else {
+        p += '<line x1="'+x.toFixed(0)+'" y1="'+y.toFixed(0)+'" x2="'+(x+slope*18).toFixed(0)+
+             '" y2="'+(y+18).toFixed(0)+'" stroke="#DDEBF6" stroke-width="1.8" opacity="0.85"/>';
+      }
+    }
+    g("precip").innerHTML = tile(p, 0, 0, 0, -380);
+
+    var gustN = wv >= 10 ? Math.round(wv/3) : 0, gs = "";
+    for (var k = 0; k < gustN; k++){
+      var gx = Math.random()*900, gy = 40 + Math.random()*220;
+      gs += '<path d="M'+gx.toFixed(0)+','+gy.toFixed(0)+' q 46,-10 92,0" stroke="#FFFFFF" ' +
+            'stroke-width="2.5" fill="none" opacity="0.55"/>';
+    }
+    g("gusts").innerHTML = tile(gs, -900, 0);
+
+    anim.bend = bend;
+    anim.slope = slope;
+    anim.cloudV = 6 + wv * 2.4;
+    anim.gustV = 160 + wv * 14;
+    anim.precipV = count === 0 ? 0 : (snow ? 40 + wv * 3 : 280 + rv * 1.1);
+    anim.windHz = 0.5 + wv * 0.07;
+    anim.sway = wv === 0 ? 0 : Math.min(7, 1 + wv * 0.16);
+    start();
+    var lr = tv <= 0 ? 28 : 44;
+    g("leafA").setAttribute("r", lr);
+    g("leafB").setAttribute("r", (lr*0.68).toFixed(0));
+    g("leafC").setAttribute("r", (lr*0.68).toFixed(0));
+
+    g("haze").setAttribute("opacity", hv >= 100 ? 0.22 : (hv >= 65 ? 0.09 : 0));
+    g("fog").setAttribute("opacity", hv >= 100 ? 0.5 : 0);
+    g("umbrella").setAttribute("opacity", (rv > 0 && wv <= 10 && !snow) ? 1 : 0);
+    g("arms").setAttribute("d", wv >= 20
+      ? "M400,256 L378,246 M400,256 L422,246"
+      : "M400,256 L381,268 M400,256 L419,268");
+
+    var rh = "";
+    ELEMENTS.forEach(function(e){
+      rh += '<div class="chip">' + sc[e.key].label +
+            '<span>' + e.name + '</span></div>';
+    });
+    g("recap").innerHTML = rh;
+
+    var v = verdictOf(sc);
+    g("verdict").textContent = v.title;
+    g("hint").textContent = v.msg + " 이런 날 무엇을 준비해야 할까요?";
+  }
+
+  ELEMENTS.forEach(buildWheel);
+
+  g("spinAll").addEventListener("click", function(){
+    ELEMENTS.forEach(function(e, i){
+      window.setTimeout(function(){ spin(wheels[e.key]); }, i * 170);
+    });
+  });
+
+  g("mute").addEventListener("click", function(){
+    muted = !muted;
+    g("mute").textContent = muted ? "소리 켜기" : "소리 끄기";
+  });
+
+  g("reset").addEventListener("click", function(){
+    ELEMENTS.forEach(function(e){
+      var w = wheels[e.key];
+      if (w.busy) return;
+      state[e.key] = null;
+      w.out.textContent = "?";
+      w.feel.textContent = "";
+    });
+    checkGate();
+  });
+
+  function tryReveal(){
+    if (!allDone()) return;
+    var box = g("pw");
+    if (box.value !== PASSWORD){
+      g("pwmsg").textContent = "비밀번호가 맞지 않습니다";
+      box.value = "";
+      box.focus();
+      return;
+    }
+    g("pwmsg").textContent = "";
+    box.value = "";
+    draw();
+    show(2);
+  }
+
+  g("reveal").addEventListener("click", tryReveal);
+  g("pw").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); tryReveal(); }
+  });
+
+  g("back").addEventListener("click", function(){
+    if (viewing){ renderLog(); show(3); } else { show(1); }
+  });
+
+  g("again").addEventListener("click", function(){
+    show(1);
+    ELEMENTS.forEach(function(e){
+      var w = wheels[e.key];
+      state[e.key] = null;
+      w.out.textContent = "?";
+      w.feel.textContent = "";
+    });
+    checkGate();
+    window.setTimeout(function(){
+      ELEMENTS.forEach(function(e, i){
+        window.setTimeout(function(){ spin(wheels[e.key]); }, i * 170);
+      });
+    }, 350);
+  });
+
+  var KEY = "weather-roulette-log";
+  var log = [];
+
+  function loadLog(){
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      log = raw ? JSON.parse(raw) : [];
+    } catch (err){ log = []; }
+    if (!(log instanceof Array)) log = [];
+  }
+
+  function saveLog(){
+    try { window.localStorage.setItem(KEY, JSON.stringify(log)); } catch (err){}
+  }
+
+  function stamp(){
+    var d = new Date();
+    function two(n){ return (n < 10 ? "0" : "") + n; }
+    return two(d.getMonth()+1) + "/" + two(d.getDate()) + " " +
+           two(d.getHours()) + ":" + two(d.getMinutes());
+  }
+
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function renderLog(){
+    var box = g("logBody");
+    if (!log.length){
+      box.innerHTML = '<div class="empty">아직 기록이 없습니다. 날씨 화면에서 ' +
+                      '이름을 적고 기록해 보세요.</div>';
+      return;
+    }
+    var h = '<div class="empty" style="padding:0 0 14px;font-size:15px;">' +
+            '표의 줄을 누르면 그때 그 날씨를 다시 볼 수 있습니다</div>' +
+            '<table><thead><tr><th>이름</th><th>기온</th><th>바람</th><th>강수량</th>' +
+            '<th>습도</th><th>구름량</th><th>날씨</th><th>시각</th><th></th></tr></thead><tbody>';
+    log.forEach(function(r, i){
+      h += '<tr class="row" data-play="' + i + '"><td class="team">' + esc(r.team) + '</td><td>' + esc(r.temp) +
+           '</td><td>' + esc(r.wind) + '</td><td>' + esc(r.rain) + '</td><td>' +
+           esc(r.hum) + '</td><td>' + esc(r.cloud) + '</td><td>' + esc(r.verdict) +
+           '</td><td>' + esc(r.at) + '</td>' +
+           '<td class="del"><button data-i="' + i + '">삭제</button></td></tr>';
+    });
+    h += '</tbody></table>';
+    box.innerHTML = h;
+    var dels = box.querySelectorAll("button[data-i]");
+    for (var k = 0; k < dels.length; k++){
+      dels[k].addEventListener("click", function(e){
+        e.stopPropagation();
+        log.splice(Number(this.getAttribute("data-i")), 1);
+        saveLog();
+        renderLog();
+      });
+    }
+    var rows = box.querySelectorAll("tr[data-play]");
+    for (var m = 0; m < rows.length; m++){
+      rows[m].addEventListener("click", function(){
+        playLog(Number(this.getAttribute("data-play")));
+      });
+    }
+  }
+
+  var viewing = false;
+
+  function segByLabel(cfg, label){
+    for (var i = 0; i < cfg.segs.length; i++){
+      if (cfg.segs[i].label === label) return cfg.segs[i];
+    }
+    return null;
+  }
+
+  function playLog(i){
+    var r = log[i];
+    if (!r) return;
+    var src = {}, ok = true;
+    ELEMENTS.forEach(function(e){
+      var seg = segByLabel(e, r[e.key]);
+      if (!seg) ok = false; else src[e.key] = seg;
+    });
+    if (!ok) return;
+    viewing = true;
+    g("back").textContent = "기록으로 돌아가기";
+    g("again").style.display = "none";
+    g("playing").textContent = r.team + "님의 날씨 (" + r.at + ")";
+    draw(src);
+    show(2);
+  }
+
+  function liveMode(){
+    viewing = false;
+    g("back").textContent = "룰렛으로 돌아가기";
+    g("again").style.display = "";
+    g("playing").textContent = "";
+  }
+
+  g("save").addEventListener("click", function(){
+    if (!allDone()) return;
+    var name = g("team").value.replace(/^\s+|\s+$/g, "");
+    if (!name){
+      g("savemsg").style.color = "#C4362C";
+      g("savemsg").textContent = "이름을 적어 주세요";
+      g("team").focus();
+      return;
+    }
+    log.push({
+      team:name,
+      temp:state.temp.label, wind:state.wind.label, rain:state.rain.label,
+      hum:state.hum.label, cloud:state.cloud.label,
+      verdict:verdictOf(state).title, at:stamp()
+    });
+    saveLog();
+    g("savemsg").style.color = "#2C7A4B";
+    g("savemsg").textContent = name + " 기록 완료 — 모두 " + log.length + "명";
+    g("team").value = "";
+  });
+
+  g("team").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); g("save").click(); }
+  });
+
+  g("openLog").addEventListener("click", function(){
+    var panel = g("logGate");
+    var open = panel.className.indexOf("on") !== -1;
+    panel.className = open ? "loggate" : "loggate on";
+    g("logpwmsg").textContent = "";
+    g("logpw").value = "";
+    if (!open) g("logpw").focus();
+  });
+
+  function openLogNow(){
+    if (g("logpw").value !== PASSWORD){
+      g("logpwmsg").textContent = "비밀번호가 맞지 않습니다";
+      g("logpw").value = "";
+      g("logpw").focus();
+      return;
+    }
+    g("logpw").value = "";
+    g("logpwmsg").textContent = "";
+    g("logGate").className = "loggate";
+    renderLog();
+    show(3);
+  }
+
+  g("logGo").addEventListener("click", openLogNow);
+  g("logpw").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); openLogNow(); }
+  });
+  g("logCancel").addEventListener("click", function(){
+    g("logGate").className = "loggate";
+    g("logpw").value = "";
+    g("logpwmsg").textContent = "";
+  });
+
+  g("logBack").addEventListener("click", function(){ show(1); });
+  g("printLog").addEventListener("click", function(){ window.print(); });
+
+  var armed = false, armTimer = null;
+
+  g("clearLog").addEventListener("click", function(){
+    if (!log.length) return;
+    if (!armed){
+      armed = true;
+      g("clearLog").textContent = "정말 지울까요? 한 번 더";
+      armTimer = window.setTimeout(function(){
+        armed = false;
+        g("clearLog").textContent = "전체 지우기";
+      }, 5000);
+      return;
+    }
+    window.clearTimeout(armTimer);
+    armed = false;
+    g("clearLog").textContent = "전체 지우기";
+    log = [];
+    saveLog();
+    renderLog();
+  });
+
+  g("csv").addEventListener("click", function(){
+    if (!log.length) return;
+    var rows = [["이름","기온","바람","강수량","습도","구름량","날씨","시각"]];
+    log.forEach(function(r){
+      rows.push([r.team,r.temp,r.wind,r.rain,r.hum,r.cloud,r.verdict,r.at]);
+    });
+    var csv = "\uFEFF" + rows.map(function(row){
+      return row.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(",");
+    }).join("\r\n");
+    var url = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8;"}));
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "weather-roulette-log.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  loadLog();
+  checkGate();
+})();
+</script>
+<!-- hyun-copyright:begin -->
+<div id="hyunCopy" aria-label="저작권 안내" style="position:fixed;left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom));z-index:2147483000;max-width:calc(100vw - 24px);box-sizing:border-box;text-align:center;font:500 11.5px/1.45 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;letter-spacing:-.01em;color:#fff;background:rgba(10,12,20,.55);border-radius:999px;padding:3px 12px;pointer-events:none;display:none;word-break:keep-all">© 2026 현쌤 과학 오락실 · 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용 금지</div>
+<script>(function(){var S=["body"];function vis(e){if(!e)return false;var s=getComputedStyle(e);return !e.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&e.getClientRects().length>0}
+var STATIC=S[0]==='body';function tick(){var el=document.getElementById('hyunCopy');if(!el)return;if(STATIC){el.style.position='static';el.style.transform='none';el.style.margin='24px auto';el.style.display='table';return}var on=S.some(function(q){try{return vis(document.querySelector(q))}catch(e){return false}});el.style.display=on?'block':'none'}
+setInterval(tick,400);tick();})();</script>
+<!-- hyun-copyright:end -->
+</body>
+</html>
