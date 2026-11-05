@@ -149,6 +149,24 @@ body.connected .pc .mine{display:block}
 .msg.wait{color:var(--muted)}
 .hide{display:none!important}
 
+.intro{margin:0 0 18px;font-weight:700;font-size:15px;color:var(--muted)}
+.say{margin:10px 0 0;font-size:15px;line-height:1.65}
+.say.small{font-size:13px;color:var(--muted)}
+.say b{font-weight:900}
+.mini-sheet{margin:10px 0 0;border:1.5px solid #c6cbd6;background:#fff;color:#202124;font-size:12px;display:grid;max-width:420px}
+.mini-sheet div{display:grid;grid-template-columns:.8fr 1.3fr .8fr .8fr .8fr}
+.mini-sheet span{padding:4px 6px;border-right:1px solid #e1e3e8;border-top:1px solid #e1e3e8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-sheet .h span{background:#f1f3f4;font-weight:700;border-top:0}
+.mini-sheet .h span:first-child{outline:2px solid #1a73e8;outline-offset:-2px}
+.mock{margin:10px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.mock div{border:1.5px solid #c6cbd6;background:#fff;color:#202124;padding:7px 12px;border-radius:6px;display:flex;align-items:center;gap:8px}
+.mock .from{color:#80868b}
+.mock .from::after{content:"→";text-decoration:none;display:inline-block;margin-left:10px;color:var(--blue);font-weight:900}
+.mock .to{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.2);font-weight:700}
+.mock em{font-style:normal;font-weight:500;color:#5f6368;border-left:1px solid #dadce0;padding-left:8px}
+.adv{margin-top:22px;border-top:1.5px dashed var(--line);padding-top:16px}
+.adv summary{cursor:pointer;font-weight:900;font-size:16px}
+.adv summary small{font-weight:500;color:var(--muted)}
 .result{border-top:1.5px dashed var(--line);margin-top:18px;padding-top:18px}
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .stat{border:1.5px solid var(--ink);padding:8px 12px;min-width:92px}
@@ -278,63 +296,44 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
           </div>
         </div>
 
+        <p class="intro">세 단계면 끝나요. 구글에 로그인된 컴퓨터에서 해 주세요.</p>
+
         <div class="step">
-          <h3><i>1</i>방식 고르기</h3>
-          <div class="ways" role="radiogroup" aria-label="연결 방식">
-            <label class="way"><input type="radio" name="way" value="A" checked>
-              <span class="t">문제만 연결</span>
-              <span class="tags"><span>쉬움</span><span>2분</span></span>
-              <span class="d">시트를 링크 공유만 하면 끝. 학생 점수는 남지 않아요.</span></label>
-            <label class="way"><input type="radio" name="way" value="B">
-              <span class="t">문제 + 학생 기록</span>
-              <span class="tags"><span>10분</span><span>권한 허용 1번</span></span>
-              <span class="d">누가 어떤 문제를 맞혔는지 시트에 쌓여요.</span></label>
+          <h3><i>1</i>문제 시트 만들기</h3>
+          <div class="btns" style="margin-top:0">
+            <a class="btn main" id="newSheet" href="https://sheets.new" target="_blank" rel="noopener">새 구글 시트 열기 ↗</a>
+            <button class="btn" type="button" id="copyHead">예시 문제 복사</button>
           </div>
+          <p class="say">새 시트가 열리면 <b>맨 왼쪽 위 칸(A1)</b>을 누르고 <b>Ctrl+V</b>.<br>예시 3문제가 들어가요. 그 아래로 우리 반 문제를 이어서 적으면 돼요.</p>
+          <div class="mini-sheet" aria-hidden="true">
+            <div class="h"><span>단원</span><span>문제</span><span>정답</span><span>오답1</span><span>오답2</span></div>
+            <div><span>1단원</span><span>물이 얼면?</span><span>얼음</span><span>수증기</span><span>구름</span></div>
+          </div>
+          <p class="say small">오답은 1~3개, OX 문제는 정답 O · 오답 X. 해설·사용 칸은 비워도 돼요.<span id="tplAlt"> · <a href="teacher/question-template.xlsx" download="우리반_문제양식.xlsx">엑셀 양식으로 받기</a></span></p>
         </div>
 
         <div class="step">
-          <h3><i>2</i>문제 시트 만들기</h3>
-          <ol class="how">
-            <li id="tplCopyLi" class="hide"><a class="btn small main" id="tplCopy" target="_blank" rel="noopener">템플릿 시트 복사하기</a> 를 누르면 선생님 드라이브에 사본이 생겨요.</li>
-            <li id="tplFileLi"><a class="btn small main" href="teacher/question-template.xlsx" download="우리반_문제양식.xlsx">문제 양식 받기 (.xlsx)</a><br>구글 드라이브에 올린 뒤, 파일을 열면 위쪽에 뜨는 <span class="k">Google Sheets로 열기</span>를 눌러요.</li>
-            <li><b>[문제] 탭</b>에 한 줄에 하나씩: <span class="k">단원</span> <span class="k">문제</span> <span class="k">정답</span> <span class="k">오답1~3</span> <span class="k">해설</span> <span class="k">사용</span></li>
-          </ol>
-        </div>
-
-        <div class="step" id="stepA">
-          <h3><i>3</i>링크로 공유하기</h3>
-          <ol class="how">
-            <li>시트 오른쪽 위 <span class="k">공유</span> 누르기</li>
-            <li>일반 액세스를 <span class="k">링크가 있는 모든 사용자</span> · <span class="k">뷰어</span>로 바꾸기</li>
-            <li><span class="k">링크 복사</span> → 아래 칸에 붙여 넣기</li>
-          </ol>
-        </div>
-
-        <div class="step hide" id="stepB">
-          <h3><i>3</i>기록 받는 웹 앱 만들기</h3>
-          <ol class="how">
-            <li>시트 메뉴 <span class="k">확장 프로그램</span> → <span class="k">Apps Script</span></li>
-            <li id="codeLi">원래 있던 글을 모두 지우고 아래 코드를 붙여 넣은 뒤 <span class="k">저장</span>
-              <div class="btns"><button class="btn small" type="button" id="copyCode">코드 복사</button></div></li>
-            <li><span class="k">배포</span> → <span class="k">새 배포</span> → 톱니바퀴에서 <span class="k">웹 앱</span></li>
-            <li>실행 사용자 <span class="k">나</span> · 액세스 권한 <span class="k">모든 사용자</span> → <span class="k">배포</span></li>
-            <li>권한 확인 창: 내 계정 → <span class="k">고급</span> → <span class="k">(안전하지 않음)으로 이동</span> → <span class="k">허용</span><br><small style="color:var(--muted)">선생님이 직접 만든 스크립트라 구글이 확인을 한 번 더 묻는 거예요.</small></li>
-            <li>나온 <span class="k">웹 앱 URL</span>(…/exec로 끝남)을 복사 → 아래 칸에 붙여 넣기</li>
-          </ol>
+          <h3><i>2</i>링크 공유 켜기</h3>
+          <p class="say">시트 오른쪽 위 <span class="k">공유</span> → 아래쪽 <b>일반 액세스</b>를 이렇게 바꿔요.</p>
+          <div class="mock" aria-hidden="true">
+            <div class="from"><span class="lock">🔒</span><s>제한됨 ▾</s></div>
+            <div class="to"><span class="lock">🌐</span>링크가 있는 모든 사용자 ▾<em>뷰어</em></div>
+          </div>
+          <p class="say">그리고 <span class="k">링크 복사</span></p>
         </div>
 
         <div class="step">
-          <h3><i>4</i>연결하기</h3>
+          <h3><i>3</i>여기에 붙여 넣기</h3>
           <form id="linkForm" autocomplete="off">
             <div class="field">
-              <label for="src" id="srcLab">시트 링크</label>
-              <input id="src" inputmode="url" placeholder="https://docs.google.com/spreadsheets/d/…">
+              <label for="src" id="srcLab">복사한 시트 링크</label>
+              <input id="src" inputmode="url" placeholder="여기에 Ctrl+V">
             </div>
             <div class="field">
-              <label for="cls">반 이름 <span style="font-weight:400;color:var(--muted)">(선택 · 학생 화면에 보여요)</span></label>
+              <label for="cls">반 이름 <span style="font-weight:400;color:var(--muted)">(안 써도 돼요)</span></label>
               <input id="cls" maxlength="30" placeholder="예) 5학년 2반">
             </div>
-            <button class="btn main" type="submit" id="go">연결 확인</button>
+            <button class="btn main" type="submit" id="go">연결하기</button>
           </form>
           <p class="msg" id="msg" role="status" aria-live="polite"></p>
 
@@ -358,6 +357,19 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
             <p class="msg ok" id="after" style="font-weight:500;font-size:14px"></p>
           </div>
         </div>
+
+        <details class="adv" id="adv">
+          <summary>학생 점수까지 시트에 남기고 싶다면 <small>(선택 · 10분)</small></summary>
+          <p class="say">누가 어떤 문제를 맞혔는지 시트에 쌓여요. 1번 시트에서 이어서 해요.</p>
+          <ol class="how">
+            <li>시트 위쪽 메뉴 <span class="k">확장 프로그램</span> → <span class="k">Apps Script</span></li>
+            <li id="codeLi">열린 창의 글을 모두 지우고 <button class="btn small" type="button" id="copyCode">코드 복사</button> 한 것을 붙여 넣고 <span class="k">💾 저장</span></li>
+            <li>오른쪽 위 파란 <span class="k">배포</span> → <span class="k">새 배포</span> → 톱니바퀴 ⚙ → <span class="k">웹 앱</span></li>
+            <li>맨 아래 <b>액세스 권한</b>만 <span class="k">모든 사용자</span>로 바꾸고 <span class="k">배포</span></li>
+            <li>"확인되지 않은 앱" 창이 뜨면 <span class="k">고급</span> → 맨 아래 <span class="k">…(으)로 이동</span> → <span class="k">허용</span><br><small style="color:var(--muted)">선생님이 직접 만든 스크립트라 구글이 한 번 더 묻는 거예요.</small></li>
+            <li>나온 <b>웹 앱 URL</b>(…/exec)을 복사해서 위 3번 칸에 붙여 넣기</li>
+          </ol>
+        </details>
       </div>
     </div>
   </section>
@@ -489,19 +501,19 @@ if(HCok){
 }
 paintClass();
 
-/* ── 선생님: 방식 고르기 ── */
-if(TEMPLATE_COPY_URL){$("tplCopy").href=TEMPLATE_COPY_URL;$("tplCopyLi").classList.remove("hide");$("codeLi").classList.add("hide")}
-function way(){return document.querySelector('input[name=way]:checked').value}
-function paintWay(){
-  const b=way()==="B";
-  $("stepA").classList.toggle("hide",b);$("stepB").classList.toggle("hide",!b);
-  $("srcLab").textContent=b?"웹 앱 URL":"시트 링크";
-  $("src").placeholder=b?"https://script.google.com/macros/s/…/exec":"https://docs.google.com/spreadsheets/d/…";
+/* ── 선생님: 시트 만들기 ── */
+const SAMPLE="단원\t문제\t정답\t오답1\t오답2\t오답3\t해설\t사용\n"+
+ "우리 반 1단원\t물이 얼면 무엇이 될까요?\t얼음\t수증기\t구름\t이슬\t물이 얼면 고체인 얼음이 돼요.\t\n"+
+ "우리 반 1단원\t식물이 빛을 받아 양분을 만드는 일은?\t광합성\t증산 작용\t호흡\t\t\t\n"+
+ "우리 반 1단원\t물은 100도에서 끓는다. (O/X)\tO\tX\t\t\t\t\n";
+if(HCok&&HC.mode()==="B")$("adv").open=true;
+$("copyHead").onclick=()=>copyText(SAMPLE,$("copyHead"),"복사했어요! 시트 A1 칸에 Ctrl+V");
+if(TEMPLATE_COPY_URL){
+  $("newSheet").href=TEMPLATE_COPY_URL;$("newSheet").textContent="우리 반 문제 시트 만들기 ↗";
+  $("copyHead").classList.add("hide");
+  $("newSheet").closest(".step").querySelector(".say").innerHTML="열린 화면에서 <b>사본 만들기</b>를 누르면 예시 문제가 든 시트가 생겨요.<br>예시를 지우고 우리 반 문제를 적으면 돼요.";
+  $("codeLi").innerHTML="이미 코드가 들어 있어요. 바로 다음 단계로";
 }
-document.querySelectorAll('input[name=way]').forEach(r=>r.addEventListener("change",paintWay));
-if(HCok&&HC.mode()==="B")document.querySelector('input[name=way][value=B]').checked=true;
-paintWay();
-
 let codeText=null;
 $("copyCode").onclick=async()=>{
   const b=$("copyCode");
@@ -514,6 +526,7 @@ const PARSE_MSG={
   empty:"주소를 붙여 넣어 주세요.",
   published:"'웹에 게시' 주소예요. 시트의 [공유] → [링크 복사]로 받은 주소를 붙여 주세요.",
   editor:"Apps Script 편집 화면 주소예요. [배포] → [새 배포]에서 나온 '웹 앱 URL'(…/exec)을 붙여 주세요.",
+  sheetlike:"",
   unknown:"구글 시트 주소(docs.google.com/spreadsheets/…)나 웹 앱 주소(script.google.com/macros/…)를 붙여 주세요."
 };
 function say(t,cls){const m=$("msg");m.textContent=t;m.className="msg "+(cls||"")}
@@ -522,9 +535,7 @@ $("linkForm").addEventListener("submit",async e=>{
   const p=HC.parse($("src").value);
   $("result").classList.add("hide");
   if(p.error){say(PARSE_MSG[p.error],"bad");$("src").focus();return}
-  let note="";
-  if(way()==="B"&&p.mode==="A")note=" (시트 주소라서 '문제만 연결'로 연결했어요. 학생 기록까지 하려면 3번의 웹 앱 URL을 붙여 주세요.)";
-  if(way()==="A"&&p.mode==="B")note=" (웹 앱 주소라서 '문제 + 학생 기록'으로 연결했어요.)";
+  const note=p.mode==="B"?" 학생 점수도 시트의 [기록] 탭에 쌓여요.":"";
   $("go").disabled=true;say("구글 시트에서 문제를 읽는 중…","wait");
   let res;
   try{res=await HC.fetch(p.code)}catch(err){$("go").disabled=false;say(HC.explain(err,p.mode),"bad");return}
@@ -540,7 +551,7 @@ function showResult(res,ok){
   $("result").classList.remove("hide");
   $("stats").innerHTML=`<div class="stat"><b>${res.count}</b><span>문제</span></div><div class="stat"><b>${res.units.length}</b><span>단원</span></div>`+
     (res.skipped.length?`<div class="stat"><b style="color:var(--red)">${res.skipped.length}</b><span>건너뛴 줄</span></div>`:"")+
-    `<div class="stat"><b style="font-size:17px;padding:6px 0 3px">${res.mode==="B"?"기록 켜짐":"문제만"}</b><span>방식</span></div>`;
+    `<div class="stat"><b style="font-size:17px;padding:6px 0 3px">${res.mode==="B"?"켜짐":"꺼짐"}</b><span>학생 점수 기록</span></div>`;
   $("units").innerHTML=res.units.map(u=>`<span>${esc(u.name)} · ${u.q.length}</span>`).join("");
   $("skip").innerHTML=res.skipped.slice(0,6).map(s=>`<li>${s.row}행: ${esc(s.why)} — ${esc(s.q.slice(0,30))}</li>`).join("")+(res.skipped.length>6?`<li>…외 ${res.skipped.length-6}줄</li>`:"")+
     (res.skipped.some(s=>/정답/.test(s.why))&&res.mode==="A"?`<li>숫자만 적은 정답이 빈칸으로 읽히면: 시트에서 열 전체 선택 → 서식 → 숫자 → <b>일반 텍스트</b></li>`:"");
@@ -556,6 +567,8 @@ function showResult(res,ok){
     else $("miniQr").innerHTML='<small style="color:#6b7180;font-size:12px;text-align:center">QR을 못 불러왔어요<br>링크를 복사해 주세요</small>';
   }
 }
+/* 붙여 넣으면 바로 연결 */
+$("src").addEventListener("paste",()=>setTimeout(()=>{if(HCok&&HC.parse($("src").value).code)$("linkForm").requestSubmit()},60));
 $("copyUrl").onclick=()=>copyText($("clsUrl").textContent,$("copyUrl"));
 $("bigQr").onclick=()=>openQR((HC.className()||"우리 반")+" 링크",hubLink());
 $("testLog").onclick=()=>{
