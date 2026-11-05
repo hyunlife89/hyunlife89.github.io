@@ -280,7 +280,8 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
             <li><b>엑스탱크 스쿨</b> — 단원 고르기에 '우리 반' 묶음이 생겨요 (선생님 방·혼자 연습)</li>
             <li><b>과학 포트리스</b> — 설정의 '우리 반 문제'에 자동으로 더해져요 ('우리 반 문제만 내기' 가능)</li>
             <li><b>밤의 과학실 탈출</b> — 포트리스와 같아요</li>
-            <li class="no">등대섬 수비대 — 준비 중 · 카누·찌릿·룰렛 — 교과서 이야기에 맞춘 게임이라 기본 문제만 써요</li>
+            <li><b>등대섬 수비대</b> — 첫 화면 문제 범위에 '우리 반' 탭이 생겨요</li>
+            <li class="no">카누·찌릿·룰렛 — 교과서 이야기에 맞춘 게임이라 기본 문제만 써요</li>
           </ul>
         </div>
       </div>
@@ -411,7 +412,7 @@ const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyung
 const GAMES=[
  {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
  {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
- {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
+ {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
  {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
@@ -477,7 +478,7 @@ function paintClass(){
   if(on){
     const n=c?c.count:null;
     $("cbName").textContent=nm+" 문제가 연결돼 있어요";
-    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·과학실 탈출에서 나와요";
+    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·탈출·등대섬에서 나와요";
     $("stuBox").classList.toggle("on",HC.mode()==="B");
     $("nowT").textContent="이 기기: "+nm+" · "+WAY_NAME[HC.mode()];
     $("nowD").textContent=c?`문제 ${c.count}개 · 단원 ${c.units.length}개 · ${ago(c.at)} 읽음`:"아직 문제를 읽지 못했어요. [다시 읽기]를 눌러 주세요.";
