@@ -158,13 +158,15 @@ dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* ── 게임 목록: 새 게임은 여기에 한 칸 추가 ──
-   url: 서버 게임은 "https://hyunstock.duckdns.org/fortress/"처럼 전체 주소로, 사이트 안 게임은 "games/폴더/"처럼, 다른 주소는 https://... 전체로
+   url: 서버 게임은 SRV+"/fortress/" 처럼 (현스탁·현게임 어느 주소로 열어도 같은 서버의 게임으로), 사이트 안 게임은 "games/폴더/"처럼, 다른 주소는 https://... 전체로
    img: public/thumbs 안의 그림 (가로:세로 4:3) */
+/* 서버 게임 주소: 이 사이트가 duckdns 서버(현스탁·현게임·전용주소)에서 열리면 같은 주소 그대로, GitHub 등 다른 곳에서 열리면 현게임 주소로 */
+const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
- {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:"https://hyunstock.duckdns.org/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
- {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:"https://hyunstock.duckdns.org/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
+ {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
+ {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
  {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
- {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:"https://hyunstock.duckdns.org/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
+ {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
  {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
