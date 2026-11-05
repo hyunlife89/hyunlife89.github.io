@@ -1,0 +1,135 @@
+/**
+ * 현쌤 과학 오락실 — 선생님 시트용 스크립트 (B 방식: 문제 + 학생 기록)
+ *
+ * 이 스크립트는 선생님 본인의 구글 시트 안에서만 돌아갑니다.
+ * 문제는 [문제] 탭에서 읽고, 학생이 푼 기록은 [기록] 탭에 쌓습니다.
+ * 다른 곳(오락실 서버 포함)으로 보내는 것은 없습니다.
+ *
+ * 처음 한 번:
+ *   1) 위쪽 [저장] (디스크 모양) 누르기
+ *   2) 오른쪽 위 [배포] → [새 배포] → 톱니바퀴에서 [웹 앱]
+ *   3) 실행 사용자: 나 / 액세스 권한이 있는 사용자: 모든 사용자 → [배포]
+ *   4) 권한 확인 창: 계정 선택 → [고급] → [(안전하지 않음)으로 이동] → [허용]
+ *   5) 나온 "웹 앱 URL"을 복사해서 오락실 선생님 화면에 붙여 넣기
+ */
+
+var SHEET_Q = '문제';
+var SHEET_LOG = '기록';
+var Q_HEAD = ['단원', '문제', '정답', '오답1', '오답2', '오답3', '해설', '사용'];
+var LOG_HEAD = ['시각', '게임', '이름', '단원', '문제', '결과', '맞음'];
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('🎮 과학 오락실')
+    .addItem('탭 준비하기 (문제·기록·학생별·문제별)', 'setup')
+    .addItem('기록 비우기', 'clearLog')
+    .addToUi();
+}
+
+/* 필요한 탭이 없으면 만들어 둡니다. 여러 번 눌러도 괜찮아요. */
+function setup() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var q = ss.getSheetByName(SHEET_Q);
+  if (!q) {
+    q = ss.insertSheet(SHEET_Q, 0);
+    q.getRange(1, 1, 1, Q_HEAD.length).setValues([Q_HEAD]);
+    q.getRange(2, 1, 2, Q_HEAD.length).setValues([
+      ['우리 반 1단원', '물이 얼면 무엇이 될까요?', '얼음', '수증기', '구름', '이슬', '물이 얼면 고체인 얼음이 돼요.', ''],
+      ['우리 반 1단원', '식물이 빛을 받아 양분을 만드는 일은?', '광합성', '증산 작용', '호흡', '', '', '']
+    ]);
+  }
+  q.getRange(1, 1, 1, Q_HEAD.length).setFontWeight('bold').setBackground('#e8eefc');
+  q.setFrozenRows(1);
+  q.getRange('A:H').setNumberFormat('@'); // 숫자 답도 글자로 보관
+
+  var log = ss.getSheetByName(SHEET_LOG);
+  if (!log) {
+    log = ss.insertSheet(SHEET_LOG);
+    log.getRange(1, 1, 1, LOG_HEAD.length).setValues([LOG_HEAD]).setFontWeight('bold').setBackground('#fff3c4');
+    log.setFrozenRows(1);
+    log.setColumnWidth(5, 360);
+  }
+  if (!ss.getSheetByName('학생별')) {
+    var a = ss.insertSheet('학생별');
+    a.getRange('A1').setFormula("=IFERROR(QUERY(기록!A1:G,\"select C, count(G), sum(G) where C is not null group by C order by sum(G) desc label C '이름', count(G) '푼 문제', sum(G) '맞힌 문제'\",1),\"아직 기록이 없어요\")");
+  }
+  if (!ss.getSheetByName('문제별')) {
+    var b = ss.insertSheet('문제별');
+    b.getRange('A1').setFormula("=IFERROR(QUERY(기록!A1:G,\"select E, count(G), sum(G) where E is not null group by E order by count(G) desc label E '문제', count(G) '푼 횟수', sum(G) '맞힌 횟수'\",1),\"아직 기록이 없어요\")");
+    b.setColumnWidth(1, 420);
+  }
+  return true;
+}
+
+function clearLog() {
+  var ui = SpreadsheetApp.getUi();
+  if (ui.alert('기록 탭의 내용을 모두 지울까요?', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
+  var log = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_LOG);
+  if (log && log.getLastRow() > 1) log.deleteRows(2, log.getLastRow() - 1);
+}
+
+/* ---------- 오락실 게임이 문제를 읽어 갈 때 ---------- */
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+  var out;
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    out = { ok: true, v: 2, title: ss.getName(), log: true, rows: readRows_() };
+  } catch (err) {
+    out = { ok: false, error: String(err && err.message || err) };
+  }
+  var text = JSON.stringify(out);
+  var cb = String(p.callback || '');
+  if (/^[A-Za-z_$][\w$]{0,60}$/.test(cb)) {
+    return ContentService.createTextOutput(cb + '(' + text + ');').setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(text).setMimeType(ContentService.MimeType.JSON);
+}
+
+function readRows_() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('rows');
+  if (hit) return JSON.parse(hit);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(SHEET_Q) || ss.getSheets()[0];
+  var rows = sh.getDataRange().getDisplayValues();
+  var s = JSON.stringify(rows);
+  if (s.length < 95000) cache.put('rows', s, 60); // 1분 동안은 같은 내용을 빠르게 돌려줌
+  return rows;
+}
+
+/* ---------- 학생이 푼 기록을 받을 때 ---------- */
+function doPost(e) {
+  var body = {};
+  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return text_('bad'); }
+  if (body.action !== 'log' || !body.items || !body.items.length) return text_('skip');
+  var items = body.items.slice(0, 200);
+  var tz = Session.getScriptTimeZone() || 'Asia/Seoul';
+  var rows = items.map(function (it) {
+    var t = Number(it[0]) || Date.now();
+    var ok = Number(it[5]) ? 1 : 0;
+    return [
+      Utilities.formatDate(new Date(t), tz, 'yyyy-MM-dd HH:mm:ss'),
+      safe_(it[1]), safe_(it[2]), safe_(it[3]), safe_(it[4]),
+      ok ? 'O' : 'X', ok
+    ];
+  });
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(10000); } catch (err) { return text_('busy'); }
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var log = ss.getSheetByName(SHEET_LOG);
+    if (!log) { setup(); log = ss.getSheetByName(SHEET_LOG); }
+    log.getRange(log.getLastRow() + 1, 1, rows.length, LOG_HEAD.length).setValues(rows);
+  } finally {
+    lock.releaseLock();
+  }
+  return text_('ok');
+}
+
+/* 시트 수식으로 읽히지 않게 앞에 ' 를 붙이고 길이를 자릅니다 */
+function safe_(v) {
+  var s = String(v == null ? '' : v).slice(0, 200);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+function text_(s) { return ContentService.createTextOutput(s); }
