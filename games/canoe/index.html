@@ -1,0 +1,591 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>별빛 카누 항해</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: full-screen 3D sea (third-person canoe), HTML HUD on top, card overlays for questions and story */
+:root{
+  --sea:#0e4a60; --sea-deep:#06222d; --foam:#e8f4f1; --sand:#f2d49b;
+  --coral:#ff7a59; --leaf:#4fb57a; --sky:#ffd56b; --muted:#9cc3c9;
+  --card:#fffaf0; --card-ink:#1d2a2f; --wrong:#e2574c; --villain:#7a3e9d;
+  --display:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --body:'Gowun Dodum','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--sea-deep);color:var(--foam);font-family:var(--body);display:flex;align-items:center;justify-content:center;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
+.stage{position:relative;width:100%;height:100%;max-width:1280px;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  touch-action:none;user-select:none;-webkit-user-select:none;background:var(--sea)}
+canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;inset:0 0 auto;padding:12px 14px 0;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.bar{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--display);font-size:clamp(14px,2.3vh,20px)}
+.bar span{background:rgba(6,34,45,.72);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums}
+.bar b{color:var(--sky);font-weight:400}
+.boss{width:min(420px,100%);background:rgba(6,34,45,.72);border-radius:12px;padding:6px 10px;font-family:var(--display);font-size:clamp(13px,2vh,17px)}
+.boss .hp{height:10px;border-radius:6px;background:rgba(255,255,255,.18);margin-top:4px;overflow:hidden}
+.boss .hp i{display:block;height:100%;background:linear-gradient(90deg,#c5428a,#ff7a59);transition:width .4s}
+.qbox{width:min(720px,100%);background:rgba(255,250,240,.95);color:var(--card-ink);border-radius:14px;padding:10px 16px;font-family:var(--display);
+  font-size:clamp(16px,2.8vh,24px);line-height:1.35;text-align:center;text-wrap:balance;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.qbox small{display:block;font-family:var(--body);font-size:.6em;color:#5b6b70;margin-bottom:2px}
+.toast{background:var(--coral);color:#fff;font-family:var(--display);border-radius:999px;padding:4px 14px;font-size:clamp(13px,2.2vh,18px)}
+.flash{position:absolute;inset:0;background:rgba(226,87,76,.35);pointer-events:none}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,34,45,.5)}
+.panel{background:var(--card);color:var(--card-ink);border-radius:18px;padding:22px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px;
+  max-height:100%;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.panel h1,.panel h2{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance}
+.panel h1{font-size:clamp(30px,5.5vh,44px);color:var(--sea)}
+.panel h2{font-size:clamp(21px,3.4vh,27px);line-height:1.35}
+.panel p{margin:0;line-height:1.65}
+.tag{align-self:flex-start;background:var(--sea);color:var(--sky);font-family:var(--display);padding:3px 12px;border-radius:999px;font-size:14px}
+.tag.v{background:var(--villain);color:#fff}
+.quote{font-family:var(--display);font-size:19px;color:var(--villain);background:#f1e6f6;border-radius:12px;padding:10px 14px}
+.ok{color:#23804b}.no{color:var(--wrong)}
+.keys{font-size:14px;background:#f3ead6;border-radius:10px;padding:10px 12px;line-height:1.6}
+label{font-family:var(--display);font-size:16px}
+input{font:inherit;font-size:20px;padding:10px 12px;border-radius:12px;border:2px solid #d9cdb3;width:100%;box-sizing:border-box;background:#fff;color:var(--card-ink)}
+input:focus-visible{outline:3px solid var(--coral);outline-offset:1px}
+.btn{font-family:var(--display);font-size:21px;border:0;border-radius:14px;padding:12px 20px;background:var(--coral);color:#fff;cursor:pointer}
+.btn:focus-visible{outline:3px solid var(--sea);outline-offset:2px}
+.btn.sub{background:#e9dfc8;color:var(--card-ink);font-size:17px;padding:9px 14px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row .btn{flex:1}
+ol.board{margin:0;padding-left:22px;line-height:1.8;font-variant-numeric:tabular-nums}
+ol.board li.me{color:var(--coral);font-weight:bold}
+.answer{background:#e3f6ea;border-radius:10px;padding:8px 12px;font-family:var(--display);font-size:18px}
+.qrcard{display:flex;gap:12px;align-items:center;background:#f3ead6;border-radius:12px;padding:10px}
+.qrcard img{width:120px;height:120px;border-radius:8px;background:#fff;flex:none;image-rendering:pixelated}
+.qrcard p{font-size:14px;line-height:1.5}
+.qrcard b{font-family:var(--display);font-weight:400;font-size:17px;color:var(--sea)}
+.err{color:var(--wrong)}
+.sound{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));font-family:var(--display);font-size:16px;border:0;border-radius:999px;padding:8px 14px;background:rgba(6,34,45,.78);color:var(--foam);cursor:pointer;z-index:5}
+.sound:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+</style>
+
+<div class="stage" id="stage">
+  <canvas id="cv" aria-label="3D 카누 항해 게임 화면"></canvas>
+  <div class="flash" id="flash" hidden></div>
+  <div class="hud" id="hud" hidden>
+    <div class="bar"><span id="hLives">❤️❤️❤️</span><span id="hStage">바람섬</span><span>점수 <b id="hScore">0</b></span></div>
+    <div class="boss"><span id="bName">먹구름 대왕 우르릉</span><div class="hp"><i id="bHp" style="width:100%"></i></div></div>
+    <div class="qbox" id="qbox"></div>
+    <div class="toast" id="toast" hidden></div>
+  </div>
+  <button class="sound" id="snd" type="button" aria-pressed="true">🔊 음악 켜짐</button>
+  <div class="overlay" id="ov"><div class="panel" id="panel"><h1>별빛 카누 항해</h1><p>바다를 불러오는 중…</p></div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const LEGS=[
+ {name:"바람섬",topic:"지구를 둘러싼 기체, 대기",page:"42~43쪽",isle:"#9fd8e6",
+  boss:{name:"먹구름 대왕 우르릉",type:"cloud",shot:"#ffe14d",line:"공기? 대기? 눈에 안 보이니까 없는 거야! 번개나 받아라!"},q:[
+  {t:"ox",q:"지구를 둘러싸고 있는 공기를 지구의 '대기'라고 한다.",a:0,e:"눈에 보이지 않지만 공기가 지구를 둘러싸고 있고, 이것을 대기라고 해요."},
+  {t:"mc",q:"부풀린 비닐봉지를 향해 부채질하면?",o:["비닐봉지가 움직인다","아무 일도 없다","비닐봉지가 작아진다"],a:0,e:"부채가 공기를 밀어서 비닐봉지가 움직여요. 주변에 공기가 있다는 증거예요."},
+  {t:"mc",q:"대기가 있어서 할 수 있는 일이 아닌 것은?",o:["연날리기","열기구 타기","돌멩이 줍기"],a:2,e:"연날리기, 열기구, 풍력 발전은 대기와 바람 덕분이에요."},
+  {t:"ox",q:"대기는 태양에서 오는 해로운 빛을 막아 준다.",a:0,e:"대기는 숨 쉴 수 있게 해 주고, 알맞은 온도를 지켜 주고, 해로운 빛도 막아 줘요."}]},
+ {name:"구름산섬",topic:"지구 표면의 모습",page:"44~45쪽",isle:"#a9d98a",
+  boss:{name:"바위 거북 쿵쿵이",type:"turtle",shot:"#8a8f86",line:"지구 표면엔 바위밖에 없다고! 산도 강도 다 내 등껍질이야!"},q:[
+  {t:"ox",q:"지구 표면에서는 산, 들, 강, 호수, 사막, 빙하 등을 볼 수 있다.",a:0,e:"지구 표면에는 여러 가지 모습이 있어요."},
+  {t:"mc",q:"모래로 이루어져 있고 모래 언덕이 있는 곳은?",o:["빙하","사막","호수"],a:1,e:"사막은 모래로 이루어져 있고 높고 낮은 모래 언덕이 있어요."},
+  {t:"mc",q:"꽁꽁 언 거대한 얼음덩어리가 있는 곳은?",o:["빙하","들","강"],a:0,e:"빙하는 오랫동안 쌓인 눈이 커다란 얼음이 된 거예요."},
+  {t:"ox",q:"인공위성으로 지구 표면의 넓은 곳을 한눈에 관찰할 수 있다.",a:0,e:"인공위성은 높은 곳에서 지구 표면을 찍어 보내 줘요."}]},
+ {name:"지구본섬",topic:"육지와 바다의 넓이",page:"46~47쪽",isle:"#f2d49b",
+  boss:{name:"소용돌이 바다뱀",type:"serpent",shot:"#7fd6ff",line:"육지가 더 넓다고 믿어라~ 그럼 지나가게 해 주지!"},q:[
+  {t:"mc",q:"지구 표면에서 육지와 바다 중 더 넓은 곳은?",o:["육지","바다","똑같다"],a:1,e:"바다가 육지보다 훨씬 넓어요. 그래서 우주에서 본 지구가 푸르게 보여요."},
+  {t:"ox",q:"육지는 땅으로 이루어져 있고, 바다는 물로 덮여 있다.",a:0,e:"지구 표면은 크게 육지와 바다로 나눌 수 있어요."},
+  {t:"mc",q:"지구본 칸 안에 육지가 절반을 넘으면 어떤 딱지?",o:["바다 딱지","육지 딱지","안 붙인다"],a:1,e:"육지가 절반을 넘으면 육지 딱지, 바다가 절반을 넘으면 바다 딱지예요."}]},
+ {name:"소금섬",topic:"바닷물과 육지의 물",page:"48~49쪽",isle:"#ffffff",
+  boss:{name:"짠물 골렘",type:"golem",shot:"#ffffff",line:"바닷물 한 바가지 마셔 봐라! 시원~하지? 크하하!"},q:[
+  {t:"mc",q:"가열해서 물이 다 없어졌을 때 하얀 물질이 남는 쪽은?",o:["육지의 물","바닷물","둘 다 안 남는다"],a:1,e:"바닷물에는 소금 같은 물질이 녹아 있어서 하얀 물질이 남아요."},
+  {t:"ox",q:"바닷물은 사람이 마시기에 알맞다.",a:1,e:"바닷물은 소금 등 여러 물질이 녹아 있어 마시기에 알맞지 않아요."},
+  {t:"mc",q:"증발 접시에 끓임쪽을 넣는 까닭은?",o:["색깔을 내려고","갑자기 끓어오르지 않게","소금을 만들려고"],a:1,e:"끓임쪽은 물이 갑자기 확 끓어오르는 것을 막아 줘요."},
+  {t:"ox",q:"실험에 쓰는 바닷물은 맛을 보며 확인해도 된다.",a:1,e:"실험에 쓰는 물질은 맛보거나 마시지 않아요."}]},
+ {name:"동굴섬",topic:"바닷가 지형",page:"50~51쪽",isle:"#c7b39a",
+  boss:{name:"동굴 박쥐왕",type:"bat",shot:"#c58cff",line:"바닷가는 다 똑같이 생겼어! 내 동굴만 빼고! 끼이익!"},q:[
+  {t:"mc",q:"'지형'이란 무엇일까요?",o:["땅의 생김새","바다의 온도","하늘의 색깔"],a:0,e:"지형은 땅의 생김새를 말해요."},
+  {t:"mc",q:"바닷가에서 볼 수 있는 지형이 아닌 것은?",o:["모래 해변","바닷가 동굴","빙하"],a:2,e:"바닷가에서는 모래 해변, 절벽, 동굴, 구멍 뚫린 바위 등을 볼 수 있어요."},
+  {t:"ox",q:"바닷가 지형은 세계 어디에서나 똑같이 생겼다.",a:1,e:"바닷가 지형은 곳마다 생김새가 달라요."}]},
+ {name:"물때섬",topic:"밀물과 썰물",page:"52~53쪽",isle:"#8fd1c7",
+  boss:{name:"먹물 왕문어",type:"octopus",shot:"#2a2236",line:"바닷물을 내 다리로 끌어당겼다 놓았다~ 밀물 썰물 헷갈리지?"},q:[
+  {t:"mc",q:"바닷물 높이가 높아지며 육지 쪽으로 밀려 들어오는 것은?",o:["밀물","썰물","파도"],a:0,e:"밀물은 바닷물이 육지 쪽으로 밀려 들어오는 현상이에요."},
+  {t:"mc",q:"바닷물 높이가 낮아지며 바다 쪽으로 빠져나가는 것은?",o:["밀물","썰물","소나기"],a:1,e:"썰물은 바닷물이 바다 쪽으로 빠져나가는 현상이에요."},
+  {t:"mc",q:"물에 떠 있던 배가 땅 위에 얹혀 있어요. 지금은?",o:["밀물 때","썰물 때","태풍 때"],a:1,e:"썰물 때 바닷물이 빠져나가서 배가 땅 위에 얹혀 있어요."},
+  {t:"mc",q:"'갯벌 밖으로 나오세요' 방송이 나온 까닭은?",o:["밀물로 물이 높아져서","썰물로 물이 빠져서","점심시간이라서"],a:0,e:"밀물이 되면 바닷물이 들어와 갯벌이 물에 잠기기 때문에 위험해요."}]},
+ {name:"갯벌섬",topic:"갯벌",page:"54~57쪽",isle:"#a08770",
+  boss:{name:"쓰레기 괴물 와르르",type:"trash",shot:"#4c5a3a",line:"갯벌은 내 쓰레기장이다! 농게도 짱뚱어도 다 쫓아내 주마!"},q:[
+  {t:"mc",q:"밀물 때 잠기고 썰물 때 드러나는 편평한 땅은?",o:["사막","갯벌","절벽"],a:1,e:"이런 땅을 갯벌이라고 해요."},
+  {t:"mc",q:"갯벌에 사는 생물이 아닌 것은?",o:["농게","짱뚱어","낙타"],a:2,e:"갯벌에는 농게, 짱뚱어, 조개, 나문재, 퉁퉁마디 등이 살아요. 낙타는 사막에 살아요."},
+  {t:"ox",q:"갯벌은 바다로 흘러가는 오염 물질을 걸러 준다.",a:0,e:"갯벌은 오염 물질을 걸러 주는 자연의 정화조 같은 곳이에요."},
+  {t:"ox",q:"우리나라 갯벌은 유네스코 세계 자연 유산으로 지정되었다.",a:0,e:"세계적으로 가치가 커서 깨끗하게 지키고 보전해야 해요."},
+  {t:"mc",q:"갯벌을 지키는 행동으로 알맞은 것은?",o:["쓰레기 되가져오기","조개 마구 캐기","갯벌 메워 건물 짓기"],a:0,e:"쓰레기를 되가져오고 생물을 함부로 잡지 않는 것이 갯벌을 지키는 방법이에요."}]}
+];
+const MAXQ=LEGS.reduce((s,l)=>s+l.q.length,0);
+const $=id=>document.getElementById(id);
+const FONT="'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif";
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const SPAWN_Z=-95, XMAX=6.5, BOSS_Z=-112;
+
+if(!window.THREE){$("panel").innerHTML='<h2 class="err">3D 엔진을 불러오지 못했어요</h2><p>인터넷 연결을 확인하고 페이지를 새로고침해 주세요.</p>';throw new Error("no three");}
+
+/* ================= three.js world ================= */
+const stage=$("stage"),cv=$("cv");
+const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+const scene=new THREE.Scene();
+scene.background=(()=>{const c=document.createElement("canvas");c.width=4;c.height=256;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,"#1b3d6e");g.addColorStop(.55,"#e88a6a");g.addColorStop(1,"#ffc58f");x.fillStyle=g;x.fillRect(0,0,4,256);
+  return new THREE.CanvasTexture(c);})();
+scene.fog=new THREE.Fog(0xf3a97f,45,175);
+const camera=new THREE.PerspectiveCamera(60,1,.1,400);
+camera.position.set(0,5.5,10);
+scene.add(new THREE.HemisphereLight(0xffe8d0,0x0d4b5e,.95));
+const sun=new THREE.DirectionalLight(0xffd2a0,.9);sun.position.set(20,30,10);scene.add(sun);
+
+// sun disc on horizon
+const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(14,40),new THREE.MeshBasicMaterial({color:0xfff0c0,fog:false}));
+sunDisc.position.set(-40,8,-260);scene.add(sunDisc);
+
+// ocean
+const oceanGeo=new THREE.PlaneGeometry(160,260,56,90);oceanGeo.rotateX(-Math.PI/2);oceanGeo.translate(0,0,-100);
+const oPos=oceanGeo.attributes.position,oBase=Float32Array.from(oPos.array);
+const ocean=new THREE.Mesh(oceanGeo,new THREE.MeshPhongMaterial({color:0x1a7f9a,shininess:60,flatShading:true,specular:0x88ccdd}));
+scene.add(ocean);
+function waveH(x,z,t){return Math.sin(x*.35+t*1.3)*.28+Math.cos((z)*.22+t*1.7)*.32+Math.sin((x+z)*.12+t)*.2;}
+function updateOcean(t,scroll){
+  for(let i=0;i<oPos.count;i++){const x=oBase[i*3],z=oBase[i*3+2];oPos.array[i*3+1]=waveH(x,z-scroll,t);}
+  oPos.needsUpdate=true;oceanGeo.computeVertexNormals();
+}
+
+const M=(c,o={})=>new THREE.MeshLambertMaterial(Object.assign({color:c},o));
+
+// canoe
+const canoe=new THREE.Group();
+(()=>{
+  const hull=new THREE.Mesh(new THREE.SphereGeometry(1,20,12),M(0xc9773f));hull.scale.set(.7,.42,2.6);hull.position.y=.15;canoe.add(hull);
+  const inner=new THREE.Mesh(new THREE.SphereGeometry(1,16,10),M(0x7a3f1c));inner.scale.set(.5,.2,2.1);inner.position.y=.42;canoe.add(inner);
+  const pont=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,3.2,10),M(0xe2b07a));pont.rotation.x=Math.PI/2;pont.position.set(1.9,.15,0);canoe.add(pont);
+  [-.8,.8].forEach(z=>{const b=new THREE.Mesh(new THREE.BoxGeometry(2,.08,.12),M(0x6e3a17));b.position.set(1,.55,z);canoe.add(b);});
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,3.2,6),M(0x6e3a17));mast.position.set(0,2,-.5);canoe.add(mast);
+  const sg=new THREE.BufferGeometry();sg.setAttribute("position",new THREE.Float32BufferAttribute([0,3.5,-.5, 0,.9,-.4, 0,.9,-2.1],3));sg.computeVertexNormals();
+  const sail=new THREE.Mesh(sg,new THREE.MeshLambertMaterial({color:0xfffaf0,side:THREE.DoubleSide}));sail.rotation.y=.25;canoe.add(sail);canoe.userData.sail=sail;
+  const body=new THREE.Mesh(new THREE.SphereGeometry(.32,12,10),M(0xff7a59));body.position.set(0,.8,.6);canoe.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.22,12,10),M(0x3a2414));head.position.set(0,1.25,.6);canoe.add(head);
+  const pad=new THREE.Group();const stick=new THREE.Mesh(new THREE.BoxGeometry(2.2,.06,.06),M(0x3b2412));pad.add(stick);
+  [-1.1,1.1].forEach(x=>{const bl=new THREE.Mesh(new THREE.BoxGeometry(.12,.04,.5),M(0xf2d49b));bl.position.x=x;pad.add(bl);});
+  pad.position.set(0,.9,.6);canoe.add(pad);canoe.userData.pad=pad;
+})();
+scene.add(canoe);
+
+/* ---------- villains (original designs) ---------- */
+function addEyes(g,y,z,sep,r){
+  [-1,1].forEach(s=>{
+    const w=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),M(0xffffff,{emissive:0x333333}));w.position.set(s*sep,y,z);g.add(w);
+    const p=new THREE.Mesh(new THREE.SphereGeometry(r*.5,10,8),M(0x111111));p.position.set(s*sep,y,z+r*.62);g.add(p);
+    const b=new THREE.Mesh(new THREE.BoxGeometry(r*2.2,r*.4,r*.4),M(0x1a1a1a));b.position.set(s*sep,y+r*1.05,z+r*.5);b.rotation.z=s*-.45;g.add(b);
+  });
+}
+function mouth(g,y,z,w,c=0x2a0f14){const m=new THREE.Mesh(new THREE.BoxGeometry(w,w*.28,.4),M(c));m.position.set(0,y,z);g.add(m);
+  for(let i=-1;i<=1;i+=2){const t=new THREE.Mesh(new THREE.ConeGeometry(w*.08,w*.18,4),M(0xffffff));t.rotation.x=Math.PI;t.position.set(i*w*.25,y+w*.05,z+.22);g.add(t);}}
+const BUILD={
+  cloud(g){const mat=M(0x5d6680);[[0,8,0,3.6],[-3.4,7,.3,2.7],[3.4,7.2,.2,2.9],[-1.6,10.3,-.4,2.6],[1.9,10,-.3,2.4],[0,5.6,.6,2.4]].forEach(([x,y,z,r])=>{
+      const s=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),mat);s.position.set(x,y,z);g.add(s);});
+    addEyes(g,8.6,3.2,1.3,.7);mouth(g,6.6,3.3,2.2);
+    for(let i=0;i<3;i++){const bolt=new THREE.Mesh(new THREE.ConeGeometry(.35,2.2,4),new THREE.MeshBasicMaterial({color:0xffe14d}));bolt.rotation.x=Math.PI;bolt.position.set(-2.5+i*2.5,3.6,.8);g.add(bolt);}
+    g.userData.anim=t=>{g.children.forEach((c,i)=>{if(i<6)c.scale.setScalar(1+Math.sin(t*2+i)*.04);});};},
+  turtle(g){const shell=new THREE.Mesh(new THREE.SphereGeometry(5,18,12,0,Math.PI*2,0,Math.PI/2),M(0x5f6e4f,{flatShading:true}));shell.scale.set(1,.8,1.1);shell.position.y=1;g.add(shell);
+    for(let i=0;i<7;i++){const a=i/7*Math.PI*2;const sp=new THREE.Mesh(new THREE.DodecahedronGeometry(.9),M(0x7d7f78,{flatShading:true}));sp.position.set(Math.cos(a)*2.6,4.2,Math.sin(a)*2.6);g.add(sp);}
+    const head=new THREE.Mesh(new THREE.SphereGeometry(1.8,16,12),M(0x8aa06b));head.position.set(0,3,5.4);g.add(head);
+    addEyes(g,3.7,6.6,.7,.45);mouth(g,2.4,7,1.4);
+    [[-3.6,3],[3.6,3],[-3.6,-3],[3.6,-3]].forEach(([x,z])=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.9,1.1,2,10),M(0x8aa06b));l.position.set(x,.6,z);g.add(l);});
+    g.userData.anim=t=>{head.position.y=3+Math.sin(t*2)*.3;};},
+  serpent(g){const segs=[];for(let i=0;i<9;i++){const r=1.6-i*.08;const s=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),M(i%2?0x2f8f8a:0x3fb0a0));g.add(s);segs.push(s);}
+    const head=new THREE.Mesh(new THREE.SphereGeometry(2.2,16,12),M(0x2f8f8a));head.scale.set(1,.85,1.3);g.add(head);
+    const fin=new THREE.Mesh(new THREE.ConeGeometry(1,2.4,4),M(0xffb86b));g.add(fin);
+    const eyeG=new THREE.Group();addEyes(eyeG,.5,2.3,.9,.5);mouth(eyeG,-.7,2.6,1.6);g.add(eyeG);
+    g.userData.anim=t=>{segs.forEach((s,i)=>{const k=i/8;s.position.set(Math.sin(t*1.5+i*.7)*3*(1-k*.3)-3+i*.2,Math.sin(k*Math.PI)*7+1,-i*.6);});
+      const hx=Math.sin(t*1.5)*1.5+2,hy=9;head.position.set(hx,hy,1.2);eyeG.position.set(hx,hy,1.2);fin.position.set(hx,hy+2,1);};},
+  golem(g){const mat=M(0xe8eef0,{flatShading:true});const body=new THREE.Mesh(new THREE.BoxGeometry(5,5.5,3.4),mat);body.position.y=4;g.add(body);
+    const head=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.6,2.8),mat);head.position.y=8.2;g.add(head);
+    addEyes(g,8.5,1.5,.8,.45);mouth(g,7.5,1.5,1.6);
+    const arms=[];[-1,1].forEach(s=>{const a=new THREE.Mesh(new THREE.BoxGeometry(1.5,4.4,1.5),mat);a.position.set(s*3.4,4.4,0);g.add(a);arms.push(a);});
+    for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.OctahedronGeometry(.6+Math.random()*.5),new THREE.MeshLambertMaterial({color:0xcfe9f5,emissive:0x335566}));
+      c.position.set(-2+Math.random()*4,6+Math.random()*1.5,-1+Math.random()*2);g.add(c);}
+    g.userData.anim=t=>{arms[0].rotation.x=Math.sin(t*2)*.5;arms[1].rotation.x=-Math.sin(t*2)*.5;};},
+  bat(g){const body=new THREE.Mesh(new THREE.SphereGeometry(2.4,16,12),M(0x4a3a5c));body.position.y=8;g.add(body);
+    [-1,1].forEach(s=>{const ear=new THREE.Mesh(new THREE.ConeGeometry(.6,1.6,6),M(0x4a3a5c));ear.position.set(s*1.2,10.4,0);g.add(ear);});
+    addEyes(g,8.6,2,.9,.5);
+    const m=new THREE.Mesh(new THREE.BoxGeometry(1.6,.4,.4),M(0x2a0f14));m.position.set(0,7.4,2.2);g.add(m);
+    [-.5,.5].forEach(x=>{const f=new THREE.Mesh(new THREE.ConeGeometry(.15,.5,4),M(0xffffff));f.rotation.x=Math.PI;f.position.set(x,7.05,2.35);g.add(f);});
+    const wings=[];[-1,1].forEach(s=>{const wg=new THREE.Group();const w=new THREE.Mesh(new THREE.BoxGeometry(6,.2,3),M(0x3a2c4a));w.position.x=s*3;wg.add(w);
+      for(let i=0;i<3;i++){const tip=new THREE.Mesh(new THREE.ConeGeometry(.5,1.4,3),M(0x3a2c4a));tip.rotation.x=Math.PI;tip.position.set(s*(1.5+i*2),-.6,1);wg.add(tip);}
+      wg.position.set(s*1.8,8.4,-.4);g.add(wg);wings.push([wg,s]);});
+    g.userData.anim=t=>{wings.forEach(([w,s])=>w.rotation.z=s*Math.sin(t*6)*.5);body.position.y=8+Math.sin(t*3)*.4;};},
+  octopus(g){const mat=M(0xc4547a);const head=new THREE.Mesh(new THREE.SphereGeometry(3,18,14),mat);head.scale.set(1,1.25,1);head.position.y=8;g.add(head);
+    addEyes(g,7.8,2.6,1.1,.6);
+    const tents=[];for(let k=0;k<6;k++){const a=k/6*Math.PI*2;const arr=[];for(let i=0;i<7;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(.8-i*.08,10,8),mat);g.add(s);arr.push(s);}tents.push([a,arr]);}
+    g.userData.anim=t=>{tents.forEach(([a,arr],k)=>arr.forEach((s,i)=>{const r=2+i*.8;const w=Math.sin(t*2.5+k+i*.6)*.6;
+      s.position.set(Math.cos(a+w*.3)*r,5-i*.55+Math.sin(t*3+i+k)*.3,Math.sin(a+w*.3)*r*.6+1);}));head.rotation.z=Math.sin(t)*.08;};},
+  trash(g){const cols=[0x4c5a3a,0x6b6f73,0x3d4f63,0x8a6d4a,0x2f3a30];
+    for(let i=0;i<22;i++){let m;const c=cols[i%cols.length];
+      if(i%3===0)m=new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,1.6,10),M(c));else if(i%3===1)m=new THREE.Mesh(new THREE.BoxGeometry(1.6,1.2,1.2),M(c));else m=new THREE.Mesh(new THREE.SphereGeometry(1.1,10,8),M(c));
+      const a=i*2.4,r=1+((i*7)%10)/10*3;m.position.set(Math.cos(a)*r,1.5+i*.4,Math.sin(a)*r*.6);m.rotation.set(i,i*.7,i*1.3);g.add(m);}
+    const can=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,1.4,10),M(0xd04040));can.position.set(-2.4,9,1.6);can.rotation.z=.8;g.add(can);
+    addEyes(g,8.2,2.6,1.1,.6);mouth(g,6.6,2.8,2.4,0x1b1b10);
+    const arms=[];[-1,1].forEach(s=>{const a=new THREE.Mesh(new THREE.CylinderGeometry(.5,.8,4.5,8),M(0x5a5f4a));a.position.set(s*4,5.5,.5);a.rotation.z=s*.9;g.add(a);arms.push([a,s]);});
+    g.userData.anim=t=>{arms.forEach(([a,s])=>a.rotation.z=s*(.9+Math.sin(t*3)*.3));};}
+};
+let boss=null;
+function makeBoss(type){
+  if(boss){scene.remove(boss);}
+  boss=new THREE.Group();BUILD[type](boss);boss.position.set(0,0,BOSS_Z);boss.scale.setScalar(1.3);
+  boss.userData.base=1.3;boss.userData.hitT=0;boss.userData.dead=0;scene.add(boss);
+}
+
+/* ---------- shared props ---------- */
+const rockGeo=new THREE.DodecahedronGeometry(1.4,0),rockMat=M(0x5d6b70,{flatShading:true});
+const starGeo=new THREE.OctahedronGeometry(.7),starMat=new THREE.MeshLambertMaterial({color:0xffd56b,emissive:0x8a6a10});
+const buoyGeo=new THREE.CylinderGeometry(.55,.7,1.2,12),buoyMatA=M(0xe2574c),buoyMatB=M(0xffffff);
+const foamMat=new THREE.MeshBasicMaterial({color:0xe8f4f1,transparent:true,opacity:.5});
+const ringGeo=new THREE.RingGeometry(1.5,2.2,20);ringGeo.rotateX(-Math.PI/2);
+
+function labelTex(text,ox){
+  const c=document.createElement("canvas");c.width=512;c.height=300;const x=c.getContext("2d");
+  x.fillStyle="#fffaf0";x.strokeStyle="#e2574c";x.lineWidth=14;
+  x.beginPath();x.roundRect?x.roundRect(10,10,492,280,40):x.rect(10,10,492,280);x.fill();x.stroke();
+  x.textAlign="center";x.textBaseline="middle";
+  if(ox){x.font=`220px ${FONT}`;x.fillStyle=text==="O"?"#1f7fb0":"#e2574c";x.fillText(text,256,165);}
+  else{let fs=74,lines;do{x.font=`${fs}px ${FONT}`;lines=wrapText(x,text,440);fs-=6;}while(lines.length*fs*1.25>240&&fs>36);
+    fs+=6;x.fillStyle="#1d2a2f";const lh=fs*1.2,y0=155-(lines.length-1)*lh/2;lines.forEach((l,i)=>x.fillText(l,256,y0+i*lh));}
+  const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t;
+}
+function wrapText(x,text,maxW){const out=[];let line="";for(const ch of text){const t=line+ch;if(x.measureText(t).width>maxW&&line){out.push(line.trim());line=ch;}else line=t;}if(line)out.push(line.trim());return out;}
+
+function makeBuoy(label,ox){
+  const g=new THREE.Group();
+  const b=new THREE.Mesh(buoyGeo,buoyMatA);b.position.y=.4;g.add(b);
+  const band=new THREE.Mesh(new THREE.CylinderGeometry(.62,.66,.3,12),buoyMatB);band.position.y=.5;g.add(band);
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,1.4,6),M(0x333333));pole.position.y=1.5;g.add(pole);
+  const tex=labelTex(label,ox);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex}));
+  sp.scale.set(ox?2.8:3.9,ox?1.65:2.3,1);sp.position.y=3;g.add(sp);g.userData.tex=tex;g.userData.sp=sp;
+  return g;
+}
+function makeIsland(color){
+  const g=new THREE.Group();
+  const sand=new THREE.Mesh(new THREE.CylinderGeometry(14,17,2,24),M(0xf2d49b));sand.position.y=-.2;g.add(sand);
+  const hill=new THREE.Mesh(new THREE.SphereGeometry(10,20,12,0,Math.PI*2,0,Math.PI/2),M(color==="#ffffff"?0xe9f1ee:new THREE.Color(color).getHex(),{flatShading:true}));hill.scale.y=.6;hill.position.y=.6;g.add(hill);
+  [[-6,3],[5,4],[0,-4]].forEach(([x,z])=>{const tr=new THREE.Mesh(new THREE.CylinderGeometry(.25,.35,5,6),M(0x6e3a17));tr.position.set(x,3.5,z);tr.rotation.z=.15;g.add(tr);
+    for(let i=0;i<5;i++){const lf=new THREE.Mesh(new THREE.ConeGeometry(.6,3.4,4),M(0x3f9a64));lf.position.set(x+.4,6,z);lf.rotation.set(Math.PI/2.4,i/5*Math.PI*2,0,"YXZ");g.add(lf);}});
+  return g;
+}
+
+/* ================= music & sound (original, generated live) ================= */
+const Sound=(()=>{
+  let ac=null,master=null,musicBus=null,sfxBus=null,timer=null,nextT=0,step=0,on=true,wave=null;
+  try{on=localStorage.getItem("canoe-sound")!=="off"}catch(e){}
+  const BPM=124,S16=60/BPM/4;
+  const N=n=>440*Math.pow(2,(n-69)/12);
+  // C - G - Am - F, island strum feel
+  const CH=[[48,[60,64,67]],[43,[59,62,67]],[45,[60,64,69]],[41,[60,65,69]]];
+  const STRUM=[1,0,1,1,0,1,1,0, 1,0,1,1,0,1,1,0];          // D-DU-UDU
+  const LOG=[1,0,0,1,0,0,1,0, 0,0,1,0,1,0,0,0];
+  const LOGN=[72,0,0,69,0,0,67,0,0,0,64,0,67,0,0,0];
+  // pentatonic hook, one note per 8th (0 = rest), 4 bars
+  const MEL=[76,0,79,76,74,72,74,0, 74,0,79,74,71,67,0,0, 72,0,76,79,81,79,76,0, 77,76,74,72,74,0,72,0];
+  function init(){
+    if(ac)return;
+    const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+    ac=new C();master=ac.createGain();master.gain.value=on?.8:0;master.connect(ac.destination);
+    musicBus=ac.createGain();musicBus.gain.value=.55;musicBus.connect(master);
+    sfxBus=ac.createGain();sfxBus.gain.value=.8;sfxBus.connect(master);
+    // ocean wash: looping filtered noise with slow swell
+    const len=ac.sampleRate*4,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=ac.createBufferSource();src.buffer=buf;src.loop=true;
+    const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=600;
+    const g=ac.createGain();g.gain.value=.05;
+    const lfo=ac.createOscillator();lfo.frequency.value=.12;const lg=ac.createGain();lg.gain.value=.04;lfo.connect(lg);lg.connect(g.gain);
+    src.connect(lp);lp.connect(g);g.connect(musicBus);src.start();lfo.start();wave=src;
+  }
+  function tone(freq,t,dur,type,vol,bus,attack=.005){
+    const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+attack);g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+    o.connect(g);g.connect(bus||musicBus);o.start(t);o.stop(t+dur+.05);return o;
+  }
+  function pluck(n,t,vol){ // ukulele-ish: triangle + quick bright overtone
+    tone(N(n),t,.38,"triangle",vol);tone(N(n)*2,t,.12,"sine",vol*.3);
+  }
+  function logdrum(n,t){const o=tone(N(n),t,.22,"sine",.32);o.frequency.exponentialRampToValueAtTime(N(n)*.82,t+.18);}
+  function shaker(t,vol){const len=Math.floor(ac.sampleRate*.05),b=ac.createBuffer(1,len,ac.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=ac.createBufferSource();s.buffer=b;const hp=ac.createBiquadFilter();hp.type="highpass";hp.frequency.value=6000;
+    const g=ac.createGain();g.gain.value=vol;s.connect(hp);hp.connect(g);g.connect(musicBus);s.start(t);}
+  function schedule(){
+    while(nextT<ac.currentTime+.12){
+      const t=nextT,i=step%64,bar=Math.floor(i/16),s16=i%16,[root,chord]=CH[bar];
+      if(s16%2===0)shaker(t,s16%4===0?.05:.08);
+      if(STRUM[s16])chord.forEach((n,k)=>pluck(n,t+k*.012,.07));
+      if(s16===0||s16===8||s16===11)tone(N(root),t,.32,"sine",.3);
+      if(LOG[s16])logdrum(LOGN[s16],t);
+      if(s16%2===0){const m=MEL[bar*8+s16/2];if(m)tone(N(m),t,.26,"square",.035);}
+      nextT+=S16;step++;
+    }
+  }
+  function start(){init();if(!ac)return;if(ac.state==="suspended")ac.resume();
+    if(!timer){nextT=ac.currentTime+.05;timer=setInterval(schedule,25);}}
+  function set(v){on=v;try{localStorage.setItem("canoe-sound",v?"on":"off")}catch(e){}
+    if(master)master.gain.setTargetAtTime(v?.8:0,ac.currentTime,.05);if(v)start();}
+  function sfx(kind){
+    if(!ac||!on)return;const t=ac.currentTime+.01;
+    const seq={good:[[72,0],[76,.08],[79,.16],[84,.24]],bad:[[67,0],[63,.12],[58,.26]],star:[[88,0],[91,.06]],
+      hit:null,win:[[72,0],[76,.12],[79,.24],[84,.36],[79,.5],[84,.62]]}[kind];
+    if(kind==="hit"){const o=tone(140,t,.35,"sine",.6,sfxBus);o.frequency.exponentialRampToValueAtTime(50,t+.3);return;}
+    seq.forEach(([n,d])=>tone(N(n),t+d,kind==="bad"?.3:.28,kind==="bad"?"sawtooth":"triangle",kind==="bad"?.12:.22,sfxBus));
+  }
+  return{start,set,sfx,get on(){return on}};
+})();
+function syncSoundBtn(){const b=$("snd");b.textContent=Sound.on?"🔊 음악 켜짐":"🔇 음악 꺼짐";b.setAttribute("aria-pressed",Sound.on);}
+$("snd").onclick=()=>{Sound.set(!Sound.on);syncSoundBtn();};
+syncSoundBtn();
+addEventListener("pointerdown",()=>{if(Sound.on)Sound.start();},{once:true});
+addEventListener("keydown",()=>{if(Sound.on)Sound.start();},{once:true});
+
+/* ================= game state ================= */
+let G=null,keys={},pointerX=null,playerName="",last=0,clock=0;
+const objs=[],fx=[];
+function removeObj(o){scene.remove(o.mesh);if(o.mesh.userData.items)o.mesh.userData.items.forEach(it=>{it.g.userData.tex.dispose();it.g.userData.sp.material.dispose();});const i=objs.indexOf(o);if(i>=0)objs.splice(i,1);}
+function clearWorld(){objs.slice().forEach(removeObj);fx.slice().forEach(f=>{scene.remove(f.mesh);});fx.length=0;}
+
+function newGame(){
+  G={mode:"intro",stage:0,qi:0,lives:3,score:0,correct:0,stageStart:{score:0,correct:0},t:0,scroll:0,
+     rowTimer:1.5,rockTimer:2.5,starTimer:5,shotTimer:3,inv:0,shake:0,rowActive:false,island:null,reactT:0,after:null,bossHp:0};
+  startStage();
+}
+function startStage(){
+  clearWorld();const L=LEGS[G.stage];G.qi=0;G.island=null;G.rowActive=false;G.rowTimer=1.8;G.shotTimer=3.5;G.bossHp=L.q.length;
+  makeBoss(L.boss.type);canoe.position.x=0;
+  $("hud").hidden=true;G.mode="intro";
+  showOverlay(`<span class="tag v">${L.name}의 빌런 등장!</span><h2>${L.boss.name}</h2>
+    <div class="quote">“${L.boss.line}”</div>
+    <p>정답 부표로 카누를 몰면 <b>별빛 화살</b>이 빌런에게 날아가요. 빌런이 던지는 공격과 바위는 피하세요! (주제: ${L.topic})</p>
+    <button class="btn" id="cont" type="button">맞서 싸우기 ⛵</button>`);
+  $("cont").onclick=()=>{hideOverlay();$("hud").hidden=false;G.mode="play";updateHud();};
+}
+const speed=()=>15+G.stage*1.2;
+const curQ=()=>LEGS[G.stage].q[G.qi];
+function updateHud(){
+  const L=LEGS[G.stage];
+  $("hLives").textContent="❤️".repeat(Math.max(0,G.lives))+"🤍".repeat(3-Math.max(0,G.lives));
+  $("hStage").textContent=`${L.name} ${Math.min(G.qi+1,L.q.length)}/${L.q.length}`;
+  $("hScore").textContent=G.score;
+  $("bName").textContent=G.bossHp>0?L.boss.name:L.boss.name+" 물리침!";
+  $("bHp").style.width=(G.bossHp/L.q.length*100)+"%";
+  if(G.island||G.bossHp<=0)$("qbox").innerHTML=`<small>빌런을 물리쳤어요!</small>${L.name}이 보여요. 노를 저어 가요!`;
+  else{const q=curQ();$("qbox").innerHTML=`<small>${L.topic} · ${q.t==="ox"?"맞으면 O, 틀리면 X 부표로!":"정답 부표로 카누를 움직여요"}</small>${q.q}`;}
+}
+let toastT=0;function toast(m){$("toast").textContent=m;$("toast").hidden=false;toastT=1.6;}
+function flash(){$("flash").hidden=false;setTimeout(()=>$("flash").hidden=true,220);}
+
+function spawnRow(){
+  const q=curQ(),opts=q.t==="ox"?["O","X"]:q.o.slice();
+  const order=opts.map((_,i)=>i).sort(()=>Math.random()-.5);
+  const xs=opts.length===2?[-3,3]:[-4.4,0,4.4];
+  const g=new THREE.Group();g.position.z=SPAWN_Z;const items=[];
+  order.forEach((oi,p)=>{const b=makeBuoy(opts[oi],q.t==="ox");b.position.x=xs[p];g.add(b);items.push({i:oi,x:xs[p],g:b});});
+  g.userData.items=items;scene.add(g);objs.push({k:"row",mesh:g,items});G.rowActive=true;
+}
+const nearSpawn=()=>objs.some(o=>o.k==="row"&&o.mesh.position.z<-62)||G.island;
+function spawnRock(){if(nearSpawn())return;const m=new THREE.Mesh(rockGeo,rockMat);const s=.7+Math.random()*.8;m.scale.set(s,s*.9,s);
+  m.position.set((Math.random()*2-1)*XMAX,.2,SPAWN_Z);m.rotation.set(Math.random()*3,Math.random()*3,0);
+  const f=new THREE.Mesh(ringGeo,foamMat);f.scale.setScalar(s);f.position.y=-.05;const g=new THREE.Group();g.add(m);g.add(f);g.position.copy(m.position);m.position.set(0,.2,0);
+  scene.add(g);objs.push({k:"rock",mesh:g,r:1.2*s});}
+function spawnStar(){if(nearSpawn())return;const m=new THREE.Mesh(starGeo,starMat);m.position.set((Math.random()*2-1)*XMAX,1.4,SPAWN_Z);scene.add(m);objs.push({k:"star",mesh:m});}
+function bossPos(){return new THREE.Vector3(boss.position.x,boss.position.y+9*boss.scale.y,boss.position.z+3);}
+function spawnShot(){
+  const L=LEGS[G.stage];const m=new THREE.Mesh(new THREE.SphereGeometry(.75,12,10),new THREE.MeshBasicMaterial({color:L.boss.shot}));
+  const from=bossPos();const to=new THREE.Vector3(canoe.position.x+(Math.random()-.5)*1.5,.9,1);
+  m.position.copy(from);scene.add(m);objs.push({k:"shot",mesh:m,from,to,t:0,dur:3.2-G.stage*.15});
+}
+function sparkle(pos,color,n=18){for(let i=0;i<n;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.25,6,5),new THREE.MeshBasicMaterial({color}));m.position.copy(pos);scene.add(m);
+  fx.push({mesh:m,v:new THREE.Vector3((Math.random()-.5)*14,Math.random()*12,(Math.random()-.5)*14),life:.9});}}
+function fireArrow(){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.6),new THREE.MeshBasicMaterial({color:0xffe9a0}));
+  m.position.copy(canoe.position).add(new THREE.Vector3(0,1.5,-1));scene.add(m);
+  fx.push({mesh:m,arrow:true,from:m.position.clone(),t:0});}
+
+function loseLife(){Sound.sfx("hit");G.lives--;G.inv=1.6;G.shake=.4;flash();updateHud();if(G.lives<=0){gameOver();return true;}return false;}
+
+function answer(row,item){
+  const q=curQ(),ok=item.i===q.a;
+  removeObj(row);G.rowActive=false;
+  objs.filter(o=>o.k==="shot").forEach(removeObj);
+  if(ok){G.score+=100+G.lives*10;G.correct++;fireArrow();Sound.sfx("good");}
+  else{G.lives--;G.shake=.5;flash();boss.userData.laugh=1;Sound.sfx("bad");}
+  updateHud();G.mode="react";G.reactT=ok?.9:.7;
+  G.after=()=>{
+    const ans=q.t==="ox"?["O","X"][q.a]:q.o[q.a];G.mode="pause";
+    showOverlay(`<span class="tag">${LEGS[G.stage].name} · 교과서 ${LEGS[G.stage].page}</span>
+      <h2 class="${ok?"ok":"no"}">${ok?"명중! 별빛 화살이 빌런을 맞혔어요 ⭐":"앗, 틀렸어요! 빌런이 비웃어요 🌊"}</h2>
+      <p>${q.q}</p><div class="answer">정답: ${ans}</div><p>${q.e}</p>
+      <button class="btn" id="cont" type="button">${G.lives<=0?"계속":"계속 노 젓기"}</button>`);
+    $("cont").onclick=()=>{
+      if(G.lives<=0){gameOver();return;}
+      if(ok&&G.bossHp<=0){hideOverlay();Sound.sfx("win");G.mode="defeat";G.reactT=2.2;updateHud();return;}
+      G.qi++;if(G.qi>=LEGS[G.stage].q.length)G.qi=LEGS[G.stage].q.length-1;
+      G.rowTimer=1.3;G.shotTimer=2.5;hideOverlay();G.mode="play";updateHud();
+    };
+  };
+}
+function bossHit(){G.bossHp--;boss.userData.hitT=.4;sparkle(bossPos(),0xffe14d,24);updateHud();}
+
+function stageClear(){
+  G.mode="clear";const L=LEGS[G.stage],lastStage=G.stage===LEGS.length-1;
+  showOverlay(`<span class="tag">섬 도착 🏝</span><h2>${L.name}에 도착했어요!</h2>
+    <p>${L.boss.name}을(를) 물리치고 '${L.topic}' 문제를 모두 풀었어요. 지금 점수 ${G.score}점.</p>
+    <button class="btn" id="cont" type="button">${lastStage?"항해 결과 보기":"다음 섬으로 출항"}</button>`);
+  $("cont").onclick=()=>{if(lastStage){finish();return;}
+    G.stage++;G.lives=Math.min(3,G.lives+1);G.stageStart={score:G.score,correct:G.correct};startStage();};
+}
+function gameOver(){
+  G.mode="over";
+  showOverlay(`<span class="tag v">${LEGS[G.stage].boss.name}의 승리…</span><h2>하트를 모두 잃었어요 😵</h2>
+    <p>${LEGS[G.stage].name} 처음부터 다시 도전할 수 있어요. 공격을 피하고 문제를 천천히 읽어 봐요.</p>
+    <div class="row"><button class="btn" id="retry" type="button">다시 맞서기</button><button class="btn sub" id="home" type="button">처음 화면</button></div>`);
+  $("retry").onclick=()=>{G.score=G.stageStart.score;G.correct=G.stageStart.correct;G.lives=3;G.inv=0;startStage();};
+  $("home").onclick=title;
+}
+function loadBoard(){try{return JSON.parse(localStorage.getItem("canoe-board")||"{}")}catch(e){return{}}}
+function saveScore(n,s){const b=loadBoard();if(!b[n]||b[n]<s)b[n]=s;try{localStorage.setItem("canoe-board",JSON.stringify(b))}catch(e){}return b;}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function finish(){
+  G.mode="end";$("hud").hidden=true;
+  const b=saveScore(playerName,G.score),top=Object.entries(b).sort((a,c)=>c[1]-a[1]).slice(0,5),r=G.correct/MAXQ;
+  const msg=r>=.9?"일곱 빌런을 모두 물리친 최고의 항해사! 지구와 바다 박사예요.":r>=.7?"멋진 항해였어요! 틀린 문제만 교과서에서 다시 살펴봐요.":"완주 성공! 교과서를 다시 보고 한 번 더 도전해요.";
+  showOverlay(`<span class="tag">항해 완료 🏁</span><h2>${esc(playerName)}, 일곱 빌런을 모두 물리쳤어요!</h2>
+    <p>맞힌 문제 ${G.correct} / ${MAXQ} · 점수 <b>${G.score}</b>점</p><p>${msg}</p>
+    <div class="keys"><b>이 기기 최고 기록</b><ol class="board">${top.map(([n,s])=>`<li class="${n===playerName?"me":""}">${esc(n)} — ${s}점</li>`).join("")}</ol></div>
+    <div class="row"><button class="btn" id="again" type="button">다시 항해</button><button class="btn sub" id="home" type="button">다른 친구 차례</button></div>`);
+  $("again").onclick=newGame;$("home").onclick=title;
+}
+function showOverlay(h){$("panel").innerHTML=h;$("ov").hidden=false;const b=$("panel").querySelector("button");if(b)setTimeout(()=>b.focus(),30);}
+function hideOverlay(){$("ov").hidden=true;}
+function title(){
+  G=null;clearWorld();$("hud").hidden=true;makeBoss("cloud");
+  let nm="";try{nm=localStorage.getItem("canoe-name")||""}catch(e){}
+  showOverlay(`<h1>별빛 카누 항해</h1>
+    <p>일곱 섬마다 바다를 어지럽히는 빌런이 기다려요. 떠내려오는 <b>정답 부표</b>로 카누를 몰아 별빛 화살을 쏘고, 빌런의 공격과 바위는 피하세요!</p>
+    <div class="keys">💻 키보드: ← → 방향키 (또는 A, D)<br>📱 태블릿: 화면을 누른 채 좌우로 움직이기</div>
+    <label for="pname">내 이름</label><input id="pname" maxlength="10" placeholder="이름을 쓰세요" autocomplete="off">
+    <button class="btn" id="start" type="button">출항하기 ⛵</button>
+    <p style="font-size:13px;color:#5b6b70">3학년 2학기 과학 2. 지구와 바다 · 교과서 42~57쪽</p>`);
+  const inp=$("pname");inp.value=nm;
+  const go=()=>{if(Sound.on)Sound.start();playerName=(inp.value.trim()||"항해사").slice(0,10);try{localStorage.setItem("canoe-name",playerName)}catch(e){}newGame();};
+  $("start").onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go();};
+}
+
+/* ---------- input ---------- */
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();keys[k]=true;if(G&&G.mode==="play"&&["arrowleft","arrowright"," "].includes(k))e.preventDefault();});
+addEventListener("keyup",e=>{keys[e.key.toLowerCase()]=false;});
+function pxToX(e){const r=cv.getBoundingClientRect();return((e.clientX-r.left)/r.width-.5)*2*XMAX*1.15;}
+cv.addEventListener("pointerdown",e=>{pointerX=pxToX(e);cv.setPointerCapture(e.pointerId);});
+cv.addEventListener("pointermove",e=>{if(pointerX!==null)pointerX=pxToX(e);});
+cv.addEventListener("pointerup",()=>pointerX=null);cv.addEventListener("pointercancel",()=>pointerX=null);
+
+/* ---------- loop ---------- */
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;
+  camera.fov=w/h<1?78:60;camera.updateProjectionMatrix();}
+addEventListener("resize",resize);
+
+function update(dt){
+  clock+=dt;
+  const moving=G&&(G.mode==="play"||G.mode==="defeat");
+  const v=G?speed():10;
+  if(!G||moving||G.mode==="intro")(G?G:{}).scroll=(G?G.scroll:0)+v*dt;
+  const scroll=G?G.scroll:clock*8;
+  updateOcean(clock,scroll);
+
+  // canoe bob & paddle
+  canoe.position.y=waveH(canoe.position.x,-scroll,clock)*.6;
+  canoe.rotation.z=Math.sin(clock*1.6)*.05+(canoe.userData.vx||0)*-.15;
+  canoe.userData.pad.rotation.z=reduce?0:Math.sin(clock*6)*.5;
+  canoe.visible=!(G&&G.inv>0&&Math.floor(G.inv*10)%2===0);
+
+  // boss anim
+  if(boss){const u=boss.userData;if(u.anim)u.anim(clock);
+    if(u.hitT>0){u.hitT-=dt;boss.scale.setScalar(u.base*(1-.12*Math.sin(u.hitT/.4*Math.PI)));boss.rotation.z=Math.sin(u.hitT*40)*.06;}
+    else if(!G||G.mode!=="defeat"){boss.scale.setScalar(u.base);boss.rotation.z=0;}
+    if(u.laugh>0){u.laugh-=dt;boss.position.y=Math.abs(Math.sin(clock*18))*1.2;}else if(!G||G.mode!=="defeat")boss.position.y=Math.sin(clock*1.2)*.6;
+    boss.position.x=Math.sin(clock*.5)*3;}
+
+  // fx
+  for(const f of fx.slice()){
+    if(f.arrow){f.t+=dt/.7;const to=bossPos();f.mesh.position.lerpVectors(f.from,to,Math.min(1,f.t));f.mesh.position.y+=Math.sin(Math.min(1,f.t)*Math.PI)*6;f.mesh.rotation.y+=dt*12;
+      if(f.t>=1){scene.remove(f.mesh);fx.splice(fx.indexOf(f),1);bossHit();}continue;}
+    f.life-=dt;f.v.y-=20*dt;f.mesh.position.addScaledVector(f.v,dt);f.mesh.scale.setScalar(Math.max(.01,f.life));
+    if(f.life<=0){scene.remove(f.mesh);fx.splice(fx.indexOf(f),1);}
+  }
+  if(toastT>0){toastT-=dt;if(toastT<=0)$("toast").hidden=true;}
+
+  // camera
+  const cx=G?canoe.position.x*.55:Math.sin(clock*.3)*2;
+  camera.position.x+=(cx-camera.position.x)*Math.min(1,dt*4);camera.position.y=5.5;camera.position.z=10;
+  if(G&&G.shake>0&&!reduce){G.shake-=dt;camera.position.x+=(Math.random()-.5)*.6;camera.position.y+=(Math.random()-.5)*.6;}else if(G&&G.shake>0)G.shake-=dt;
+  camera.lookAt(camera.position.x*.4,1.6,-26);
+
+  if(!G)return;
+  G.t+=dt;
+  if(G.mode==="react"){G.reactT-=dt;if(G.reactT<=0&&fx.every(f=>!f.arrow)){const a=G.after;G.after=null;G.mode="wait";a();}return;}
+  if(G.mode==="defeat"){
+    G.reactT-=dt;boss.position.y-=dt*5;boss.rotation.z+=dt*1.5;boss.scale.setScalar(Math.max(.05,boss.scale.x-dt*.5));
+    if(Math.random()<.3)sparkle(bossPos(),0xffd56b,4);
+    if(G.reactT<=0){scene.remove(boss);G.mode="play";const isl=makeIsland(LEGS[G.stage].isle);isl.position.set(0,0,SPAWN_Z-20);scene.add(isl);G.island=isl;updateHud();}
+    return;
+  }
+  if(G.mode!=="play")return;
+
+  // canoe control
+  let dx=0;if(keys.arrowleft||keys.a)dx-=1;if(keys.arrowright||keys.d)dx+=1;
+  if(pointerX!==null){const d=pointerX-canoe.position.x;dx=Math.abs(d)>.15?Math.sign(d)*Math.min(1,Math.abs(d)/1.2):0;}
+  canoe.position.x=Math.max(-XMAX,Math.min(XMAX,canoe.position.x+dx*11*dt));canoe.userData.vx=dx;
+  if(G.inv>0)G.inv-=dt;
+
+  // spawns
+  if(!G.island&&G.bossHp>0){
+    if(!G.rowActive){G.rowTimer-=dt;if(G.rowTimer<=0)spawnRow();}
+    G.shotTimer-=dt;if(G.shotTimer<=0){spawnShot();G.shotTimer=3.6+Math.random()*2-G.stage*.25;}
+  }
+  G.rockTimer-=dt;if(G.rockTimer<=0){spawnRock();G.rockTimer=1.3+Math.random()*1.4-G.stage*.08;}
+  G.starTimer-=dt;if(G.starTimer<=0){spawnStar();G.starTimer=5+Math.random()*4;}
+
+  const cxp=canoe.position.x;
+  for(const o of objs.slice()){
+    if(o.k==="shot"){o.t+=dt/o.dur;const k=Math.min(1,o.t);o.mesh.position.lerpVectors(o.from,o.to,k);o.mesh.position.y+=Math.sin(k*Math.PI)*8;
+      o.to.x+=(cxp-o.to.x)*dt*.4; // light homing
+      if(k>=.97&&Math.abs(o.mesh.position.x-cxp)<1.3&&G.inv<=0){removeObj(o);toast("빌런의 공격에 맞았어요!");if(loseLife())return;continue;}
+      if(o.t>=1.05){sparkle(o.mesh.position,0xe8f4f1,8);removeObj(o);}continue;}
+    o.mesh.position.z+=v*dt;const z=o.mesh.position.z;
+    if(o.k==="row"){
+      o.items.forEach(it=>it.g.position.y=Math.sin(clock*2.5+it.x)*.2);
+      if(z>-1.6&&z<1.4){for(const it of o.items){if(Math.abs(it.x-cxp)<1.85){answer(o,it);return;}}}
+      if(z>8){removeObj(o);G.rowActive=false;G.rowTimer=.6;toast("부표를 놓쳤어요! 다시 와요");}
+    }else if(o.k==="rock"){
+      if(G.inv<=0&&Math.abs(z)<1.4&&Math.abs(o.mesh.position.x-cxp)<o.r+.6){removeObj(o);toast("쿵! 바위에 부딪혔어요");if(loseLife())return;}
+      else if(z>10)removeObj(o);
+    }else if(o.k==="star"){o.mesh.rotation.y+=dt*3;
+      if(Math.abs(z)<1.3&&Math.abs(o.mesh.position.x-cxp)<1.4){removeObj(o);G.score+=30;updateHud();toast("보너스 별 +30");Sound.sfx("star");sparkle(o.mesh.position,0xffd56b,10);}
+      else if(z>10)removeObj(o);
+    }
+  }
+  if(G.island){G.island.position.z+=v*dt;if(G.island.position.z>-20){clearWorld();scene.remove(G.island);G.island=null;stageClear();}}
+}
+function loop(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;update(dt);renderer.render(scene,camera);requestAnimationFrame(loop);}
+
+resize();
+(document.fonts?document.fonts.load(`40px ${FONT}`):Promise.resolve()).catch(()=>{}).finally(()=>{title();requestAnimationFrame(loop);});
+</script>
+
+<!-- hyun-copyright:begin -->
+<div id="hyunCopy" aria-label="저작권 안내" style="position:fixed;left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom));z-index:2147483000;max-width:calc(100vw - 24px);box-sizing:border-box;text-align:center;font:500 11.5px/1.45 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;letter-spacing:-.01em;color:#fff;background:rgba(10,12,20,.55);border-radius:999px;padding:3px 12px;pointer-events:none;display:none;word-break:keep-all">© 2026 현쌤 과학 오락실 · 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용 금지</div>
+<script>(function(){var S=["#ov:not([hidden]) #panel h1"];function vis(e){if(!e)return false;var s=getComputedStyle(e);return !e.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&e.getClientRects().length>0}
+var STATIC=S[0]==='body';function tick(){var el=document.getElementById('hyunCopy');if(!el)return;if(STATIC){el.style.position='static';el.style.transform='none';el.style.margin='24px auto';el.style.display='table';return}var on=S.some(function(q){try{return vis(document.querySelector(q))}catch(e){return false}});el.style.display=on?'block':'none'}
+setInterval(tick,400);tick();})();</script>
+<!-- hyun-copyright:end -->
+</body></html>
