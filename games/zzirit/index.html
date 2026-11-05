@@ -1,0 +1,826 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>찌릿 마을의 불빛</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Gothic+Coding:wght@400;700&display=swap">
+<style>
+/* layout: one game screen (240x176 pixel canvas, scaled) with dragon-quest style windows laid over it, touch pad underneath */
+:root{
+  --night:#0c0e1c;
+  --panel:#05060c;
+  --ink:#f3efe3;
+  --frame:#e8e2cf;
+  --volt:#ffd84a;
+  --hurt:#ff7a66;
+  --mana:#8fd0ff;
+  --muted:#9a9cb4;
+  --display:"Do Hyeon","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --text:"Nanum Gothic Coding","D2Coding","Malgun Gothic",monospace;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{background:var(--night);color:var(--ink)}
+body{font-family:var(--text);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 24px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px}
+.top h1{font-family:var(--display);font-weight:400;font-size:clamp(24px,5vw,34px);margin:0;color:var(--volt);letter-spacing:.02em;text-wrap:balance}
+.top p{margin:0;color:var(--muted);font-size:13px;letter-spacing:.06em}
+
+.screen{position:relative;width:100%;aspect-ratio:240/176;background:#000;border-radius:6px;overflow:hidden;container-type:inline-size;box-shadow:0 0 0 2px #1d2036,0 18px 40px rgba(0,0,0,.5);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.screen canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+.screen.shake{animation:shake .32s}
+@keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-1.4%,.6%)}40%{transform:translate(1.2%,-.8%)}60%{transform:translate(-.8%,.4%)}80%{transform:translate(.6%,0)}}
+.fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .28s}
+.fade.on{opacity:1}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.flash.go{animation:flash .5s steps(2) 2}
+@keyframes flash{0%{opacity:.85}100%{opacity:0}}
+
+.win{position:absolute;background:var(--panel);color:var(--ink);border:.45cqw solid var(--frame);border-radius:1.2cqw;box-shadow:inset 0 0 0 .5cqw var(--panel),inset 0 0 0 .75cqw #3a3d55;font-size:clamp(11px,3.3cqw,25px);line-height:1.55;padding:1.6cqw 2.4cqw}
+.hud{top:2%;left:2%;min-width:30%;display:grid;grid-template-columns:auto auto;gap:0 2.2cqw;font-size:clamp(10px,2.9cqw,22px);padding:1.2cqw 2cqw}
+.hud .nm{grid-column:1/-1;color:var(--volt);font-weight:700;border-bottom:.3cqw solid #3a3d55;margin-bottom:.4cqw}
+.hud b{font-weight:700;font-variant-numeric:tabular-nums}
+.hud .hp b{color:var(--ink)}
+.hud.low .hp b{color:var(--hurt)}
+.hud .x{grid-column:1/-1;color:var(--mana);font-size:.9em}
+.foe{top:2%;right:2%;max-width:52%;font-size:clamp(10px,2.9cqw,22px);padding:1.2cqw 2cqw;text-align:right}
+.foe .fn{color:var(--hurt);font-weight:700}
+.foe .fx{color:var(--mana)}
+.msg{left:2%;right:2%;bottom:2.5%;height:31%;overflow:auto;cursor:pointer;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.caret{position:absolute;right:2.4cqw;bottom:1.4cqw;width:1.6cqw;height:1.2cqw;background:var(--ink);clip-path:polygon(0 0,100% 0,50% 100%);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.menu{display:grid;grid-template-columns:repeat(var(--cols,1),auto);gap:.3cqw 2.4cqw;padding:1.4cqw 2.2cqw 1.4cqw 1.2cqw}
+.menu.cmd{right:2%;bottom:36%}
+.menu.cmd2{right:2%;bottom:36%;max-height:56%;overflow:auto}
+.menu.wide{left:2%;right:2%;bottom:36%;grid-template-columns:1fr}
+.menu.field{right:2%;top:2%}
+.opt{all:unset;box-sizing:border-box;display:flex;gap:1.6cqw;align-items:baseline;padding:.2cqw 0 .2cqw 3.6cqw;position:relative;cursor:pointer;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
+.opt.on::before{content:"";position:absolute;left:.6cqw;top:.62em;width:1.6cqw;height:1.6cqw;background:var(--volt);clip-path:polygon(0 0,100% 50%,0 100%);animation:blink 1s steps(2) infinite}
+.opt[aria-disabled="true"]{color:#666a80}
+.opt small{font-size:.8em;color:var(--mana);margin-left:auto;padding-left:2cqw}
+.opt:focus-visible{outline:.3cqw dashed var(--volt)}
+
+.panel{inset:3%;overflow:auto;padding:2.4cqw 3.4cqw}
+.panel h2{font-family:var(--display);font-weight:400;color:var(--volt);margin:0 0 1.4cqw;font-size:1.35em;letter-spacing:.03em}
+.panel h3{margin:2cqw 0 .4cqw;font-size:1em;color:var(--mana)}
+.panel p{margin:0 0 .8cqw;font-size:.92em;color:var(--ink)}
+.panel .lock{color:#6a6e86}
+.panel .close{all:unset;cursor:pointer;display:inline-block;margin-top:2cqw;color:var(--volt);border:.3cqw solid var(--volt);border-radius:1cqw;padding:.6cqw 2.4cqw}
+.panel .stat{display:grid;grid-template-columns:auto 1fr;gap:.4cqw 3cqw;font-variant-numeric:tabular-nums}
+
+.titlecard{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.2cqw;text-align:center;background:radial-gradient(ellipse at 50% 120%,rgba(255,216,74,.16),transparent 60%),linear-gradient(#070814,#11142a);padding:4cqw}
+.titlecard .eyebrow{font-size:clamp(10px,2.6cqw,18px);letter-spacing:.3em;color:var(--muted)}
+.titlecard h2{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(28px,10cqw,76px);line-height:1;color:var(--volt);text-shadow:0 0 2cqw rgba(255,216,74,.45),.5cqw .5cqw 0 #6b4a00}
+.titlecard p{margin:0;font-size:clamp(11px,2.9cqw,20px);color:var(--ink);max-width:70cqw;word-break:keep-all}
+.titlecard label{display:flex;gap:2cqw;align-items:center;font-size:clamp(11px,3cqw,20px)}
+.titlecard input{font:inherit;font-family:var(--text);background:#000;color:var(--ink);border:.35cqw solid var(--frame);border-radius:1cqw;padding:.6cqw 1.6cqw;width:30cqw;text-align:center}
+.titlecard input:focus{outline:.35cqw solid var(--volt)}
+.titlecard .btns{display:flex;gap:2.4cqw;flex-wrap:wrap;justify-content:center}
+.titlecard button{all:unset;cursor:pointer;font-family:var(--display);font-size:clamp(14px,4cqw,28px);padding:.8cqw 3.4cqw;border:.4cqw solid var(--frame);border-radius:1.2cqw;background:#000;color:var(--ink)}
+.titlecard button.main{border-color:var(--volt);color:var(--volt)}
+.titlecard button:hover,.titlecard button:focus-visible{background:#1b1e36}
+
+.pad{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:4px 4px 0}
+.dpad{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:4px}
+.pbtn{all:unset;box-sizing:border-box;display:grid;place-items:center;background:#1a1d33;border:2px solid #34385a;border-radius:10px;color:var(--ink);font-family:var(--display);font-size:20px;cursor:pointer;touch-action:none}
+.pbtn:active,.pbtn.hold{background:#2b3058;border-color:var(--volt)}
+.pbtn:focus-visible{outline:2px dashed var(--volt)}
+.dpad .u{grid-area:1/2}.dpad .l{grid-area:2/1}.dpad .r{grid-area:2/3}.dpad .d{grid-area:3/2}
+.ab{display:flex;gap:12px;align-items:flex-end}
+.ab .pbtn{width:72px;height:72px;border-radius:50%;font-size:22px;flex-direction:column;line-height:1.1}
+.ab .pbtn span{font-family:var(--text);font-size:11px;color:var(--muted)}
+.ab .a{border-color:#7a6a20;color:var(--volt);transform:translateY(-14px)}
+.keys{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
+.keys kbd{font-family:var(--text);background:#1a1d33;border:1px solid #34385a;border-radius:4px;padding:0 5px;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.screen.shake,.flash.go,.caret,.opt.on::before{animation:none}}
+</style>
+
+<main class="wrap">
+  <header class="top">
+    <h1>찌릿 마을의 불빛</h1>
+    <p>6학년 과학 · 전기의 이용 RPG</p>
+  </header>
+
+  <div class="screen" id="screen">
+    <canvas id="cv" width="240" height="176" aria-label="게임 화면"></canvas>
+    <div id="hud" class="win hud" hidden></div>
+    <div id="foe" class="win foe" hidden></div>
+    <div id="msg" class="win msg" hidden><div id="msgText"></div><span id="caret" class="caret" hidden></span></div>
+    <div id="menu" class="win menu" hidden role="listbox"></div>
+    <div id="panel" class="win panel" hidden></div>
+    <div id="title" class="titlecard">
+      <div class="eyebrow">전기의 이용 · 6학년</div>
+      <h2>찌릿 마을의 불빛</h2>
+      <p>단선마왕이 마을의 전기를 끊어 버렸다. 전기의 원리를 배워 마을에 다시 불을 밝히자!</p>
+      <label for="nameIn">용사 이름 <input id="nameIn" maxlength="6" value="용사" autocomplete="off"></label>
+      <div class="btns">
+        <button id="btnNew" class="main">새로 시작</button>
+        <button id="btnLoad" hidden>이어하기</button>
+      </div>
+    </div>
+    <div id="flash" class="flash"></div>
+    <div id="fade" class="fade"></div>
+  </div>
+
+  <div class="pad" aria-label="터치 조작">
+    <div class="dpad">
+      <button class="pbtn u" data-k="up" aria-label="위">▲</button>
+      <button class="pbtn l" data-k="left" aria-label="왼쪽">◀</button>
+      <button class="pbtn r" data-k="right" aria-label="오른쪽">▶</button>
+      <button class="pbtn d" data-k="down" aria-label="아래">▼</button>
+    </div>
+    <div class="ab">
+      <button class="pbtn b" data-k="b">B<span>메뉴·취소</span></button>
+      <button class="pbtn a" data-k="a">A<span>말걸기·결정</span></button>
+    </div>
+  </div>
+  <p class="keys">키보드: <kbd>방향키</kbd> 이동 · <kbd>Space</kbd> <kbd>Enter</kbd> 말걸기·결정 · <kbd>Esc</kbd> 메뉴·취소. 진행 상황은 이 기기에 자동 저장돼요.</p>
+</main>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const cv=$('cv'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
+const W=240,H=176,TS=16,MOVE=9;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const bat=w=>{const c=w.charCodeAt(w.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0};
+const jo=(w,a,b)=>w+(bat(w)?a:b);
+
+/* ---------------- maps ---------------- */
+const MAPS={
+ town:{name:'찌릿 마을',town:true,tiles:[
+"TTTTTTTTTTXTTTTTTTTTTT",
+"T.........,..........T",
+"T.RRRR....,....RRRR..T",
+"T.WWdW.L..,..L.WdWW..T",
+"T.........,..........T",
+"T,,,,,,,,,,,,,,,,,,,,T",
+"T....,....,....,.....T",
+"TRRRR,...~~~...,RRRR.T",
+"TWdWW,...~~~...,WWdW.T",
+"T....,.........,.....T",
+"T.L..,,,,,,,,,,,..L..T",
+"T.....RRRRR..........T",
+"T.....WWdWW....TT....T",
+"T..........,.........T",
+"T......,,,,,,,,......T",
+"TTTTTTTTTTTTTTTTTTTTTT"]},
+ mine:{name:'번개 광산',town:false,tiles:[
+"########################",
+"#S...#.........#.......#",
+"#.#..#.#######.#.#####.#",
+"#.#....#.....#...#...#.#",
+"#.####.#.###.#####.#.#.#",
+"#....#.#...#.......#...#",
+"####.#.###.#########.###",
+"#....#...#.#.....C.#...#",
+"#.#####.##.#.#####.###.#",
+"#.#C....#..#.....#.....#",
+"#.####.##.#####.#.####.#",
+"#......#........#....#.#",
+"###.####.##.#.#####.##.#",
+"#...#....#..#.....#....#",
+"#.#.#.####.######.####.#",
+"#.#C#......#.....#....B#",
+"#.###.####...###...##..#",
+"########################"]}
+};
+const SOLID=new Set(['T','~','R','W','d','L','#','C','c','B']);
+const CHESTS={'mine:17,7':{item:'herb',n:2},'mine:3,9':{item:'cell',n:2},'mine:3,15':{item:'key',n:1}};
+const ITEMS={herb:{name:'약초',desc:'HP를 25 회복한다.'},cell:{name:'예비 전지',desc:'MP를 10 회복한다.'},key:{name:'번개 열쇠',desc:'광산 동쪽 끝 철문의 열쇠.'}};
+
+/* ---------------- science content ---------------- */
+const SPELLS={
+ spark:{name:'찌릿',mp:2,desc:'작은 전류를 쏜다. 전기가 통하지 않는 물질로 된 적에게는 소용없다.'},
+ circuit:{name:'회로 잇기',mp:3,desc:'끊어진 곳을 이어 전기 회로를 완성하고 적에게 전류를 흘린다. 몸이 끊어진 적에게 특히 강하다.'},
+ pluck:{name:'전구 뽑기',mp:3,desc:'적의 전구 하나를 뽑는다. 전구가 어떻게 이어져 있느냐에 따라 결과가 달라진다.'},
+ magnet:{name:'전자석',mp:4,desc:'볼트에 감은 에나멜선에 전류를 흘려 쇠붙이를 끌어당긴다. 같은 극은 밀어내고 다른 극은 끌어당긴다.'},
+ flip:{name:'극 바꾸기',mp:0,desc:'전지를 반대 방향으로 연결해 전자석의 N극과 S극을 바꾼다.'},
+ boost:{name:'전지 더하기',mp:2,desc:'전지를 직렬로 하나 더 연결해 다음 전자석을 두 배로 세게 만든다.'}
+};
+const LESSONS={
+ circuit:{who:'번쩍 할머니',title:'전기 회로',
+  lines:['얘야, 전구에 불이 켜지려면 어떻게 해야 하는지 아니?','전지, 전선, 전구가 끊어진 곳 없이 하나로 이어져야 한단다.','전선 한쪽은 전지의 (+)극에, 다른 한쪽은 (-)극에 연결해야 해.','전구는 꼭지와 꼭지쇠에 전선이 각각 닿아야 하고.','이렇게 전기가 흐르도록 이은 길을 전기 회로라고 한단다.'],
+  qs:[{q:'전구에 불이 켜지는 것은 무엇일까?',opts:['전선 두 개를 모두 전지의 (+)극에 연결했다','전선을 (+)극과 (-)극에 하나씩 잇고, 전구의 꼭지와 꼭지쇠에 각각 연결했다','전선을 전구의 유리 부분에 칭칭 감았다'],ans:1,why:'전선이 전지의 두 극과 전구의 꼭지·꼭지쇠에 각각 이어져 끊어진 곳이 없어야 전기가 흐른단다.'}],
+  learn:['circuit'],gain:'회로 잇기',
+  note:'전지·전선·전구가 끊어진 곳 없이 이어져야 불이 켜진다. 전선은 전지의 (+)극과 (-)극에 하나씩, 전구의 꼭지와 꼭지쇠에 하나씩 연결한다. 이렇게 이은 것을 전기 회로라고 한다.',
+  after:['끊어진 전선뱀을 만나면 회로를 이어 버리렴. 끊어진 곳을 이으면 전기가 흐르니까!']},
+ pluck:{who:'가로등지기',title:'전구의 직렬연결과 병렬연결',
+  lines:['가로등 전구는 어떻게 이을지가 아주 중요해.','전구 여러 개를 한 줄로 이으면 전구의 직렬연결이야.','여러 갈래로 나누어 하나씩 이으면 전구의 병렬연결이지.','같은 전지라면 병렬로 이은 전구가 직렬로 이은 전구보다 더 밝아.','직렬은 전구 하나를 빼면 나머지도 모두 꺼져. 병렬은 하나를 빼도 나머지는 그대로 켜져 있어.'],
+  qs:[{q:'가로등 하나가 고장 나도 나머지는 계속 켜져 있게 하려면?',opts:['전구를 한 줄로 직렬연결한다','전구를 여러 갈래로 병렬연결한다','전지를 빼 둔다'],ans:1,why:'직렬연결은 하나가 꺼지면 길이 끊겨 모두 꺼져. 병렬연결은 갈래가 따로라서 나머지는 계속 켜져 있어.'},
+      {q:'같은 전지에 전구 두 개를 이을 때, 더 밝은 쪽은?',opts:['직렬연결','병렬연결','밝기가 똑같다'],ans:1,why:'병렬연결한 전구가 직렬연결한 전구보다 더 밝아.'}],
+  learn:['pluck'],gain:'전구 뽑기',
+  note:'직렬연결: 전구를 한 줄로 잇는다. 전구 하나를 빼면 모두 꺼지고, 병렬보다 어둡다. 병렬연결: 전구를 여러 갈래로 나누어 잇는다. 하나를 빼도 나머지는 켜져 있고, 직렬보다 밝다.',
+  after:['전구단 괴물을 만나면 전구가 한 줄인지 여러 갈래인지 잘 봐.']},
+ magnet:{who:'대장장이',title:'전자석',
+  lines:['허허, 전기로 자석을 만들 수 있다는 걸 아느냐?','둥근머리 볼트에 에나멜선을 감고 전류를 흘리면 전자석이 된다.','전자석은 전류가 흐를 때만 자석이 되지. 스위치를 끄면 붙어 있던 쇠붙이가 떨어진다.','철은 끌어당기지만, 알루미늄이나 구리는 붙지 않아.','그리고 전지의 방향을 반대로 연결하면 전자석의 극이 바뀐다.','같은 극끼리는 밀어내고, 다른 극끼리는 끌어당긴다는 것도 잊지 말거라.'],
+  qs:[{q:'전자석이 영구 자석과 다른 점은?',opts:['전류가 흐를 때만 자석이 된다','언제나 자석의 성질을 띤다','알루미늄을 잘 끌어당긴다'],ans:0,why:'전자석은 전류가 흐를 때만 자석이 된다. 그래서 켜고 끌 수 있는 게 장점이지.'},
+      {q:'전자석의 N극과 S극을 바꾸려면?',opts:['전지의 방향을 반대로 연결한다','볼트를 더 긴 것으로 바꾼다','전선을 짧게 자른다'],ans:0,why:'전지를 반대 방향으로 연결하면 전류의 방향이 바뀌어 전자석의 극도 바뀐다.'}],
+  learn:['magnet','flip'],gain:'전자석, 극 바꾸기',
+  note:'전자석은 볼트에 감은 에나멜선에 전류가 흐를 때만 자석이 된다. 철은 끌어당기고 알루미늄·구리는 끌어당기지 않는다. 전지 방향을 바꾸면 극이 바뀐다. 같은 극은 밀어내고 다른 극은 끌어당긴다.',
+  after:['자석 박쥐는 가슴의 극을 잘 봐라. 같은 극이어야 밀어낼 수 있다!']},
+ safety:{who:'소방관',title:'전기 안전과 절약',
+  lines:['정전이 끝나면 전기를 안전하게 써야 해.','젖은 손으로 플러그나 콘센트를 만지면 감전될 수 있어.','콘센트 하나에 플러그를 여러 개 꽂으면 전선이 뜨거워져 불이 날 수 있지.','플러그를 뽑을 땐 전선 말고 플러그 머리를 잡고 뽑아야 해.','쓰지 않는 전등은 끄고, 안 쓰는 플러그는 뽑아 두면 전기를 아낄 수 있어.'],
+  qs:[{q:'전기를 안전하게 쓰는 방법은?',opts:['젖은 손으로 플러그를 뽑는다','플러그 머리를 잡고 뽑는다','전선을 잡고 힘껏 당겨 뽑는다'],ans:1,why:'플러그 머리를 잡고 뽑아야 해. 전선을 당기면 속의 선이 끊어지거나 벗겨져 위험해.'}],
+  learn:[],gain:'고무장갑',
+  note:'젖은 손으로 전기 기구를 만지지 않는다. 콘센트 하나에 플러그를 많이 꽂지 않는다. 플러그는 머리를 잡고 뽑는다. 쓰지 않는 전등은 끄고 안 쓰는 플러그는 뽑아 전기를 아낀다.',
+  after:['문어발 도깨비의 꾀에 넘어가면 안 된다!']},
+ boost:{who:'광부',title:'전자석의 세기',
+  lines:['살았다! 갇혀서 꼼짝도 못 하고 있었어.','보답으로 비밀 하나 알려 줄게.','전지 여러 개를 직렬로 연결해 전자석에 이으면, 전자석의 세기가 더 세져.','더 많은 쇠붙이를 끌어당길 수 있지. 단선마왕의 강철 갑옷도 말이야.'],
+  qs:[{q:'전자석을 더 세게 만들려면?',opts:['전지를 직렬로 더 연결한다','전지를 하나 뺀다','볼트 대신 플라스틱 막대를 쓴다'],ans:0,why:'전지를 직렬로 더 연결하면 더 센 전류가 흘러 전자석의 세기가 세진다.'}],
+  learn:['boost'],gain:'전지 더하기',
+  note:'전지를 직렬로 더 많이 연결하면 전자석의 세기가 세진다.',
+  after:['단선마왕은 광산 동쪽 끝 철문 너머에 있어. 번개 열쇠가 필요할 거야.']}
+};
+const LESSON_ORDER=['circuit','pluck','magnet','safety','boost'];
+const SAFETY=[
+ {bait:'콘센트 하나에 플러그를 잔뜩 꽂아 버려!',ok:'한 콘센트에 너무 많이 꽂지 않는다',no:'좋아, 전부 꽂자',good:'한 콘센트에 너무 많이 꽂으면 전선이 뜨거워져 불이 날 수 있다.',bad:'멀티탭이 뜨거워지며 불꽃이 튀었다! 문어발식으로 꽂으면 불이 날 수 있다.'},
+ {bait:'손 씻고 물기 그대로 플러그를 꽂아 봐!',ok:'손의 물기를 닦고 꽂는다',no:'젖은 손으로 바로 꽂는다',good:'젖은 손으로 전기 기구를 만지면 감전될 수 있다.',bad:'찌릿! 젖은 손은 감전되기 쉽다.'},
+ {bait:'플러그는 전선을 잡고 확 당겨 뽑는 거야!',ok:'플러그 머리를 잡고 뽑는다',no:'전선을 잡아당긴다',good:'전선을 당기면 속의 선이 끊어지거나 벗겨질 수 있다.',bad:'전선 껍질이 벗겨지며 불꽃이 튀었다! 플러그 머리를 잡고 뽑아야 한다.'},
+ {bait:'아무도 없는 방에도 불은 계속 켜 두자!',ok:'방을 나올 때 불을 끈다',no:'계속 켜 둔다',good:'쓰지 않는 전등을 끄면 전기를 아낄 수 있다.',bad:'전기가 줄줄 새어 나가 힘이 빠졌다… 쓰지 않는 전등은 꺼야 한다.'},
+ {bait:'안 쓰는 충전기도 계속 꽂아 둬!',ok:'안 쓸 때는 플러그를 뽑아 둔다',no:'계속 꽂아 둔다',good:'쓰지 않는 플러그를 뽑으면 새어 나가는 전기를 줄일 수 있다.',bad:'꽂아만 둬도 전기가 조금씩 새어 나간다! 안 쓸 때는 뽑아 두자.'},
+ {bait:'냉장고 문은 활짝 열어 두는 게 시원하지!',ok:'필요한 것만 꺼내고 바로 닫는다',no:'계속 열어 둔다',good:'냉장고 문을 오래 열어 두면 전기가 많이 든다.',bad:'냉장고가 윙윙 힘들어하며 전기를 잔뜩 썼다! 문은 바로 닫자.'}
+];
+const MON={
+ snake:{name:'끊어진 전선뱀',hp:22,atk:5,def:0,exp:5,gold:4,tags:['broken'],intro:['끊어진 전선뱀이 나타났다!','몸 한가운데가 뚝 끊어져 구리선이 삐죽 나와 있다.']},
+ rubber:{name:'고무 젤리',hp:20,atk:4,def:0,exp:6,gold:5,tags:['rubber'],intro:['고무 젤리가 나타났다!','말랑말랑한 고무로 된 몸이 출렁인다.']},
+ series:{name:'한줄 전구단',hp:26,atk:4,def:0,exp:7,gold:6,tags:['series'],intro:['한줄 전구단이 나타났다!','전구 세 개가 전선 한 줄에 나란히 이어져 희미하게 빛난다.']},
+ parallel:{name:'갈래 전구단',hp:1,bulbs:[11,11,11],atk:0,def:0,exp:9,gold:8,tags:['parallel'],intro:['갈래 전구단이 나타났다!','전구 세 개가 여러 갈래로 나뉘어 따로따로 이어져 있다.','한줄 전구단보다 훨씬 밝게 빛난다!']},
+ iron:{name:'쇠붙이 골렘',hp:36,atk:7,def:2,exp:12,gold:10,tags:['iron'],intro:['쇠붙이 골렘이 나타났다!','온몸이 철로 된 단단한 골렘이다.']},
+ alum:{name:'깡통 골렘',hp:26,atk:6,def:1,exp:9,gold:8,tags:['alum'],intro:['깡통 골렘이 나타났다!','알루미늄 캔을 쌓아 만든 몸이 반짝인다.']},
+ bat:{name:'자석 박쥐',hp:26,atk:6,def:0,exp:11,gold:9,tags:['polar'],intro:['자석 박쥐가 나타났다!']},
+ goblin:{name:'문어발 도깨비',hp:30,atk:6,def:0,exp:12,gold:10,tags:['trick'],intro:['문어발 도깨비가 나타났다!','플러그를 잔뜩 꽂은 멀티탭 몸에서 불꽃이 튄다.']},
+ boss:{name:'단선마왕',hp:60,atk:7,def:1,exp:60,gold:100,tags:['boss'],boss:true,intro:['단선마왕이 앞을 가로막았다!','단선마왕: 마을의 전기는 모두 내 것이다! 회로를 몽땅 끊어 주마!','마왕 앞에서 수정 세 개가 한 줄로 이어진 방패가 빛나고 있다.']}
+};
+const EASY=['snake','snake','rubber','series','rubber'];
+const HARD=['parallel','iron','alum','bat','goblin','series','snake'];
+const NEXT=[0,0,10,24,42,66,96,132,176,230,300];
+
+/* ---------------- state ---------------- */
+let G=null,mode='title',busy=true,mv=null,mapCv=null,battleE=null,frame=0;
+const KEY='zzirit-light-v1';
+function newGame(name){return{name,map:'town',x:10,y:13,dir:'up',lv:1,exp:0,gold:20,hp:30,maxHp:30,mp:12,maxMp:12,spells:['spark'],items:{herb:2,cell:1,key:0},lessons:{},flags:{},opened:{},pole:'N',boost:false,gloves:false,steps:0,stats:{right:0,wrong:0,kills:0}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(G))}catch(e){}}
+function loadSave(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){return null}}
+const atk=()=>4+G.lv*2;
+const def=()=>(G.gloves?2:0)+Math.floor(G.lv/2);
+
+/* ---------------- sprites ---------------- */
+const BODY=["................",".....HHHHHH.....","....HHHHHHHH....","....HSSSSSSH....","....SSESSESS....","....SSSSSSSS....",".....SSSSSS.....","....CCCCCCCC....","...CCCCCCCCCC...","...SCCCCCCCCS...","...SCCCCCCCCS...","....CCCCCCCC....","....PPP..PPP....","....PPP..PPP....","....BBB..BBB....","................"];
+function variant(dir){const b=BODY.slice();if(dir==='up'){b[3]="....HHHHHHHH....";b[4]="....HHHHHHHH....";}if(dir==='left'){b[3]="....HSSSSSHH....";b[4]="....SESSSSSS....";}if(dir==='right'){b[3]="....HHSSSSSH....";b[4]="....SSSSSSES....";}return b}
+const SPR={
+ granny:[".......WW.......","......WWWW......",".....HHHHHH.....","....HHHHHHHH....","....HSSSSSSH....","....SKKSSKKS....","....SSSSSSSS....",".....SSSSSS.....","....CCCCCCCC....","...CCCCCCCCCC.G.","...SCCCCCCCCSGG.","...CCCCCCCCCC.G.","...CCCCCCCCCC.G.","..CCCCCCCCCCCCG.","....BBB..BBB..G.","................"],
+ lamp:["..............Y.",".....AAAAAA..GY.","....AAAAAAAA.G..","...AAAAAAAAAAG..","....HSSSSSSH.G..","....SSESSESS.G..","....SSSSSSSS.G..",".....SSSSSS..G..","....CCCCCCCC.G..","...CCCCCCCCCCG..","...SCCCCCCCCSG..","...SCCCCCCCC.G..","....CCCCCCCC.G..","....PPP..PPP.G..","....BBB..BBB.G..","................"],
+ smith:["................",".....HHHHHH.....","....HHHHHHHH....","....HSSSSSSH....","....SSESSESS....","....SKKKKKKS....",".....KKKKKK.....","...CCAAAAAACC...","..CCCAAAAAACCC..","..SCCAAAAAACCSMM","..SCCAAAAAACC.G.","....AAAAAAAA..G.","....PPP..PPP..G.","....PPP..PPP....","....BBB..BBB....","................"],
+ fire:["................",".....AAAAAA.....","....AAAYYAAA....","..AAAAAAAAAAAA..","....SSSSSSSS....","....SSESSESS....","....SSSSSSSS....",".....SSSSSS.....","....CCCCCCCC....","...CCCCCCCCCC...","...YYYYYYYYYY...","...SCCCCCCCCS...","....CCCCCCCC....","....YYY..YYY....","....BBB..BBB....","................"],
+ elder:["................","............GG..",".....SSSSSS.GG..","....HSSSSSSH.G..","....HSSSSSSH.G..","....SSESSESS.G..","....SWWWWWWS.G..",".....WWWWWW..G..","....CCWWWWCC.G..","...CCCCWWCCCCG..","...SCCCCCCCCSG..","...CCCCCCCCCCG..","...CCCCCCCCCCG..","...CCCCCCCCCCG..","....BBB..BBB.G..","................"],
+ inn:["................",".....AAAAAA.....","....AAAAAAAAA...","....HSSSSSSH.A..","....SSESSESS....","....SSSSSSSS....",".....SSRRSS.....","....CCCCCCCC....","...CCWWWWWWCC...","...SCWWWWWWCS...","...SCWWWWWWCS...","....CWWWWWWC....","....PWWWWWWP....","....PPP..PPP....","....BBB..BBB....","................"],
+ shop:["................","......AAAA......",".....AAAAAA.....","..AAAAAAAAAAAA..","....HSSSSSSH....","....SSESSESS....","....SSKKKKSS....",".....SSSSSS.....","..GGCCCCCCCC....","..GGCCCCCCCCC...","..GGSCCCCCCCS...","..GGSCCCCCCCS...","....CCCCCCCC....","....PPP..PPP....","....BBB..BBB....","................"],
+ kid:["................","................","................","......HHHH......",".....HHHHHH.....","....HHSSSSHH....",".....SESSES.....",".....SSSSSS.....","......SSSS......",".....CCCCCC.....","....SCCCCCCS....",".....CCCCCC.....",".....PP..PP.....",".....PP..PP.....",".....BB..BB.....","................"],
+ guard:["..............M.",".....AAAAAA..MMM","....AAAAAAAA..G.","....ASSSSSSA..G.","....SSESSESS..G.","....SSSSSSSS..G.",".....SSSSSS...G.","....CCCCCCCC..G.","...CCCCCCCCCC.G.","...SCCCCCCCCSSG.","...SCCCCCCCC..G.","....CCCCCCCC..G.","....PPP..PPP..G.","....PPP..PPP..G.","....BBB..BBB..G.","................"],
+ miner:["................",".....AAAAAA.....","....AAAYYAAA....","....AAAAAAAA....","....HSSSSSSH....","....SSESSESS....","....SSSSSSSS....",".....KSSSSK.....","....CCCCCCCC....","...CCCCCCCCCC...","...SCCCCCCCCS...","...SCCCCCCCCS...","....CCCCCCCC....","....PPP..PPP....","....BBB..BBB....","................"]
+};
+const PAL={
+ hero:{A:'#dfe3e9',a:'#8a909a',Y:'#ffd84a',H:'#3b2414',S:'#f1c79a',E:'#161616',C:'#2f6fd6',D:'#7a4a22',R:'#c8302a',r:'#8a1f1a',P:'#262b44',B:'#6b4426',M:'#eef2f6',G:'#d8a020',K:'#d8a020',O:'#24499a'},
+ granny:{H:'#d8d4ce',W:'#f2efe9',K:'#2a2a34',S:'#eec39a',E:'#161616',C:'#7a4fa0',B:'#3a2a20',G:'#8a5a2a'},
+ lamp:{A:'#3f6a3a',Y:'#ffd84a',G:'#9a7a4a',H:'#5a3a1a',S:'#f1c79a',E:'#161616',C:'#d8742a',P:'#2f3b2a',B:'#3a2a20'},
+ smith:{H:'#1c1c1c',K:'#3a2414',A:'#6b4426',S:'#d8a070',E:'#161616',C:'#c8b8a0',P:'#3a3a3a',B:'#2a2a2a',M:'#aab0b8',G:'#7a5230'},
+ fire:{A:'#d83a28',Y:'#ffd84a',S:'#f1c79a',E:'#161616',C:'#2b2b38',P:'#2b2b38',B:'#111'},
+ elder:{H:'#a8a8b0',W:'#f2f2f2',S:'#e8bb92',E:'#161616',C:'#8a2a2a',B:'#2a1a14',G:'#9a6a3a'},
+ inn:{A:'#d84a6a',H:'#5a3a1a',S:'#f1c79a',E:'#161616',R:'#c84a3a',C:'#5a7ab0',W:'#f0ece0',P:'#4a4a5a',B:'#3a2a20'},
+ shop:{A:'#5a3a2a',H:'#2a2a2a',K:'#3a2414',S:'#e8bb92',E:'#161616',G:'#b8843a',C:'#2a8a8a',P:'#2a3a3a',B:'#2a2a2a'},
+ kid:{H:'#3a2414',S:'#f6cfa4',E:'#161616',C:'#e0b030',P:'#2a4a8a',B:'#d84a3a'},
+ guard:{A:'#8a909a',M:'#d8dce2',G:'#6b4426',S:'#e8bb92',E:'#161616',C:'#4a5a7a',P:'#3a3e4a',B:'#222'},
+ miner:{A:'#f0c020',Y:'#fff7c0',H:'#3a2a1a',K:'#6a5a4a',S:'#d8a070',E:'#161616',C:'#8a6a3a',P:'#4a3a2a',B:'#2a2a2a'}
+};
+const HERO={
+ down:["........Y.......",".......YY.......","....aAAYYAAa....","....AAAAAAAA....","...HaSSSSSSaH...","...HSSESSESSH...","....SSSSSSSS....","...RCCYYYYCCR...","..RRCCCCCCCCRR..",".KOOKCCCCCCCSRG.",".KOYKCCDDCCCSRM.",".KOOKCCCCCCCRRM.","..KK.PPP..PPPRM.","....PPP..PPP.R..","....BBB..BBB....","................"],
+ up:["........Y.......",".......YY.......","....aAAYYAAa....","....AAAAAAAA....","...HaHHHHHHaH...","...HHHHHHHHHHG..","....HHHHHHHHG...","...RRRRRRRRRR...","..RRRRRRRRRRRR..","..RrRRRRRRRRrR..","..RrRRRRRRRRrR..","..RRRRRRRRRRRR..","....PPP..PPP....","....PPP..PPP....","....BBB..BBB....","................"],
+ left:[".......Y........","......YY........","....aAYYAAa.....","....AAAAAAA.....","....SSSSaHH.....","....SESSSHH.....",".....SSSSH......",".....CYYCRR.....","....CCCCCRRR....","..KOOKCCCRRR....","..KOYKDDDRRR....","..KOOKCCCRRR....","...KK.PPPRR.....",".....PP.PPR.....",".....BB.BB......","................"]
+};
+HERO.right=HERO.left.map(r=>[...r].reverse().join(''));
+const sprCache={};
+function sprite(pal,dir){const k=pal+dir;if(sprCache[k])return sprCache[k];const c=document.createElement('canvas');c.width=c.height=16;const g=c.getContext('2d');let rows;if(pal==='hero')rows=HERO[dir]||HERO.down;else if(SPR[pal])rows=SPR[pal];else rows=variant(dir);const p=PAL[pal];rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch!=='.'&&p[ch]){g.fillStyle=p[ch];g.fillRect(x,y,1,1)}}));return sprCache[k]=c}
+
+/* ---------------- tiles ---------------- */
+function tileAt(map,x,y){const T=MAPS[map].tiles;if(y<0||y>=T.length||x<0||x>=T[0].length)return '#';let ch=T[y][x];if(ch==='C'&&G.opened[map+':'+x+','+y])ch='c';return ch}
+function drawTile(c,ch,px,py,x,y,town){
+ const s=(x*7+y*13)%5,lit=G.flags.lit;
+ const R=(col,a,b,w,h)=>{c.fillStyle=col;c.fillRect(px+a,py+b,w,h)};
+ if(town){R('#2c5a34',0,0,16,16);if(s===0){R('#3d7344',3,5,1,1);R('#3d7344',11,10,1,1)}if(s===2)R('#24502c',7,12,2,1)}
+ else{R('#2a221c',0,0,16,16);if(s===1)R('#362c24',4,9,2,1);if(s===3)R('#1d1712',10,4,1,1)}
+ switch(ch){
+  case ',':R('#8c7b58',0,0,16,16);R('#9c8a64',3+s,4,2,1);R('#76664a',10,11-s,1,1);break;
+  case 'T':R('#4a3424',7,10,3,6);R('#1d4426',2,2,12,9);R('#1d4426',4,0,8,13);R('#2a5e34',4,2,5,4);R('#163a20',9,8,4,3);break;
+  case '~':R('#1f4f86',0,0,16,16);R('#3a72b0',2+s,4,5,1);R('#3a72b0',9-s,10,5,1);break;
+  case 'R':R('#7a2e22',0,0,16,16);R('#9a3c2c',0,0,16,2);R('#5e2219',0,6,16,1);R('#5e2219',0,12,16,1);R('#5e2219',s*3,7,1,5);break;
+  case 'W':R('#c9b48a',0,0,16,16);R('#a8936a',0,15,16,1);R(lit?'#ffd84a':'#1b2238',4,4,8,7);R('#6b5638',7,4,2,7);R('#6b5638',4,7,8,1);break;
+  case 'd':R('#c9b48a',0,0,16,16);R('#5a3a22',4,3,8,13);R('#4a2e1a',4,3,8,1);R('#d8b25a',10,9,1,1);break;
+  case 'L':R('#3b3f4a',7,4,2,12);R('#2a2d36',5,0,6,1);R(lit?'#ffe58a':'#4a4f5c',5,1,6,4);break;
+  case 'X':R('#5a5f68',0,0,16,16);R('#6c727c',1,1,5,3);R('#0a0a0c',3,5,10,11);R('#0a0a0c',5,3,6,2);R('#8c7b58',4,13,8,3);break;
+  case '#':R('#4a3f36',0,0,16,16);R('#5c5046',1,1,6,4);R('#3a3029',9,8,6,5);R('#5c5046',10,9,3,1);R('#332a24',0,15,16,1);break;
+  case 'S':R('#6e6258',2,2,12,12);R('#a89a8a',2,2,12,2);R('#4a4038',2,6,12,1);R('#4a4038',2,10,12,1);R('#d8c9b4',6,4,4,1);break;
+  case 'C':R('#6b3f1e',2,5,12,9);R('#8a5428',2,5,12,3);R('#3a2210',2,8,12,1);R('#d8b25a',7,8,2,3);break;
+  case 'c':R('#6b3f1e',2,7,12,7);R('#2a1a10',3,5,10,3);R('#8a5428',2,4,12,2);break;
+  case 'B':R('#30343c',0,0,16,16);R('#4a505a',1,1,14,14);R('#3a3f48',8,1,1,14);R('#ffd84a',8,3,2,4);R('#ffd84a',6,6,4,2);R('#ffd84a',6,8,2,4);break;
+ }
+}
+function buildMap(){const M=MAPS[G.map],T=M.tiles;mapCv=document.createElement('canvas');mapCv.width=T[0].length*TS;mapCv.height=T.length*TS;const c=mapCv.getContext('2d');for(let y=0;y<T.length;y++)for(let x=0;x<T[0].length;x++)drawTile(c,tileAt(G.map,x,y),x*TS,y*TS,x,y,M.town)}
+
+/* ---------------- NPCs ---------------- */
+const NPCS={
+ town:[
+  {id:'elder',x:10,y:9,pal:'elder',talk:talkElder},
+  {id:'granny',x:4,y:4,pal:'granny',talk:()=>teach('circuit')},
+  {id:'lamp',x:16,y:4,pal:'lamp',talk:()=>teach('pluck')},
+  {id:'smith',x:2,y:9,pal:'smith',talk:()=>teach('magnet')},
+  {id:'fire',x:18,y:9,pal:'fire',talk:()=>teach('safety')},
+  {id:'inn',x:8,y:13,pal:'inn',talk:talkInn},
+  {id:'shop',x:13,y:13,pal:'shop',talk:talkShop},
+  {id:'kid',x:7,y:6,pal:'kid',talk:talkKid},
+  {id:'guard',x:11,y:1,pal:'guard',talk:talkGuard}
+ ],
+ mine:[{id:'miner',x:14,y:9,pal:'miner',talk:()=>teach('boost')}]
+};
+const npcAt=(x,y)=>(NPCS[G.map]||[]).find(n=>n.x===x&&n.y===y);
+
+/* ---------------- UI ---------------- */
+const msg=$('msg'),msgText=$('msgText'),caret=$('caret'),menu=$('menu'),panel=$('panel'),hudEl=$('hud'),foeEl=$('foe');
+const ui={typing:false,skip:false,msgResolve:null,menu:null,panel:null,tok:0};
+function typeText(line){return new Promise(res=>{const tok=++ui.tok;msg.hidden=false;msgText.textContent='';caret.hidden=true;let i=0;ui.typing=true;ui.skip=false;const step=()=>{if(tok!==ui.tok)return res();i=ui.skip?line.length:i+1;msgText.textContent=line.slice(0,i);if(i<line.length)setTimeout(step,20);else{ui.typing=false;res()}};step()})}
+async function sayOne(line){await typeText(line);caret.hidden=false;await new Promise(r=>ui.msgResolve=r);caret.hidden=true}
+async function say(t){for(const l of(Array.isArray(t)?t:[t]))await sayOne(l)}
+function show(line){typeText(line)}
+function setLine(line){ui.tok++;ui.typing=false;msg.hidden=false;caret.hidden=true;msgText.textContent=line}
+function closeMsg(){ui.tok++;ui.typing=false;msg.hidden=true}
+function choose(opts,{cancel=true,where='cmd',cols=1,onSel}={}){
+ return new Promise(res=>{
+  menu.className='win menu '+where;menu.style.setProperty('--cols',cols);menu.innerHTML='';menu.hidden=false;
+  const n=opts.length;let idx=0;
+  const items=opts.map(o=>typeof o==='string'?{label:o}:o);
+  const btns=items.map((o,i)=>{const b=document.createElement('button');b.className='opt';b.type='button';b.setAttribute('role','option');b.textContent=o.label;if(o.sub){const s=document.createElement('small');s.textContent=o.sub;b.appendChild(s)}if(o.disabled)b.setAttribute('aria-disabled','true');b.addEventListener('click',e=>{e.stopPropagation();sel(i);finish(i)});b.addEventListener('pointerenter',()=>sel(i));menu.appendChild(b);return b});
+  function sel(i){idx=i;btns.forEach((b,j)=>b.classList.toggle('on',j===i));if(onSel)onSel(i)}
+  function done(v){ui.menu=null;menu.hidden=true;res(v)}
+  function finish(i){if(items[i].disabled){if(items[i].why)setLine(items[i].why);return}done(i)}
+  sel(0);
+  ui.menu={key(k){const rows=Math.ceil(n/cols);
+   if(k==='up')sel((idx-cols+n)%n);else if(k==='down')sel((idx+cols)%n);
+   else if(k==='left')sel(cols>1?(idx-1+n)%n:(idx-1+n)%n);else if(k==='right')sel((idx+1)%n);
+   else if(k==='a')finish(idx);else if(k==='b'&&cancel)done(-1)}};
+ })
+}
+async function ask(text,opts,o={}){show(text);return choose(opts,Object.assign({where:'wide',cancel:false},o))}
+/* question with shuffled options; returns true when right */
+async function quiz(q){
+ const order=q.opts.map((_,i)=>i).sort(()=>Math.random()-.5);
+ const i=await ask(q.q,order.map(k=>q.opts[k]));
+ return order[i]===q.ans;
+}
+function showPanel(html){return new Promise(res=>{panel.innerHTML=html+'<div><button class="close" type="button">닫기</button></div>';panel.hidden=false;panel.scrollTop=0;const close=()=>{ui.panel=null;panel.hidden=true;res()};panel.querySelector('.close').onclick=e=>{e.stopPropagation();close()};ui.panel={key(k){if(k==='a'||k==='b')close();if(k==='down')panel.scrollTop+=40;if(k==='up')panel.scrollTop-=40}}})}
+function hud(){
+ if(!G){hudEl.hidden=true;return}
+ hudEl.hidden=false;hudEl.classList.toggle('low',G.hp<=G.maxHp*0.3);
+ let x='';if(G.spells.includes('magnet'))x=`전자석 ${G.pole}극${G.boost?' · 전지 +1':''}`;
+ hudEl.innerHTML=`<div class="nm">${esc(G.name)}</div><span>Lv</span><b>${G.lv}</b><span class="hp">HP</span><span class="hp"><b>${G.hp}</b>/${G.maxHp}</span><span>MP</span><span><b>${G.mp}</b>/${G.maxMp}</span>${x?`<div class="x">${x}</div>`:''}`;
+}
+function foeHud(E){
+ if(!E){foeEl.hidden=true;return}foeEl.hidden=false;
+ let fx='';if(E.tags.has('polar'))fx=`가슴: ${E.pole}극`;
+ if(E.boss)fx=['','수정 방패','강철 갑옷','심장 드러남'][E.phase];
+ if(E.tags.has('parallel'))fx=`켜진 전구 ${E.bulbs.filter(b=>b>0).length}개`;
+ foeEl.innerHTML=`<div class="fn">${E.name}</div>${fx?`<div class="fx">${fx}</div>`:''}`;
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shake(){const s=$('screen');s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake')}
+function flash(){const f=$('flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');return wait(1000)}
+async function fade(fn){$('fade').classList.add('on');await wait(300);fn();await wait(80);$('fade').classList.remove('on');await wait(200)}
+
+/* ---------------- input ---------------- */
+const dirs=[];
+function press(k){
+ if(ui.typing){if(k==='a'||k==='b')ui.skip=true;return}
+ if(ui.msgResolve&&(k==='a'||k==='b')){const r=ui.msgResolve;ui.msgResolve=null;r();return}
+ if(ui.panel){ui.panel.key(k);return}
+ if(ui.menu){ui.menu.key(k);return}
+ if(mode==='field'&&!busy&&!mv){if(k==='a')interact();else if(k==='b')fieldMenu()}
+}
+const CODES={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',KeyW:'up',KeyS:'down',KeyA:'left',KeyD:'right',Space:'a',Enter:'a',NumpadEnter:'a',KeyZ:'a',KeyJ:'a',Escape:'b',KeyX:'b',KeyK:'b'};
+addEventListener('keydown',e=>{
+ if(document.activeElement&&document.activeElement.tagName==='INPUT'){if(e.code==='Enter')$('btnNew').click();return}
+ const k=CODES[e.code];if(!k)return;e.preventDefault();
+ if(['up','down','left','right'].includes(k)){if(!e.repeat&&!dirs.includes(k))dirs.push(k);if(ui.menu||ui.panel)press(k)}else if(!e.repeat)press(k);
+});
+addEventListener('keyup',e=>{const k=CODES[e.code];const i=dirs.indexOf(k);if(i>=0)dirs.splice(i,1)});
+addEventListener('blur',()=>dirs.length=0);
+document.querySelectorAll('.pbtn').forEach(b=>{
+ const k=b.dataset.k;
+ b.addEventListener('pointerdown',e=>{e.preventDefault();b.classList.add('hold');try{b.setPointerCapture(e.pointerId)}catch(_){}if(['up','down','left','right'].includes(k)){if(!dirs.includes(k))dirs.push(k);if(ui.menu||ui.panel)press(k)}else press(k)});
+ const up=()=>{b.classList.remove('hold');const i=dirs.indexOf(k);if(i>=0)dirs.splice(i,1)};
+ b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
+ b.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();e.stopPropagation();press(k)}});
+});
+msg.addEventListener('click',()=>press('a'));
+
+/* ---------------- field ---------------- */
+const DXY={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+function walkable(x,y){return !SOLID.has(tileAt(G.map,x,y))&&!npcAt(x,y)}
+function update(){
+ if(mode!=='field'||busy)return;
+ if(mv){mv.t++;if(mv.t>=MOVE){G.x=mv.tx;G.y=mv.ty;mv=null;afterStep()}return}
+ const d=dirs[dirs.length-1];if(!d)return;
+ G.dir=d;const[dx,dy]=DXY[d];const nx=G.x+dx,ny=G.y+dy;
+ if(walkable(nx,ny)){mv={fx:G.x,fy:G.y,tx:nx,ty:ny,t:0}}
+}
+async function run(fn){busy=true;try{await fn()}finally{closeMsg();busy=false;hud()}}
+function afterStep(){
+ const ch=tileAt(G.map,G.x,G.y);
+ if(G.map==='town'&&ch==='X')return run(enterMine);
+ if(G.map==='mine'&&ch==='S')return run(async()=>{await fade(()=>{G.map='town';G.x=10;G.y=1;G.dir='down';buildMap()});save()});
+ if(G.map==='mine'){G.steps++;if(G.steps>4&&Math.random()<0.085){G.steps=0;const hard=G.x>=12||G.y>=10;run(()=>battle(pick(hard?HARD:EASY)))}}
+}
+async function enterMine(){
+ if(!G.flags.elder){await say(['광산지기: 이봐, 어딜 가려고?','먼저 연못가의 촌장님 이야기를 듣고 와.']);G.y=1;G.dir='down';return}
+ if(!G.lessons.circuit){await say(['광산지기: 광산엔 끊어진 전선 괴물이 득실거려.','왼쪽 위 집 번쩍 할머니에게 전기 회로부터 배우고 와!']);G.y=1;G.dir='down';return}
+ await fade(()=>{G.map='mine';G.x=1;G.y=2;G.dir='down';G.steps=0;buildMap()});save();
+ if(!G.flags.mineIntro){G.flags.mineIntro=true;await say(['번개 광산에 들어왔다. 사방이 캄캄하다.','깊이 들어갈수록 강한 괴물이 나온다고 했다.'])}
+}
+function interact(){
+ const[dx,dy]=DXY[G.dir];const tx=G.x+dx,ty=G.y+dy;
+ const n=npcAt(tx,ty);if(n){const back={up:'down',down:'up',left:'right',right:'left'};n.dir=back[G.dir];return run(n.talk)}
+ const ch=tileAt(G.map,tx,ty);
+ if(ch==='C')return run(()=>openChest(tx,ty));
+ if(ch==='c')return run(()=>say('빈 상자다.'));
+ if(ch==='B')return run(bossGate);
+ if(ch==='d')return run(()=>say(G.flags.lit?'집 안에서 웃음소리가 들린다.':'문이 잠겨 있다. 정전이라 모두 집 안에 숨어 있는 모양이다.'));
+ if(ch==='L')return run(()=>say(G.flags.lit?'가로등이 환하게 빛나고 있다.':'불이 꺼진 가로등이다.'));
+ if(ch==='~')return run(()=>say('작은 연못이다. 물에 비친 하늘이 캄캄하다.'));
+ if(ch==='W')return run(()=>say(G.flags.lit?'창문 너머로 불빛이 따뜻하다.':'창문이 깜깜하다.'));
+}
+async function openChest(x,y){
+ const k=G.map+':'+x+','+y,c=CHESTS[k];G.opened[k]=true;buildMap();
+ G.items[c.item]=(G.items[c.item]||0)+c.n;
+ const nm=ITEMS[c.item].name;await say(`상자를 열었다! ${c.n>1?nm+' '+c.n+'개를':jo(nm,'을','를')} 손에 넣었다.`);
+ if(c.item==='key')await say('번개 모양 무늬가 새겨진 열쇠다. 광산 동쪽 끝 철문에 맞을 것 같다.');
+ save();
+}
+async function fieldMenu(){
+ await run(async()=>{
+  const c=await choose(['과학 수첩','도구','주문','상태','저장'],{where:'field'});
+  if(c===0)await showPanel(notebookHtml());
+  if(c===1)await useItemMenu(false);
+  if(c===2)await showPanel('<h2>주문</h2>'+G.spells.map(id=>`<h3>${SPELLS[id].name} · ${SPELLS[id].mp}MP</h3><p>${SPELLS[id].desc}</p>`).join(''));
+  if(c===3)await showPanel(statusHtml());
+  if(c===4){save();await say('여기까지의 모험을 기록했다.')}
+ });
+}
+function notebookHtml(){
+ return '<h2>과학 수첩</h2>'+LESSON_ORDER.map(id=>{const L=LESSONS[id];return G.lessons[id]?`<h3>${L.title} <span style="color:var(--muted);font-weight:400">· ${L.who}</span></h3><p>${L.note}</p>`:`<h3 class="lock">??? </h3><p class="lock">${L.who}에게 배울 수 있다.</p>`}).join('');
+}
+function statusHtml(){
+ const nx=G.lv<NEXT.length-1?NEXT[G.lv+1]:'-';
+ return `<h2>${esc(G.name)}의 상태</h2><div class="stat"><span>레벨</span><b>${G.lv}</b><span>경험치</span><b>${G.exp} / ${nx}</b><span>공격력</span><b>${atk()}</b><span>방어력</span><b>${def()}${G.gloves?' (고무장갑)':''}</b><span>금화</span><b>${G.gold}G</b><span>쓰러뜨린 괴물</span><b>${G.stats.kills}</b><span>과학 문제</span><b>맞힘 ${G.stats.right} · 틀림 ${G.stats.wrong}</b></div>`;
+}
+async function useItemMenu(inBattle){
+ const ids=['herb','cell'];
+ const opts=ids.map(id=>({label:ITEMS[id].name,sub:'×'+(G.items[id]||0),disabled:!(G.items[id]>0),why:`${ITEMS[id].name}${bat(ITEMS[id].name)?'이':'가'} 없다.`}));
+ if(G.items.key)opts.push({label:ITEMS.key.name,sub:'×1',disabled:true,why:ITEMS.key.desc});
+ setLine('어떤 도구를 쓸까?');
+ const i=await choose(opts,{where:'cmd2',onSel:j=>setLine(j<2?ITEMS[ids[j]].desc:ITEMS.key.desc)});
+ if(i<0||i>1)return false;
+ const id=ids[i];G.items[id]--;
+ if(id==='herb'){const h=Math.min(25,G.maxHp-G.hp);G.hp+=h;hud();await say(`약초를 먹었다. HP가 ${h} 회복되었다.`)}
+ else{const m=Math.min(10,G.maxMp-G.mp);G.mp+=m;hud();await say(`예비 전지를 연결했다. MP가 ${m} 회복되었다.`)}
+ return true;
+}
+
+/* ---------------- talk ---------------- */
+function nextHint(){
+ if(!G.lessons.circuit)return '왼쪽 위 집의 번쩍 할머니에게 전기 회로를 배우렴.';
+ if(!G.lessons.pluck)return '오른쪽 위 집 앞의 가로등지기를 찾아가 보렴. 전구 잇는 법을 잘 안단다.';
+ if(!G.lessons.magnet)return '왼쪽 대장간의 대장장이가 전기로 자석을 만든다더구나.';
+ if(!G.lessons.safety)return '오른쪽 집 앞 소방관에게 전기 안전도 꼭 배워 두렴.';
+ if(!G.lessons.boost)return '광산 한가운데에 광부 한 사람이 갇혀 있다는 소문이 있다.';
+ if(!G.items.key)return '광산 깊은 남서쪽 어딘가에 번개 열쇠가 있다고 들었다.';
+ return '단선마왕의 철문은 광산 동쪽 끝에 있다. 조심하거라!';
+}
+async function talkElder(){
+ if(G.flags.lit)return say(['찌릿 마을에 다시 불이 켜졌구나!',`고맙다, ${G.name}. 너는 이제 진짜 전기 용사란다.`]);
+ if(!G.flags.elder){
+  await say([`오, ${G.name}! 큰일이 났다.`,'단선마왕이 번개 광산 깊은 곳의 발전실을 차지하고 마을의 전기를 끊어 버렸어.','그래서 가로등도, 집 안의 전등도 전부 꺼진 거란다.','마을 사람들에게 전기의 원리를 배운 뒤 북쪽 광산으로 가 다오.','배운 내용은 B 버튼(Esc)을 눌러 과학 수첩에서 다시 볼 수 있단다.',nextHint()]);
+  G.flags.elder=true;save();return;
+ }
+ return say(nextHint());
+}
+async function teach(id){
+ const L=LESSONS[id];
+ if(G.lessons[id])return say(L.after);
+ await say(L.lines);
+ for(const q of L.qs){
+  while(true){
+   if(await quiz(q)){G.stats.right++;await say('딩동댕! 정답이야.');break}
+   G.stats.wrong++;await say(['땡! '+q.why,'다시 한번 풀어 보자.']);
+  }
+ }
+ G.lessons[id]=true;
+ L.learn.forEach(s=>{if(!G.spells.includes(s))G.spells.push(s)});
+ if(id==='safety'){G.gloves=true;await say(['잘 알고 있구나! 이 고무장갑을 가져가.','고무는 전기가 통하지 않아서 손을 지켜 줄 거야.',`${jo(G.name,'은','는')} 고무장갑을 받았다! 방어력이 올랐다.`])}
+ else await say([`${jo(G.name,'은','는')} 주문 「${L.gain}」${bat(L.gain)?'을':'를'} 배웠다!`,'과학 수첩에 새 내용이 적혔다.']);
+ hud();save();
+}
+async function talkInn(){
+ const i=await ask(G.flags.lit?'어서 오세요! 불이 켜져서 손님이 늘었답니다. 쉬어 가실래요?':'정전이라 촛불뿐이지만 쉬어 가실래요? 돈은 안 받아요.',['쉰다','괜찮다']);
+ if(i===0){G.hp=G.maxHp;G.mp=G.maxMp;save();await say(['푹 쉬었다. HP와 MP가 모두 회복되었다!','(모험이 기록되었다.)'])}
+}
+async function talkShop(){
+ const goods=[{id:'herb',price:8},{id:'cell',price:12}];
+ while(true){
+  const i=await ask(`잡화점이에요. 무엇을 살래요? (가진 돈 ${G.gold}G)`,goods.map(g=>({label:ITEMS[g.id].name,sub:g.price+'G'})).concat([{label:'그만둔다'}]),{cancel:true});
+  if(i<0||i===2)return say('또 오세요!');
+  const g=goods[i];if(G.gold<g.price){await say('돈이 모자라요.');continue}
+  G.gold-=g.price;G.items[g.id]=(G.items[g.id]||0)+1;await say(`${ITEMS[g.id].name}${bat(ITEMS[g.id].name)?'을':'를'} 샀다!`);save();
+ }
+}
+async function talkKid(){
+ if(G.flags.lit)return say(pick(['불이 켜지니까 너무 좋아! 그래도 안 쓰는 방 불은 꼭 끌 거야.','엄마가 그러는데 안 쓰는 플러그는 뽑아 두면 전기를 아낀대!']));
+ return say(pick(['깜깜해서 무서워… 형이 불을 다시 켜 줄 거지?','광산엔 고무로 된 젤리가 있대. 고무는 전기가 안 통한다던데?','깡통 골렘은 자석에 안 붙는대. 알루미늄이라서!']));
+}
+async function talkGuard(){return say(['이 길로 가면 번개 광산이야.','깊이 들어갈수록 강한 괴물이 나와. 다치면 마을 여관에서 쉬어 가.'])}
+
+/* ---------------- battle ---------------- */
+function makeEnemy(key){const m=MON[key];const E=Object.assign({key},JSON.parse(JSON.stringify(m)));E.tags=new Set(m.tags);E.maxHp=E.hp;E.hitT=0;if(key==='bat')E.pole=Math.random()<.5?'N':'S';if(E.boss)E.phase=1;return E}
+const alive=E=>E.tags.has('parallel')?E.bulbs.some(b=>b>0):E.hp>0;
+async function battle(key){
+ const E=makeEnemy(key);battleE=E;
+ await flash();mode='battle';foeHud(E);hud();
+ await say(E.intro);
+ if(key==='bat'){await say(`가슴의 ${E.pole}극이 이쪽을 향하고 있다.`)}
+ let result=null;
+ while(!result){
+  result=await playerTurn(E);
+  foeHud(E);hud();
+  if(result)break;
+  if(!alive(E)){result='win';break}
+  if(G.hp<=0){result='lose';break}
+  await enemyTurn(E);foeHud(E);hud();
+  if(G.hp<=0)result='lose';
+ }
+ if(result==='win'){
+  G.stats.kills++;
+  if(E.boss){mode='field';battleE=null;foeHud(null);return ending()}
+  G.exp+=E.exp;G.gold+=E.gold;
+  await say([`${jo(E.name,'을','를')} 물리쳤다!`,`경험치 ${E.exp}, 금화 ${E.gold}G를 얻었다.`]);
+  while(G.lv<NEXT.length-1&&G.exp>=NEXT[G.lv+1]){G.lv++;G.maxHp+=6;G.maxMp+=3;G.hp=Math.min(G.maxHp,G.hp+6);G.mp=Math.min(G.maxMp,G.mp+3);hud();await say(`레벨이 올랐다! ${jo(G.name,'은','는')} 이제 Lv ${G.lv}. 최대 HP와 MP가 늘었다.`)}
+ }
+ if(result==='lose'){
+  await say(['눈앞이 캄캄해졌다…']);
+  await fade(()=>{mode='field';battleE=null;foeHud(null);G.map='town';G.x=8;G.y=14;G.dir='up';G.hp=G.maxHp;G.mp=G.maxMp;G.gold=Math.floor(G.gold/2);G.boost=false;buildMap()});
+  hud();await say(['정신을 차려 보니 마을 여관이었다.','가진 돈의 절반을 잃었다. 다시 힘을 내자!']);
+ }
+ mode='field';battleE=null;foeHud(null);G.boost=false;save();
+}
+async function playerTurn(E){
+ while(true){
+  hud();show(`${G.name}, 어떻게 할까?`);
+  const c=await choose(['싸운다','주문','도구','도망'],{where:'cmd',cols:2,cancel:false});
+  if(c===0){await attack(E);return null}
+  if(c===1){
+   const ids=G.spells;
+   const s=await choose(ids.map(id=>({label:SPELLS[id].name,sub:SPELLS[id].mp+'MP',disabled:G.mp<SPELLS[id].mp,why:'MP가 모자라다.'})),{where:'cmd2',onSel:i=>setLine(SPELLS[ids[i]].desc)});
+   if(s<0)continue;await cast(ids[s],E);return null;
+  }
+  if(c===2){if(await useItemMenu(true))return null;continue}
+  if(c===3){if(E.boss){await say('도망칠 수 없다!');return null}if(Math.random()<.6){await say(`${jo(G.name,'은','는')} 재빨리 도망쳤다.`);return 'flee'}await say('도망치지 못했다!');return null}
+ }
+}
+function bossBlocked(E,id){return E.boss&&E.phase<3&&['attack','spark','circuit','magnet'].includes(id)&&!(E.phase===2&&id==='magnet')}
+async function bossBlock(E){
+ if(E.phase===1)return say(['수정 방패가 공격을 막아냈다!','수정 세 개가 전선 한 줄로 이어져 빛나고 있다.']);
+ return say(['강철 갑옷에 튕겨 나갔다!','철로 된 두꺼운 갑옷이다.']);
+}
+async function attack(E){
+ await say(`${G.name}의 공격!`);
+ if(bossBlocked(E,'attack'))return bossBlock(E);
+ return hit(E,Math.max(1,atk()+rnd(0,3)-E.def));
+}
+async function hit(E,n,big){
+ E.hitT=performance.now()+420;
+ if(E.tags.has('parallel')){
+  const i=E.bulbs.findIndex(b=>b>0);E.bulbs[i]=Math.max(0,E.bulbs[i]-n);foeHud(E);
+  await say(`${big?'효과가 굉장하다! ':''}전구 하나에 ${n}의 피해를 주었다!`);
+  if(E.bulbs[i]===0)await say(E.bulbs.some(b=>b>0)?'전구 하나가 꺼졌다. 다른 갈래의 전구는 그대로 켜져 있다!':'마지막 전구가 꺼졌다!');
+  return;
+ }
+ E.hp=Math.max(0,E.hp-n);foeHud(E);
+ await say(`${big?'효과가 굉장하다! ':''}${E.name}에게 ${n}의 피해를 주었다!`);
+}
+async function hurt(n){G.hp=Math.max(0,G.hp-n);shake();hud();await say(`${jo(G.name,'은','는')} ${n}의 피해를 입었다!`)}
+async function cast(id,E){
+ const S=SPELLS[id];G.mp-=S.mp;hud();
+ await say(`${jo(G.name,'은','는')} 「${S.name}」 주문을 외웠다!`);
+ if(bossBlocked(E,id))return bossBlock(E);
+ const lv=G.lv;
+ switch(id){
+  case 'spark':
+   if(E.tags.has('rubber'))return say(['고무 젤리에게는 전기가 전혀 통하지 않는다!','고무는 전기가 통하지 않는 물질이다. 그래서 전선 겉을 고무나 비닐로 감싼다.']);
+   return hit(E,rnd(8,11)+lv);
+  case 'circuit':
+   if(E.tags.has('broken')){await say('끊어진 곳을 이어 회로를 완성했다! 전류가 전선뱀의 몸을 타고 흐른다!');return hit(E,(rnd(7,9)+lv)*3,true)}
+   if(E.boss){await say('마왕의 끊어진 전선 왕관을 이어 회로를 완성했다! 전류가 마왕을 꿰뚫는다!');return hit(E,(rnd(7,9)+lv)*2,true)}
+   if(E.tags.has('rubber'))return say(['고무 몸에는 전류가 흐르지 않는다!','회로를 이었지만 전기가 통하지 않는 물질이 끼어 있으면 전류가 흐르지 않는다.']);
+   await say('회로를 이어 전류를 흘렸지만 효과가 약하다. 끊어진 곳이 없는 적이다.');return hit(E,rnd(3,5)+Math.floor(lv/2));
+  case 'pluck':
+   if(E.tags.has('series')){E.hp=0;E.hitT=performance.now()+420;foeHud(E);return say(['전구 하나를 쏙 뽑았다!','그러자 한 줄로 이어진 나머지 전구도 한꺼번에 꺼졌다!','직렬연결은 전구 하나를 빼면 전기가 흐르는 길이 끊겨 모두 꺼진다.'])}
+   if(E.tags.has('parallel')){const i=E.bulbs.findIndex(b=>b>0);E.bulbs[i]=0;E.hitT=performance.now()+420;foeHud(E);return say(['전구 하나를 쏙 뽑았다!',E.bulbs.some(b=>b>0)?'하지만 다른 갈래의 전구는 여전히 환하게 켜져 있다! 병렬연결은 갈래가 따로따로이기 때문이다.':'마지막 전구까지 꺼졌다!'])}
+   if(E.boss&&E.phase===1){E.phase=2;E.hitT=performance.now()+420;foeHud(E);await say(['수정 하나를 쏙 뽑았다!','한 줄로 이어진 수정 방패가 한꺼번에 꺼졌다! 직렬연결의 약점이다.']);return say(['단선마왕: 크윽… 제법이구나.','단선마왕: 하지만 이 강철 갑옷은 뚫지 못할 것이다!'])}
+   return say('뽑을 전구가 없다! 주문이 허공에 흩어졌다.');
+  case 'magnet':{
+   let pow=rnd(9,12)+lv;const boosted=G.boost;
+   if(boosted){pow*=2;G.boost=false;hud();await say('전지를 직렬로 더한 덕분에 전자석이 훨씬 세졌다!')}
+   if(E.boss&&E.phase===2){
+    if(!boosted)return say(['전자석으로 강철 갑옷을 끌어당겼다…','하지만 힘이 모자라 꿈쩍도 하지 않는다!','전자석을 더 세게 만들 방법이 필요하다.']);
+    E.phase=3;E.hp=E.maxHp=60;E.hitT=performance.now()+420;foeHud(E);return say(['센 전자석이 강철 갑옷을 확 뜯어냈다!','단선마왕의 빛나는 심장이 드러났다!']);
+   }
+   if(E.tags.has('iron')){await say('철로 된 몸이 전자석에 확 끌려왔다! 쇠붙이가 우수수 떨어진다!');return hit(E,pow*2,true)}
+   if(E.tags.has('alum'))return say(['깡통 골렘은 꿈쩍도 하지 않는다!','알루미늄은 자석에 붙지 않는 물질이다.']);
+   if(E.tags.has('rubber'))return say('고무 젤리는 자석에 붙지 않는다!');
+   if(E.tags.has('polar')){
+    if(G.pole===E.pole){await say(`같은 ${G.pole}극끼리는 밀어낸다! 박쥐가 벽으로 튕겨 나갔다!`);return hit(E,pow*2,true)}
+    await say([`${G.pole}극과 ${E.pole}극, 다른 극끼리는 끌어당긴다!`,'박쥐가 확 끌려와 팔을 깨물었다!']);return hurt(rnd(5,7));
+   }
+   await say('끌어당길 쇠붙이가 없다. 효과가 약하다.');return hit(E,rnd(2,4));
+  }
+  case 'flip':G.pole=G.pole==='N'?'S':'N';hud();return say(['전지를 반대 방향으로 연결했다.',`전자석의 극이 ${G.pole}극으로 바뀌었다!`]);
+  case 'boost':G.boost=true;hud();return say('전지 하나를 직렬로 더 연결했다! 다음 전자석이 두 배로 세진다.');
+ }
+}
+async function safetyTrick(E){
+ const q=pick(SAFETY);const okFirst=Math.random()<.5;const opts=okFirst?[q.ok,q.no]:[q.no,q.ok];
+ const i=await ask(`${E.name}: "${q.bait}"`,opts);
+ if(opts[i]===q.ok){G.stats.right++;await say([`꾀에 넘어가지 않았다! ${q.good}`,`${jo(E.name,'이','가')} 당황한 틈을 타 반격했다!`]);if(E.boss&&E.phase<3)return;return hit(E,8+G.lv*2,true)}
+ G.stats.wrong++;await say(q.bad);return hurt(rnd(7,9));
+}
+async function enemyTurn(E){
+ if(E.boss){
+  if(E.phase===3&&Math.random()<.4)return safetyTrick(E);
+  await say(E.phase===1?'단선마왕이 검은 번개를 내리쳤다!':E.phase===2?'단선마왕이 강철 주먹을 휘둘렀다!':'단선마왕이 끊어진 전선을 채찍처럼 휘둘렀다!');
+  return hurt(Math.max(1,(E.phase===3?8:6)+rnd(0,3)-def()));
+ }
+ if(E.tags.has('trick')&&Math.random()<.55)return safetyTrick(E);
+ if(E.tags.has('polar')&&Math.random()<.3){E.pole=E.pole==='N'?'S':'N';foeHud(E);return say(`자석 박쥐가 몸을 휙 뒤집었다! 이제 ${E.pole}극이 이쪽을 향한다.`)}
+ let a=E.atk,line=`${E.name}의 공격!`;
+ if(E.tags.has('series'))line='한줄 전구단이 희미한 빛을 쏘았다!';
+ if(E.tags.has('parallel')){const lit=E.bulbs.filter(b=>b>0).length;a=2+lit*2;line=lit>1?'갈래 전구단이 눈부신 빛을 한꺼번에 쏘았다!':'남은 전구 하나가 빛을 쏘았다!'}
+ await say(line);
+ return hurt(Math.max(1,a+rnd(0,2)-def()));
+}
+
+/* ---------------- boss & ending ---------------- */
+async function bossGate(){
+ if(G.flags.lit)return say('철문이 열려 있다. 발전실의 큰 전지가 힘차게 웅웅거린다.');
+ if(!G.items.key)return say(['번개 무늬가 새겨진 커다란 철문이다.','열쇠 구멍이 번개 모양이다. 어딘가에 열쇠가 있을 것이다.']);
+ const need=['circuit','pluck','magnet','boost'].filter(s=>!G.spells.includes(s));
+ if(need.length)return say(['문 너머에서 엄청난 기운이 느껴진다…','아직 배우지 못한 주문이 있다. 이대로는 위험하다.',`(필요한 주문: ${need.map(s=>SPELLS[s].name).join(', ')})`]);
+ const i=await ask('번개 열쇠로 철문을 열까?',['연다','그만둔다']);
+ if(i!==0)return;
+ G.hp=G.maxHp;G.mp=G.maxMp;hud();
+ await say(['철컥! 무거운 문이 열렸다.','문 옆 비상 전지의 빛을 받아 HP와 MP가 모두 회복되었다!']);
+ await battle('boss');
+}
+async function ending(){
+ await say(['단선마왕이 쓰러졌다!','발전실의 큰 전지가 다시 웅웅 소리를 내기 시작했다.','이제 마을 가로등에 전선을 이을 차례다.']);
+ while(true){
+  const i=await ask('마을 가로등을 어떻게 연결할까?',['전구를 한 줄로 이어 직렬로 연결한다','여러 갈래로 나누어 병렬로 연결한다']);
+  if(i===1){G.stats.right++;break}
+  G.stats.wrong++;
+  await say(['가로등이 희미하게 켜졌다…','그런데 바람에 가로등 하나가 고장 나자 나머지도 모두 꺼져 버렸다!','직렬연결은 하나가 꺼지면 모두 꺼진다. 다시 연결해 보자.']);
+ }
+ await say(['가로등이 하나하나 환하게 켜졌다!','하나가 고장 나도 나머지는 계속 켜져 있다. 병렬연결 덕분이다.']);
+ G.flags.lit=true;
+ await fade(()=>{G.map='town';G.x=10;G.y=10;G.dir='up';buildMap()});
+ hud();
+ await say(['찌릿 마을에 불이 다시 켜졌다!','촌장: 해냈구나! 마을을 대표해 고맙다.','촌장: 이제 다들 전기를 안전하게, 아껴서 쓰도록 하마.']);
+ save();
+ const total=G.stats.right+G.stats.wrong;
+ await showPanel(`<h2>모험 기록</h2><p>찌릿 마을에 불을 밝혔다! 이 화면을 선생님께 보여 주세요.</p><div class="stat"><span>용사</span><b>${esc(G.name)}</b><span>레벨</span><b>${G.lv}</b><span>쓰러뜨린 괴물</span><b>${G.stats.kills}</b><span>과학 문제</span><b>맞힘 ${G.stats.right} · 틀림 ${G.stats.wrong}${total?` (정답률 ${Math.round(G.stats.right/total*100)}%)`:''}</b><span>배운 주문</span><b>${G.spells.map(s=>SPELLS[s].name).join(', ')}</b></div>`);
+}
+
+/* ---------------- drawing ---------------- */
+function heroPx(){if(!mv)return[G.x*TS,G.y*TS];const t=mv.t/MOVE;return[(mv.fx+(mv.tx-mv.fx)*t)*TS,(mv.fy+(mv.ty-mv.fy)*t)*TS]}
+function drawField(){
+ const M=MAPS[G.map];const mw=mapCv.width,mh=mapCv.height;
+ const[hx,hy]=heroPx();
+ const cx=Math.round(Math.max(0,Math.min(mw-W,hx+8-W/2))),cy=Math.round(Math.max(0,Math.min(mh-H,hy+8-H/2)));
+ ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+ ctx.drawImage(mapCv,-cx,-cy);
+ for(const n of NPCS[G.map]||[]){ctx.drawImage(sprite(n.pal,n.dir||'down'),n.x*TS-cx,n.y*TS-cy+((frame>>5)%2))}
+ const bob=mv?((mv.t>>2)%2):0;
+ ctx.drawImage(sprite('hero',G.dir),Math.round(hx-cx),Math.round(hy-cy)-bob);
+ if(!(M.town&&G.flags.lit)){
+  const r=M.town?58:44;const g=ctx.createRadialGradient(hx-cx+8,hy-cy+8,r*0.25,hx-cx+8,hy-cy+8,r);
+  g.addColorStop(0,'rgba(4,5,16,0)');g.addColorStop(1,M.town?'rgba(4,5,16,0.78)':'rgba(4,3,2,0.9)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ } else {
+  ctx.fillStyle='rgba(255,210,120,0.05)';ctx.fillRect(0,0,W,H);
+ }
+}
+function R(col,x,y,w,h){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),w,h)}
+function bulb(x,y,on,bright,t){
+ if(on){ctx.fillStyle=bright?'rgba(255,240,120,0.22)':'rgba(255,220,110,0.12)';ctx.fillRect(x-14,y-16,28,26)}
+ R(on?(bright?'#fff07a':'#d8c060'):'#4a4a52',x-7,y-12,14,12);R(on?(bright?'#fff07a':'#d8c060'):'#4a4a52',x-5,y-14,10,2);
+ R('#9aa0a8',x-5,y,10,5);R('#6a7078',x-5,y+2,10,1);R('#3a3a3a',x-2,y+5,4,2);
+ R('#222',x-4,y-8,2,2);R('#222',x+2,y-8,2,2);R('#222',x-2,y-4,4,1);
+}
+function drawMonster(E,t){
+ const k=E.key,b=Math.round(Math.sin(t/320)*2);
+ if(k==='snake'){
+  R('#1f7040',84,120,44,8);R('#2e9e5a',84,117,44,7);R('#2e9e5a',120,98,8,26);
+  R('#d88a3a',121,91,2,8);R('#d88a3a',125,92,2,7);R('#d88a3a',121,84+b,2,6);R('#d88a3a',125,85+b,2,5);
+  R('#2e9e5a',120,64+b,8,20);R('#2e9e5a',110,50+b,24,16);R('#1f7040',110,62+b,24,4);
+  R('#ffd84a',114,54+b,5,5);R('#ffd84a',125,54+b,5,5);R('#111',116,56+b,2,2);R('#111',127,56+b,2,2);R('#e04a3a',133,60+b,7,2);
+ } else if(k==='rubber'){
+  const s=Math.round(Math.sin(t/240)*2);
+  R('#2b2522',94,92-s,52,34+s);R('#2b2522',100,84-s,40,8);R('#2b2522',108,78-s,24,6);R('#4a403a',106,88-s,10,4);R('#4a403a',104,94-s,4,6);
+  R('#eee',110,98,7,8);R('#eee',124,98,7,8);R('#111',112,101,3,4);R('#111',126,101,3,4);R('#5a4a44',116,112,8,2);
+ } else if(k==='series'){
+  const on=E.hp>0;R('#222',62,98,124,2);R('#222',62,124,124,2);R('#222',184,98,2,28);
+  R('#3a3a3a',56,96,12,30);R('#d23b2a',56,96,12,6);R('#fff',60,98,4,1);R('#fff',61,97,2,3);
+  [92,122,152].forEach((x,i)=>bulb(x,99+Math.round(Math.sin(t/300+i)*1.5),on,false,t));
+ } else if(k==='parallel'){
+  R('#3a3a3a',56,84,12,34);R('#d23b2a',56,84,12,6);R('#fff',60,86,4,1);R('#fff',61,85,2,3);
+  R('#222',68,70,2,58);R('#222',182,70,2,58);
+  [72,98,124].forEach((y,i)=>{R('#222',68,y,116,2);bulb(126,y+1+Math.round(Math.sin(t/300+i)*1.5),E.bulbs[i]>0,true,t)});
+ } else if(k==='iron'||k==='alum'){
+  if(k==='iron'){
+   R('#5d6168',82,78+b,14,38);R('#5d6168',144,78+b,14,38);R('#6b7078',96,70+b,48,52);R('#7c828a',104,50+b,32,22);
+   R('#4a4e55',100,122,14,10);R('#4a4e55',126,122,14,10);R('#ff4a3a',110,58+b,5,4);R('#ff4a3a',125,58+b,5,4);
+   [[100,76],[136,76],[100,112],[136,112]].forEach(([x,y])=>R('#3a3d42',x,y+b,3,3));R('#8a4a2a',112,92+b,8,5);R('#8a4a2a',130,104+b,5,4);
+  } else {
+   R('#c8ccd2',102,58+b,36,24);R('#e8ebef',102,58+b,36,3);R('#9aa0a8',102,80+b,36,2);R('#9aa0a8',114,54+b,10,4);
+   R('#c8ccd2',96,84+b,48,36);R('#e8ebef',96,84+b,48,3);R('#a8aeb6',96,118+b,48,2);R('#d84a3a',96,96+b,48,6);
+   R('#c8ccd2',84,90+b,12,20);R('#c8ccd2',144,90+b,12,20);R('#2f6fd6',110,66+b,5,5);R('#2f6fd6',125,66+b,5,5);
+   R('#9aa0a8',102,120,14,10);R('#9aa0a8',124,120,14,10);
+  }
+ } else if(k==='bat'){
+  const f=Math.round(Math.sin(t/120)*4);
+  [[80,82],[86,88],[92,94]].forEach(([x,y],i)=>{R('#2a1e36',x,y+f*(1-i*.3),30-i*6,6);R('#2a1e36',240-x-30+i*6,y+f*(1-i*.3),30-i*6,6)});
+  R('#3a2a4a',108,74+b,24,30);R('#3a2a4a',110,68+b,4,6);R('#3a2a4a',126,68+b,4,6);R('#ffd84a',114,78+b,3,3);R('#ffd84a',123,78+b,3,3);
+  R(E.pole==='N'?'#d23b2a':'#2f6fd6',111,86+b,18,14);
+  ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(E.pole,120,94+b);
+ } else if(k==='goblin'){
+  R('#3a8a5a',104,58+b,32,30);R('#f0d070',110,50+b,4,8);R('#f0d070',126,50+b,4,8);R('#fff',110,66+b,6,6);R('#fff',124,66+b,6,6);R('#111',112,68+b,3,3);R('#111',126,68+b,3,3);R('#1f5a3a',114,80+b,12,3);
+  R('#e8e4da',86,90,68,18);R('#b8b2a4',86,106,68,2);[94,108,122,136].forEach(x=>{R('#333',x,95,3,6);R('#333',x+5,95,3,6)});
+  [[90,108,18],[104,108,24],[130,108,22],[146,108,16]].forEach(([x,y,l],i)=>{const w=Math.round(Math.sin(t/200+i)*2);R('#222',x+w,y,2,l);R('#eee',x-3+w,y+l,8,6);R('#c8a020',x-1+w,y+l+6,1,3);R('#c8a020',x+2+w,y+l+6,1,3)});
+  if((t>>7)%3===0){R('#ffd84a',150,84,3,3);R('#ffd84a',84,86,2,2)}
+ } else if(k==='boss'){
+  R('#1a1022',70,62,100,70);R('#2a1a36',88,54,64,74);R('#3a2448',100,30+b,40,28);R('#ff4a3a',108,40+b,7,4);R('#ff4a3a',125,40+b,7,4);R('#1a0e22',112,50+b,16,3);
+  [[100,20],[112,16],[124,16],[136,20]].forEach(([x,y],i)=>{R('#222',x,y+b,4,12);R('#d88a3a',x+(i%2?1:0),y-3+b,2,4)});
+  R('#2a1a36',72,70,16,40);R('#2a1a36',152,70,16,40);
+  if(E.phase===1){R('#9be7ff',78,113,84,2);[92,120,148].forEach((x,i)=>{const p=Math.sin(t/200+i)>0;R(p?'#c8f4ff':'#9be7ff',x-6,102,12,16);R('#6ac0e0',x-4,100,8,2);R('#6ac0e0',x-4,118,8,2)})}
+  if(E.phase<=2){R('#8a9098',90,66,60,46);R('#a8aeb6',90,66,60,3);[[94,70],[142,70],[94,104],[142,104]].forEach(([x,y])=>R('#5a5e66',x,y,3,3));R('#6a7078',118,66,4,46)}
+  if(E.phase===3){const p=Math.sin(t/150)>0;ctx.fillStyle='rgba(255,216,74,.25)';ctx.fillRect(104,72,32,32);R(p?'#fff07a':'#ffd84a',112,80,16,16)}
+ }
+}
+function drawBattle(t){
+ const boss=battleE&&battleE.boss;
+ const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,boss?'#140a1e':'#0e0b09');g.addColorStop(1,boss?'#2a1838':'#2a221c');
+ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ ctx.fillStyle=boss?'#2a1838':'#3a2f26';ctx.beginPath();ctx.ellipse(120,132,70,10,0,0,Math.PI*2);ctx.fill();
+ if(!battleE)return;
+ const blink=battleE.hitT>t&&Math.floor(t/60)%2===0;
+ if(!blink)drawMonster(battleE,t);
+}
+function drawTitle(t){
+ ctx.fillStyle='#070814';ctx.fillRect(0,0,W,H);
+ for(let i=0;i<40;i++){const x=(i*53)%W,y=(i*29)%(H-60);if(((t>>8)+i)%7)R('#3a3d60',x,y,1,1)}
+}
+function loop(t){
+ frame++;update();
+ if(mode==='battle')drawBattle(t);else if(G&&mapCv)drawField();else drawTitle(t);
+ requestAnimationFrame(loop);
+}
+
+/* ---------------- start ---------------- */
+function begin(state,isNew){
+ G=state;$('title').hidden=true;mode='field';buildMap();hud();
+ if(isNew){busy=true;run(async()=>{await say(['어느 날 밤, 찌릿 마을의 불이 한꺼번에 꺼졌다.','번개 광산에 숨어 살던 단선마왕이 발전실을 차지해 버린 것이다.',`${G.name}, 연못가의 촌장님을 찾아가 보자.`,'(방향키로 움직이고, 사람 앞에서 A 또는 Space로 말을 걸 수 있다.)']);save()})}
+ else{busy=false}
+}
+const saved=loadSave();if(saved&&saved.name)$('btnLoad').hidden=false;
+$('btnNew').onclick=()=>{const n=($('nameIn').value||'').trim().slice(0,6)||'용사';$('nameIn').blur();begin(newGame(n),true)};
+$('btnLoad').onclick=()=>{const s=loadSave();if(s){s.stats=s.stats||{right:0,wrong:0,kills:0};begin(s,false)}};
+if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)try{window.claude.hot.snapshot(()=>G?{G}:{})}catch(e){}
+const boot=(data)=>{if(data&&data.G){begin(data.G,false)}requestAnimationFrame(loop)};
+if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.ready(boot);else boot((window.claude&&window.claude.hot&&window.claude.hot.data)||{});
+})();
+</script>
+
+<!-- hyun-copyright:begin -->
+<div id="hyunCopy" aria-label="저작권 안내" style="position:fixed;left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom));z-index:2147483000;max-width:calc(100vw - 24px);box-sizing:border-box;text-align:center;font:500 11.5px/1.45 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;letter-spacing:-.01em;color:#fff;background:rgba(10,12,20,.55);border-radius:999px;padding:3px 12px;pointer-events:none;display:none;word-break:keep-all">© 2026 현쌤 과학 오락실 · 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용 금지</div>
+<script>(function(){var S=["#title"];function vis(e){if(!e)return false;var s=getComputedStyle(e);return !e.hidden&&s.display!=='none'&&s.visibility!=='hidden'&&e.getClientRects().length>0}
+var STATIC=S[0]==='body';function tick(){var el=document.getElementById('hyunCopy');if(!el)return;if(STATIC){el.style.position='static';el.style.transform='none';el.style.margin='24px auto';el.style.display='table';return}var on=S.some(function(q){try{return vis(document.querySelector(q))}catch(e){return false}});el.style.display=on?'block':'none'}
+setInterval(tick,400);tick();})();</script>
+<!-- hyun-copyright:end -->
+</body></html>
