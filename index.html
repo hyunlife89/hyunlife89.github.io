@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>현쌤 과학 오락실</title>
+<meta name="description" content="초등 3~6학년 과학 복습 게임과 수업 도구 모음">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* 레이아웃: 상단 메뉴 → 왼쪽 큰 제목 + 오른쪽 부채꼴 카드 더미 → 학년·종류 필터 → 폴라로이드 카드 격자 → QR 창 */
+:root{
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#14171f; --muted:#6b7180; --line:#d9dce3;
+  --blue:#2f5bff; --yellow:#ffd23f; --night:#11141c;
+  --font:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left))}
+
+/* 상단 메뉴 */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1.5px solid var(--ink)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:58px}
+.logo{font-weight:900;font-size:21px;letter-spacing:-.03em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.logo small{font-weight:500;font-size:13px;margin-left:6px;color:var(--muted)}
+.nav{margin-left:auto;display:flex;gap:22px;font-weight:700;font-size:15px}
+.nav a{color:var(--ink);text-decoration:none}
+.nav a:hover{color:var(--blue)}
+
+/* 첫 화면 */
+.hero{display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:24px;min-height:min(640px,82vh);padding:40px 0 20px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.12em;margin:0 0 14px}
+.hero h1{font-weight:900;font-size:clamp(46px,7.4vw,84px);line-height:1.08;letter-spacing:-.045em;margin:0 0 30px}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.find{display:flex;max-width:430px;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--paper)}
+.find input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:16px;padding:15px 18px;outline:none}
+.find button{border:0;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;padding:0 22px;cursor:pointer}
+.find:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 35%,transparent)}
+
+.fan{position:relative;height:440px}
+.fan .pc{position:absolute;left:calc(50% - 125px);top:70px;width:250px;transform-origin:50% 190%;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:rotate(calc(var(--i) * 9deg - 27deg))}
+.fan:hover .pc{transform:rotate(calc(var(--i) * 12deg - 36deg)) translateY(-10px)}
+
+/* 폴라로이드 카드 (첫 화면 더미와 목록 공용) */
+.pc{display:block;background:#fff;color:#14171f;text-decoration:none;padding:10px 10px 14px;border:1.5px solid #14171f;box-shadow:0 18px 30px -18px rgba(0,0,0,.45);position:relative}
+.pc img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e9ebef}
+.pc .meta{font-size:12px;color:#6b7180;margin:10px 2px 2px}
+.pc .nm{font-weight:900;font-size:19px;letter-spacing:-.03em;margin:0 2px;line-height:1.25}
+.pc::after{content:"";position:absolute;right:12px;bottom:14px;width:14px;height:14px;background:var(--blue)}
+
+/* 목록 */
+.sec{padding:30px 0 10px}
+.sec .num{font-size:13px;color:var(--muted);letter-spacing:.1em}
+.sec h2{font-weight:900;font-size:clamp(32px,5vw,48px);letter-spacing:-.04em;margin:4px 0 20px;line-height:1.15}
+.sec h2 em{font-style:normal;color:var(--blue)}
+.filters{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:26px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-weight:700;font-size:15px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:6px 15px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip:focus-visible,.find button:focus-visible,.qrb:focus-visible,.pc:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.sep{width:1.5px;height:22px;background:var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:34px 26px;padding-bottom:20px}
+.item{position:relative}
+.item .pc{transition:transform .25s ease,box-shadow .25s ease}
+.item:nth-child(3n+1) .pc{transform:rotate(-1.2deg)}
+.item:nth-child(3n+2) .pc{transform:rotate(.8deg)}
+.item:nth-child(3n) .pc{transform:rotate(-.4deg)}
+.item .pc:hover{transform:rotate(0) translateY(-6px);box-shadow:0 28px 40px -20px rgba(0,0,0,.5)}
+.pc .mode{display:inline-block;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 6px;margin-right:4px}
+.under{display:flex;gap:10px;align-items:flex-start;margin:12px 4px 0}
+.item .desc{margin:0;flex:1;font-size:14px;color:var(--muted)}
+.qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font:inherit;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+
+/* 안내 띠 */
+.band{background:var(--night);color:#fff;margin-top:40px}
+.band .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:40px 16px}
+.band b{display:block;font-size:30px;font-weight:900;color:var(--yellow);line-height:1}
+.band span{font-size:14px;color:#b9bfd0}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0 40px}
+
+/* QR 창 */
+dialog{border:1.5px solid var(--ink);border-radius:0;padding:26px;max-width:min(540px,calc(100vw - 32px));width:100%;background:var(--paper);color:var(--ink);text-align:center;box-shadow:12px 12px 0 var(--ink)}
+dialog::backdrop{background:rgba(10,12,20,.72)}
+dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
+#qr{display:flex;justify-content:center;margin:16px auto;background:#fff;padding:14px;width:fit-content}
+#qr img,#qr canvas{width:min(340px,68vw)!important;height:auto!important}
+.url{font-weight:700;word-break:break-all;margin:0 0 16px;color:var(--blue)}
+.acts{display:flex;gap:8px;justify-content:center}
+.btn{font:inherit;font-weight:700;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:9px 16px;cursor:pointer;text-decoration:none}
+.btn.main{background:var(--ink);color:var(--bg)}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;min-height:0;padding-top:30px}
+  .fan{height:330px;order:2}
+  .fan .pc{width:180px;left:calc(50% - 90px);top:40px}
+  .nav{display:none}
+  .band .wrap{grid-template-columns:1fr;gap:18px}
+}
+@media (prefers-reduced-motion:reduce){.fan .pc,.item .pc{transition:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="./">현쌤 과학 오락실<small>초등 과학 게임함</small></a>
+  <nav class="nav"><a href="#all">학년으로 찾기</a><a href="#all">전체 게임</a><a href="#how">쓰는 법</a></nav>
+</div></header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">초등 3~6학년 과학 복습 게임</p>
+      <h1>문제 풀며<br>노는 과학<br><em>오락실</em></h1>
+      <form class="find" id="findForm" role="search">
+        <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
+        <button type="submit">찾기</button>
+      </form>
+    </div>
+    <div class="fan" id="fan" aria-hidden="true"></div>
+  </section>
+
+  <section class="sec" id="all">
+    <div class="num">01 — 전체 게임</div>
+    <h2>오늘은 <em>뭐 할까?</em></h2>
+    <div class="filters">
+      <div class="chips" id="grades" role="group" aria-label="학년"></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="chips" id="modes" role="group" aria-label="종류"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</div>
+
+<section class="band" id="how"><div class="wrap">
+  <div><b>QR 한 번</b><span>카드의 QR을 TV에 띄우면 학생들이 크롬북·웨일북·태블릿으로 바로 들어와요.</span></div>
+  <div><b>로그인 없음</b><span>학생 계정이 필요 없어요. 이름만 쓰고 시작해요.</span></div>
+  <div><b>함께 하기</b><span>협동·대전 게임은 방 번호로 친구들과 같이 해요.</span></div>
+</div></section>
+<footer>© 2026 현쌤 과학 오락실 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
+
+<dialog id="dlg" aria-labelledby="dlgT">
+  <h3 id="dlgT"></h3>
+  <div id="qr"></div>
+  <p class="url" id="dlgU"></p>
+  <div class="acts">
+    <button class="btn" id="copy" type="button">주소 복사</button>
+    <a class="btn main" id="dlgGo" href="#">열기</a>
+    <button class="btn" id="close" type="button">닫기</button>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ── 게임 목록: 새 게임은 여기에 한 칸 추가 ──
+   url: 서버 게임은 "https://hyunstock.duckdns.org/fortress/"처럼 전체 주소로, 사이트 안 게임은 "games/폴더/"처럼, 다른 주소는 https://... 전체로
+   img: public/thumbs 안의 그림 (가로:세로 4:3) */
+const GAMES=[
+ {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:"https://hyunstock.duckdns.org/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
+ {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:"https://hyunstock.duckdns.org/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
+ {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
+ {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:"https://hyunstock.duckdns.org/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
+ {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
+ {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
+ {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
+];
+const MODES=["전체","혼자","협동","대전","수업 도구"];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const gtxt=g=>g.length>1?`${g[0]}~${g[g.length-1]}학년`:`${g[0]}학년`;
+let grade=0,mode="전체";
+try{grade=+localStorage.getItem("arcade-grade")||0}catch(e){}
+
+function card(x){return `<a class="pc" href="${esc(x.url)}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy"><div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
+
+const FAN=GAMES.slice().reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");
+
+function chips(el,items,cur,label,onPick){
+  el.innerHTML=items.map(v=>`<button class="chip" type="button" data-v="${v}" aria-pressed="${v==cur}">${label(v)}</button>`).join("");
+  el.onclick=e=>{const b=e.target.closest(".chip");if(b)onPick(b.dataset.v)};
+}
+function render(){
+  chips($("grades"),[0,3,4,5,6],grade,v=>v==0?"모든 학년":v+"학년",v=>{grade=+v;try{localStorage.setItem("arcade-grade",grade)}catch(e){}render()});
+  chips($("modes"),MODES,mode,v=>v,v=>{mode=v;render()});
+  const q=$("q").value.trim().replace(/학년/,"");
+  const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&
+    (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
+  $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
+    <div class="under"><p class="desc">${esc(x.d)}</p><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+}
+$("q").addEventListener("input",render);
+$("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";render();$("all").scrollIntoView({behavior:"smooth"})});
+$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b)openQR(GAMES[+b.dataset.qr])});
+
+function openQR(x){
+  const url=new URL(x.url,location.href).href;
+  $("dlgT").textContent=x.t;$("dlgU").textContent=url;$("dlgGo").href=url;$("qr").innerHTML="";
+  if(window.QRCode)new QRCode($("qr"),{text:url,width:512,height:512,correctLevel:QRCode.CorrectLevel.M});
+  else $("qr").textContent="QR을 불러오지 못했어요. 주소를 칠판에 적어 주세요.";
+  $("copy").textContent="주소 복사";$("dlg").showModal();
+}
+$("close").onclick=()=>$("dlg").close();
+$("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText($("dlgU").textContent);$("copy").textContent="복사했어요!"}catch(e){$("copy").textContent="직접 복사해 주세요"}};
+render();
+</script>
+</body>
+</html>
