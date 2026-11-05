@@ -4,33 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>현쌤 과학 오락실</title>
-<meta name="description" content="초등 3~6학년 과학 복습 게임과 수업 도구 모음">
+<meta name="description" content="초등 3~6학년 과학 복습 게임과 수업 도구 모음 · 선생님 구글 시트 문제로도 플레이">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
 <style>
-/* 레이아웃: 상단 메뉴 → 왼쪽 큰 제목 + 오른쪽 부채꼴 카드 더미 → 학년·종류 필터 → 폴라로이드 카드 격자 → QR 창 */
+/* 레이아웃: 상단 메뉴 → 첫 화면(제목 + 카드 더미) → 우리 반 연결 띠 → 게임 격자 → 선생님(우리 반 문제 연결) → 안내 띠 */
 :root{
-  --bg:#f5f6f8; --paper:#ffffff; --ink:#14171f; --muted:#6b7180; --line:#d9dce3;
-  --blue:#2f5bff; --yellow:#ffd23f; --night:#11141c;
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#14171f; --muted:#6b7180; --line:#d9dce3; --soft:#eef1f6;
+  --blue:#2f5bff; --yellow:#ffd23f; --green:#11a36a; --red:#e2483d; --night:#11141c;
   --font:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; color-scheme:dark;}}
+  --bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; --soft:#232837; --blue:#6b8bff; color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; --soft:#232837; --blue:#6b8bff; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0;overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1160px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left))}
+button,input{font:inherit;color:inherit}
+a{color:inherit}
 
 /* 상단 메뉴 */
 .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1.5px solid var(--ink)}
 .top .wrap{display:flex;align-items:center;gap:20px;height:58px}
 .logo{font-weight:900;font-size:21px;letter-spacing:-.03em;text-decoration:none;color:var(--ink);white-space:nowrap}
 .logo small{font-weight:500;font-size:13px;margin-left:6px;color:var(--muted)}
-.nav{margin-left:auto;display:flex;gap:22px;font-weight:700;font-size:15px}
+.nav{margin-left:auto;display:flex;gap:22px;font-weight:700;font-size:15px;align-items:center}
 .nav a{color:var(--ink);text-decoration:none}
 .nav a:hover{color:var(--blue)}
+.pill{display:none;align-items:center;gap:7px;border:1.5px solid var(--ink);border-radius:999px;padding:4px 12px 4px 10px;font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;background:var(--paper)}
+.pill::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);flex:none}
+.pill.on{display:inline-flex}
 
 /* 첫 화면 */
 .hero{display:grid;grid-template-columns:1fr 1.05fr;align-items:center;gap:24px;min-height:min(640px,82vh);padding:40px 0 20px}
@@ -38,20 +45,34 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 .hero h1{font-weight:900;font-size:clamp(46px,7.4vw,84px);line-height:1.08;letter-spacing:-.045em;margin:0 0 30px}
 .hero h1 em{font-style:normal;color:var(--blue)}
 .find{display:flex;max-width:430px;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--paper)}
-.find input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:16px;padding:15px 18px;outline:none}
-.find button{border:0;background:var(--ink);color:var(--bg);font:inherit;font-weight:700;padding:0 22px;cursor:pointer}
+.find input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:15px 18px;outline:none}
+.find button{border:0;background:var(--ink);color:var(--bg);font-weight:700;padding:0 22px;cursor:pointer}
 .find:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 35%,transparent)}
+.hero .tlink{display:inline-block;margin-top:18px;font-weight:700;font-size:15px;color:var(--muted)}
+.hero .tlink:hover{color:var(--blue)}
 
 .fan{position:relative;height:440px}
 .fan .pc{position:absolute;left:calc(50% - 125px);top:70px;width:250px;transform-origin:50% 190%;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:rotate(calc(var(--i) * 9deg - 27deg))}
 .fan:hover .pc{transform:rotate(calc(var(--i) * 12deg - 36deg)) translateY(-10px)}
+
+/* 우리 반 연결 띠 */
+.classbar{display:none;margin:0 0 10px;border:1.5px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;gap:14px;align-items:center;flex-wrap:wrap}
+.classbar.on{display:flex}
+.classbar .dot{width:12px;height:12px;border-radius:50%;background:var(--green);flex:none}
+.classbar b{font-weight:900;font-size:18px;letter-spacing:-.02em}
+.classbar .sub{color:var(--muted);font-size:14px;flex:1;min-width:200px}
+.classbar .stu{display:none;align-items:center;gap:8px}
+.classbar .stu.on{display:flex}
+.classbar .stu input{width:130px;border:1.5px solid var(--ink);background:var(--bg);padding:6px 10px;border-radius:0}
 
 /* 폴라로이드 카드 (첫 화면 더미와 목록 공용) */
 .pc{display:block;background:#fff;color:#14171f;text-decoration:none;padding:10px 10px 14px;border:1.5px solid #14171f;box-shadow:0 18px 30px -18px rgba(0,0,0,.45);position:relative}
 .pc img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#e9ebef}
 .pc .meta{font-size:12px;color:#6b7180;margin:10px 2px 2px}
 .pc .nm{font-weight:900;font-size:19px;letter-spacing:-.03em;margin:0 2px;line-height:1.25}
-.pc::after{content:"";position:absolute;right:12px;bottom:14px;width:14px;height:14px;background:var(--blue)}
+.pc::after{content:"";position:absolute;right:12px;bottom:14px;width:14px;height:14px;background:#2f5bff}
+.pc .mine{position:absolute;right:10px;top:-12px;background:#11a36a;color:#fff;font-weight:900;font-size:12px;padding:3px 9px;border:1.5px solid #14171f;transform:rotate(3deg);box-shadow:2px 2px 0 #14171f;display:none;z-index:1}
+body.connected .pc .mine{display:block}
 
 /* 목록 */
 .sec{padding:30px 0 10px}
@@ -60,9 +81,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 .sec h2 em{font-style:normal;color:var(--blue)}
 .filters{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:26px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:inherit;font-weight:700;font-size:15px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:6px 15px;cursor:pointer}
+.chip{font-weight:700;font-size:15px;border:1.5px solid var(--ink);background:transparent;border-radius:999px;padding:6px 15px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.chip:focus-visible,.find button:focus-visible,.qrb:focus-visible,.pc:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .sep{width:1.5px;height:22px;background:var(--line)}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:34px 26px;padding-bottom:20px}
@@ -75,13 +96,81 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16p
 .pc .mode{display:inline-block;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 6px;margin-right:4px}
 .under{display:flex;gap:10px;align-items:flex-start;margin:12px 4px 0}
 .item .desc{margin:0;flex:1;font-size:14px;color:var(--muted)}
-.qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font:inherit;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
+.qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+
+/* 선생님 */
+.teach{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:34px;align-items:start;padding-bottom:30px}
+.teach .lead{font-size:17px;margin:0 0 16px}
+.teach .lead b{background:linear-gradient(transparent 60%,var(--yellow) 60%);color:#14171f}
+.facts{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+.facts li{display:flex;gap:10px;font-size:15px}
+.facts li::before{content:"";width:8px;height:8px;margin-top:9px;background:var(--blue);flex:none}
+.support{border:1.5px solid var(--line);padding:14px 16px;font-size:14px;background:var(--paper)}
+.support h3{margin:0 0 8px;font-size:15px;font-weight:900}
+.support ul{margin:0;padding-left:18px}
+.support li{margin:3px 0}
+.support .no{color:var(--muted)}
+
+.panel{border:1.5px solid var(--ink);background:var(--paper);box-shadow:10px 10px 0 var(--ink);padding:24px}
+.now{display:none;border:1.5px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:14px 16px;margin-bottom:20px}
+.now.on{display:block}
+.now b{font-weight:900}
+.now .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.step{margin:0 0 22px}
+.step:last-child{margin-bottom:0}
+.step h3{display:flex;gap:10px;align-items:center;margin:0 0 10px;font-size:18px;font-weight:900;letter-spacing:-.02em}
+.step h3 i{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:14px;flex:none}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.way{position:relative;display:block;border:1.5px solid var(--ink);padding:14px 14px 12px;cursor:pointer;background:var(--bg)}
+.way input{position:absolute;opacity:0;pointer-events:none}
+.way:has(input:checked){background:var(--ink);color:var(--bg)}
+.way:has(input:focus-visible){outline:3px solid var(--blue);outline-offset:3px}
+.way .t{font-weight:900;font-size:17px;display:block;letter-spacing:-.02em}
+.way .tags{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}
+.way .tags span{font-size:12px;font-weight:700;border:1.5px solid currentColor;padding:0 6px;border-radius:999px}
+.way .d{font-size:13px;opacity:.8;display:block}
+.how{margin:0;padding-left:20px;font-size:15px}
+.how li{margin:6px 0}
+.how b{font-weight:900}
+.how .k{display:inline-block;border:1.5px solid var(--ink);padding:0 6px;font-size:13px;font-weight:700;background:var(--soft);white-space:nowrap}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.btn{font-weight:700;border:1.5px solid var(--ink);background:transparent;padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.main{background:var(--ink);color:var(--bg)}
+.btn.small{padding:5px 11px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.field{display:grid;gap:6px;margin:0 0 10px}
+.field label{font-weight:700;font-size:14px}
+.field input{border:1.5px solid var(--ink);background:var(--bg);padding:11px 12px;border-radius:0;font-size:15px;width:100%;min-width:0}
+.field small{color:var(--muted);font-size:13px}
+.msg{min-height:1.4em;font-weight:700;font-size:15px;margin:8px 0 0}
+.msg.bad{color:var(--red)}
+.msg.ok{color:var(--green)}
+.msg.wait{color:var(--muted)}
+.hide{display:none!important}
+
+.result{border-top:1.5px dashed var(--line);margin-top:18px;padding-top:18px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stat{border:1.5px solid var(--ink);padding:8px 12px;min-width:92px}
+.stat b{display:block;font-size:26px;font-weight:900;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+.units{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.units span{border:1.5px solid var(--line);padding:3px 10px;font-size:13px;font-weight:700;border-radius:999px;background:var(--bg)}
+.skip{font-size:13px;color:var(--red);margin:0 0 12px;padding-left:18px}
+.peek{border:1.5px solid var(--line);font-size:14px;margin:0 0 14px}
+.peek div{padding:8px 10px;border-bottom:1px solid var(--line)}
+.peek div:last-child{border-bottom:0}
+.peek em{font-style:normal;color:var(--green);font-weight:700}
+.peek small{color:var(--muted)}
+.share{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:var(--soft);padding:14px}
+.share .qr{background:#fff;padding:8px;width:132px;height:132px;display:grid;place-items:center}
+.share .qr img,.share .qr canvas{width:116px!important;height:116px!important}
+.share .u{font-weight:700;font-size:13px;word-break:break-all;color:var(--blue);margin:4px 0 8px}
 
 /* 안내 띠 */
 .band{background:var(--night);color:#fff;margin-top:40px}
-.band .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:40px 16px}
-.band b{display:block;font-size:30px;font-weight:900;color:var(--yellow);line-height:1}
+.band .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:40px 16px}
+.band b{display:block;font-size:28px;font-weight:900;color:var(--yellow);line-height:1.1;margin-bottom:6px}
 .band span{font-size:14px;color:#b9bfd0}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0 40px}
 
@@ -89,27 +178,39 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0 40px}
 dialog{border:1.5px solid var(--ink);border-radius:0;padding:26px;max-width:min(540px,calc(100vw - 32px));width:100%;background:var(--paper);color:var(--ink);text-align:center;box-shadow:12px 12px 0 var(--ink)}
 dialog::backdrop{background:rgba(10,12,20,.72)}
 dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
+dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 #qr{display:flex;justify-content:center;margin:16px auto;background:#fff;padding:14px;width:fit-content}
 #qr img,#qr canvas{width:min(340px,68vw)!important;height:auto!important}
-.url{font-weight:700;word-break:break-all;margin:0 0 16px;color:var(--blue)}
-.acts{display:flex;gap:8px;justify-content:center}
-.btn{font:inherit;font-weight:700;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:9px 16px;cursor:pointer;text-decoration:none}
-.btn.main{background:var(--ink);color:var(--bg)}
+.url{font-weight:700;word-break:break-all;margin:0 0 16px;color:var(--blue);font-size:14px}
+.acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);background:var(--ink);color:var(--bg);font-weight:700;padding:12px 18px;z-index:50;transition:transform .3s;max-width:calc(100vw - 32px)}
+.toast.on{transform:translate(-50%,0)}
+.toast:not(.on){visibility:hidden;transition:transform .3s,visibility 0s .3s}
+
+@media (max-width:960px){.teach{grid-template-columns:1fr}.band .wrap{grid-template-columns:1fr 1fr}}
 @media (max-width:860px){
   .hero{grid-template-columns:1fr;min-height:0;padding-top:30px}
   .fan{height:330px;order:2}
   .fan .pc{width:180px;left:calc(50% - 90px);top:40px}
-  .nav{display:none}
+  .nav a{display:none}
+}
+@media (max-width:560px){
+  .ways{grid-template-columns:1fr}
+  .panel{padding:18px;box-shadow:6px 6px 0 var(--ink)}
+  .share{grid-template-columns:1fr}
   .band .wrap{grid-template-columns:1fr;gap:18px}
 }
-@media (prefers-reduced-motion:reduce){.fan .pc,.item .pc{transition:none}}
+@media (prefers-reduced-motion:reduce){.fan .pc,.item .pc,.toast{transition:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="./">현쌤 과학 오락실<small>초등 과학 게임함</small></a>
-  <nav class="nav"><a href="#all">학년으로 찾기</a><a href="#all">전체 게임</a><a href="#how">쓰는 법</a></nav>
+  <nav class="nav">
+    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a>
+    <a class="pill" id="pill" href="#teacher" title="우리 반 문제가 연결되어 있어요"></a>
+  </nav>
 </div></header>
 
 <div class="wrap">
@@ -121,9 +222,16 @@ dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
       </form>
+      <a class="tlink" href="#teacher">선생님 — 우리 반 문제로 게임하기 →</a>
     </div>
     <div class="fan" id="fan" aria-hidden="true"></div>
   </section>
+
+  <div class="classbar" id="classbar" role="status">
+    <span class="dot" aria-hidden="true"></span>
+    <div><b id="cbName"></b><div class="sub" id="cbSub"></div></div>
+    <div class="stu" id="stuBox"><label for="stuName" style="font-size:14px;font-weight:700">내 이름</label><input id="stuName" maxlength="20" placeholder="예) 김하늘" autocomplete="off"></div>
+  </div>
 
   <section class="sec" id="all">
     <div class="num">01 — 전체 게임</div>
@@ -135,17 +243,137 @@ dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
     </div>
     <div class="grid" id="grid"></div>
   </section>
+
+  <section class="sec" id="teacher">
+    <div class="num">02 — 선생님</div>
+    <h2>우리 반 문제로<br><em>게임하기</em></h2>
+    <div class="teach">
+      <div>
+        <p class="lead">선생님이 <b>구글 시트에 문제를 적으면</b>, 그 반 학생들 게임에 그 문제가 나와요.</p>
+        <ul class="facts">
+          <li>문제와 학생 기록은 선생님 구글 드라이브에만 저장돼요. 오락실 서버에는 남지 않아요.</li>
+          <li>과학이 아니어도 돼요. 객관식(보기 2~4개)과 OX 문제면 어느 과목이든 들어가요.</li>
+          <li>시트를 고치면 학생이 게임을 다시 열 때 바로 바뀌어요.</li>
+          <li>연결하면 이 화면의 QR·링크에 우리 반 코드가 붙어요. 학생은 한 번만 들어오면 기기가 기억해요.</li>
+        </ul>
+        <div class="support">
+          <h3>우리 반 문제가 들어가는 게임</h3>
+          <ul>
+            <li><b>엑스탱크 스쿨</b> — 단원 고르기에 '우리 반' 묶음이 생겨요 (선생님 방·혼자 연습)</li>
+            <li><b>과학 포트리스</b> — 설정의 '우리 반 문제'에 자동으로 더해져요 ('우리 반 문제만 내기' 가능)</li>
+            <li><b>밤의 과학실 탈출</b> — 포트리스와 같아요</li>
+            <li class="no">등대섬 수비대 — 준비 중 · 카누·찌릿·룰렛 — 교과서 이야기에 맞춘 게임이라 기본 문제만 써요</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel" id="panel">
+        <div class="now" id="now" role="status">
+          <b id="nowT"></b>
+          <div id="nowD" style="font-size:14px;margin-top:4px"></div>
+          <div class="row">
+            <button class="btn small" type="button" id="nowRe">다시 읽기</button>
+            <button class="btn small" type="button" id="nowQr">학생 링크·QR</button>
+            <button class="btn small" type="button" id="nowOff">연결 끊기</button>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><i>1</i>방식 고르기</h3>
+          <div class="ways" role="radiogroup" aria-label="연결 방식">
+            <label class="way"><input type="radio" name="way" value="A" checked>
+              <span class="t">문제만 연결</span>
+              <span class="tags"><span>쉬움</span><span>2분</span></span>
+              <span class="d">시트를 링크 공유만 하면 끝. 학생 점수는 남지 않아요.</span></label>
+            <label class="way"><input type="radio" name="way" value="B">
+              <span class="t">문제 + 학생 기록</span>
+              <span class="tags"><span>10분</span><span>권한 허용 1번</span></span>
+              <span class="d">누가 어떤 문제를 맞혔는지 시트에 쌓여요.</span></label>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><i>2</i>문제 시트 만들기</h3>
+          <ol class="how">
+            <li id="tplCopyLi" class="hide"><a class="btn small main" id="tplCopy" target="_blank" rel="noopener">템플릿 시트 복사하기</a> 를 누르면 선생님 드라이브에 사본이 생겨요.</li>
+            <li id="tplFileLi"><a class="btn small main" href="teacher/question-template.xlsx" download="우리반_문제양식.xlsx">문제 양식 받기 (.xlsx)</a><br>구글 드라이브에 올린 뒤, 파일을 열면 위쪽에 뜨는 <span class="k">Google Sheets로 열기</span>를 눌러요.</li>
+            <li><b>[문제] 탭</b>에 한 줄에 하나씩: <span class="k">단원</span> <span class="k">문제</span> <span class="k">정답</span> <span class="k">오답1~3</span> <span class="k">해설</span> <span class="k">사용</span></li>
+          </ol>
+        </div>
+
+        <div class="step" id="stepA">
+          <h3><i>3</i>링크로 공유하기</h3>
+          <ol class="how">
+            <li>시트 오른쪽 위 <span class="k">공유</span> 누르기</li>
+            <li>일반 액세스를 <span class="k">링크가 있는 모든 사용자</span> · <span class="k">뷰어</span>로 바꾸기</li>
+            <li><span class="k">링크 복사</span> → 아래 칸에 붙여 넣기</li>
+          </ol>
+        </div>
+
+        <div class="step hide" id="stepB">
+          <h3><i>3</i>기록 받는 웹 앱 만들기</h3>
+          <ol class="how">
+            <li>시트 메뉴 <span class="k">확장 프로그램</span> → <span class="k">Apps Script</span></li>
+            <li id="codeLi">원래 있던 글을 모두 지우고 아래 코드를 붙여 넣은 뒤 <span class="k">저장</span>
+              <div class="btns"><button class="btn small" type="button" id="copyCode">코드 복사</button></div></li>
+            <li><span class="k">배포</span> → <span class="k">새 배포</span> → 톱니바퀴에서 <span class="k">웹 앱</span></li>
+            <li>실행 사용자 <span class="k">나</span> · 액세스 권한 <span class="k">모든 사용자</span> → <span class="k">배포</span></li>
+            <li>권한 확인 창: 내 계정 → <span class="k">고급</span> → <span class="k">(안전하지 않음)으로 이동</span> → <span class="k">허용</span><br><small style="color:var(--muted)">선생님이 직접 만든 스크립트라 구글이 확인을 한 번 더 묻는 거예요.</small></li>
+            <li>나온 <span class="k">웹 앱 URL</span>(…/exec로 끝남)을 복사 → 아래 칸에 붙여 넣기</li>
+          </ol>
+        </div>
+
+        <div class="step">
+          <h3><i>4</i>연결하기</h3>
+          <form id="linkForm" autocomplete="off">
+            <div class="field">
+              <label for="src" id="srcLab">시트 링크</label>
+              <input id="src" inputmode="url" placeholder="https://docs.google.com/spreadsheets/d/…">
+            </div>
+            <div class="field">
+              <label for="cls">반 이름 <span style="font-weight:400;color:var(--muted)">(선택 · 학생 화면에 보여요)</span></label>
+              <input id="cls" maxlength="30" placeholder="예) 5학년 2반">
+            </div>
+            <button class="btn main" type="submit" id="go">연결 확인</button>
+          </form>
+          <p class="msg" id="msg" role="status" aria-live="polite"></p>
+
+          <div class="result hide" id="result">
+            <div class="stats" id="stats"></div>
+            <div class="units" id="units"></div>
+            <ul class="skip" id="skip"></ul>
+            <div class="peek" id="peek"></div>
+            <div class="share">
+              <div class="qr" id="miniQr" aria-label="학생 링크 QR"></div>
+              <div>
+                <b>학생 링크</b>
+                <div class="u" id="clsUrl"></div>
+                <div class="btns" style="margin:0">
+                  <button class="btn small" type="button" id="copyUrl">링크 복사</button>
+                  <button class="btn small main" type="button" id="bigQr">QR 크게</button>
+                  <button class="btn small hide" type="button" id="testLog">기록 시험 보내기</button>
+                </div>
+              </div>
+            </div>
+            <p class="msg ok" id="after" style="font-weight:500;font-size:14px"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <section class="band" id="how"><div class="wrap">
   <div><b>QR 한 번</b><span>카드의 QR을 TV에 띄우면 학생들이 크롬북·웨일북·태블릿으로 바로 들어와요.</span></div>
   <div><b>로그인 없음</b><span>학생 계정이 필요 없어요. 이름만 쓰고 시작해요.</span></div>
   <div><b>함께 하기</b><span>협동·대전 게임은 방 번호로 친구들과 같이 해요.</span></div>
+  <div><b>우리 반 문제</b><span>선생님 구글 시트를 연결하면 그 반 문제로 게임해요.</span></div>
 </div></section>
 <footer>© 2026 현쌤 과학 오락실 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
 
 <dialog id="dlg" aria-labelledby="dlgT">
   <h3 id="dlgT"></h3>
+  <p class="cls" id="dlgC"></p>
   <div id="qr"></div>
   <p class="url" id="dlgU"></p>
   <div class="acts">
@@ -154,19 +382,25 @@ dialog h3{font-weight:900;font-size:28px;letter-spacing:-.03em;margin:0}
     <button class="btn" id="close" type="button">닫기</button>
   </div>
 </dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="hc.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+/* ── 설정 ──
+   TEMPLATE_COPY_URL: 템플릿 구글 시트를 만들었다면 그 주소의 /edit… 부분을 /copy 로 바꿔 넣으세요.
+   비워 두면 '문제 양식 받기(.xlsx)'만 보여요. */
+const TEMPLATE_COPY_URL='';
+
 /* ── 게임 목록: 새 게임은 여기에 한 칸 추가 ──
    url: 서버 게임은 SRV+"/fortress/" 처럼 (현스탁·현게임 어느 주소로 열어도 같은 서버의 게임으로), 사이트 안 게임은 "games/폴더/"처럼, 다른 주소는 https://... 전체로
-   img: public/thumbs 안의 그림 (가로:세로 4:3) */
-/* 서버 게임 주소: 이 사이트가 duckdns 서버(현스탁·현게임·전용주소)에서 열리면 같은 주소 그대로, GitHub 등 다른 곳에서 열리면 현게임 주소로 */
+   img: public/thumbs 안의 그림 (가로:세로 4:3)   hc:true → 우리 반 문제가 들어가는 게임 */
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
- {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
- {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
+ {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
+ {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
  {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
- {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
+ {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
  {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
@@ -175,11 +409,15 @@ const MODES=["전체","혼자","협동","대전","수업 도구"];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const gtxt=g=>g.length>1?`${g[0]}~${g[g.length-1]}학년`:`${g[0]}학년`;
+const HCok=!!window.HC;
+const link=u=>HCok&&HC.code()?HC.link(new URL(u,location.href).href):u;
 let grade=0,mode="전체";
 try{grade=+localStorage.getItem("arcade-grade")||0}catch(e){}
 
-function card(x){return `<a class="pc" href="${esc(x.url)}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy"><div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
+function toast(t,ms){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),ms||3200)}
 
+/* ── 게임 카드 ── */
+function card(x){return `<a class="pc" href="${esc(link(x.url))}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
 const FAN=GAMES.slice().reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");
 
 function chips(el,items,cur,label,onPick){
@@ -196,20 +434,134 @@ function render(){
     <div class="under"><p class="desc">${esc(x.d)}</p><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
 }
 $("q").addEventListener("input",render);
-$("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";render();$("all").scrollIntoView({behavior:"smooth"})});
-$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b)openQR(GAMES[+b.dataset.qr])});
+$("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";render();$("all").scrollIntoView()});
+$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url))}});
 
-function openQR(x){
-  const url=new URL(x.url,location.href).href;
-  $("dlgT").textContent=x.t;$("dlgU").textContent=url;$("dlgGo").href=url;$("qr").innerHTML="";
+/* ── QR 창 ── */
+function openQR(title,u){
+  const url=new URL(u,location.href).href;
+  $("dlgT").textContent=title;$("dlgU").textContent=url;$("dlgGo").href=url;$("qr").innerHTML="";
+  $("dlgC").textContent=HCok&&HC.code()?"● "+(HC.className()||"우리 반")+" 문제로 열려요":"";
   if(window.QRCode)new QRCode($("qr"),{text:url,width:512,height:512,correctLevel:QRCode.CorrectLevel.M});
   else $("qr").textContent="QR을 불러오지 못했어요. 주소를 칠판에 적어 주세요.";
   $("copy").textContent="주소 복사";$("dlg").showModal();
 }
 $("close").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
-$("copy").onclick=async()=>{try{await navigator.clipboard.writeText($("dlgU").textContent);$("copy").textContent="복사했어요!"}catch(e){$("copy").textContent="직접 복사해 주세요"}};
-render();
+async function copyText(t,btn,done){try{await navigator.clipboard.writeText(t);btn.textContent=done||"복사했어요!"}catch(e){btn.textContent="직접 복사해 주세요"}}
+$("copy").onclick=()=>copyText($("dlgU").textContent,$("copy"));
+
+/* ── 우리 반 연결 상태 ── */
+const WAY_NAME={A:"문제만 연결",B:"문제 + 학생 기록"};
+function ago(t){if(!t)return"";const s=(Date.now()-t)/1000;return s<60?"방금":s<3600?Math.floor(s/60)+"분 전":s<86400?Math.floor(s/3600)+"시간 전":Math.floor(s/86400)+"일 전"}
+function hubLink(){return HC.classLink(location.origin+location.pathname)}
+function paintClass(){
+  if(!HCok)return;
+  const on=!!HC.code(),c=HC.cache(),nm=HC.className()||"우리 반";
+  document.body.classList.toggle("connected",on);
+  $("pill").classList.toggle("on",on);$("pill").textContent=nm+" 문제";
+  $("classbar").classList.toggle("on",on);
+  $("now").classList.toggle("on",on);
+  if(on){
+    const n=c?c.count:null;
+    $("cbName").textContent=nm+" 문제가 연결돼 있어요";
+    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·과학실 탈출에서 나와요";
+    $("stuBox").classList.toggle("on",HC.mode()==="B");
+    $("nowT").textContent="이 기기: "+nm+" · "+WAY_NAME[HC.mode()];
+    $("nowD").textContent=c?`문제 ${c.count}개 · 단원 ${c.units.length}개 · ${ago(c.at)} 읽음`:"아직 문제를 읽지 못했어요. [다시 읽기]를 눌러 주세요.";
+  }
+  render();
+}
+if(HCok){
+  HC.onChange(paintClass);
+  $("stuName").value=HC.student();
+  $("stuName").addEventListener("change",()=>{HC.student($("stuName").value);toast("이름을 저장했어요. 게임 기록에 이 이름으로 남아요.")});
+  if(new URLSearchParams(location.search).get("c")){
+    toast((HC.className()||"우리 반")+" 문제와 연결했어요!",4000);
+    HC.refresh().then(r=>{if(r&&!r.count)toast("연결은 됐는데 읽을 문제가 없어요. 선생님께 알려 주세요.",5000)}).catch(e=>toast(HC.explain(e,HC.mode()),6000));
+  }
+  $("nowRe").onclick=()=>{$("nowD").textContent="읽는 중…";HC.refresh().then(r=>{paintClass();toast(`문제 ${r.count}개를 다시 읽었어요`)}).catch(e=>{$("nowD").textContent=HC.explain(e,HC.mode())})};
+  $("nowQr").onclick=()=>openQR((HC.className()||"우리 반")+" 링크",hubLink());
+  $("nowOff").onclick=()=>{if(confirm("이 기기에서 우리 반 문제 연결을 끊을까요?\n(시트는 그대로 남아요)")){HC.clear();$("result").classList.add("hide");$("msg").textContent="";toast("연결을 끊었어요")}};
+  if(HC.code()&&HC.className())$("cls").value=HC.className();
+}else{
+  $("panel").innerHTML='<p class="msg bad">연결 파일(hc.js)을 불러오지 못했어요. 새로고침해 주세요.</p>';
+}
+paintClass();
+
+/* ── 선생님: 방식 고르기 ── */
+if(TEMPLATE_COPY_URL){$("tplCopy").href=TEMPLATE_COPY_URL;$("tplCopyLi").classList.remove("hide");$("codeLi").classList.add("hide")}
+function way(){return document.querySelector('input[name=way]:checked').value}
+function paintWay(){
+  const b=way()==="B";
+  $("stepA").classList.toggle("hide",b);$("stepB").classList.toggle("hide",!b);
+  $("srcLab").textContent=b?"웹 앱 URL":"시트 링크";
+  $("src").placeholder=b?"https://script.google.com/macros/s/…/exec":"https://docs.google.com/spreadsheets/d/…";
+}
+document.querySelectorAll('input[name=way]').forEach(r=>r.addEventListener("change",paintWay));
+if(HCok&&HC.mode()==="B")document.querySelector('input[name=way][value=B]').checked=true;
+paintWay();
+
+let codeText=null;
+$("copyCode").onclick=async()=>{
+  const b=$("copyCode");
+  try{if(!codeText)codeText=await fetch("teacher/Code.gs.txt",{cache:"no-store"}).then(r=>{if(!r.ok)throw 0;return r.text()});copyText(codeText,b,"복사했어요! Apps Script에 붙여 넣으세요")}
+  catch(e){b.textContent="불러오지 못했어요";window.open("teacher/Code.gs.txt","_blank")}
+};
+
+/* ── 선생님: 연결 확인 ── */
+const PARSE_MSG={
+  empty:"주소를 붙여 넣어 주세요.",
+  published:"'웹에 게시' 주소예요. 시트의 [공유] → [링크 복사]로 받은 주소를 붙여 주세요.",
+  editor:"Apps Script 편집 화면 주소예요. [배포] → [새 배포]에서 나온 '웹 앱 URL'(…/exec)을 붙여 주세요.",
+  unknown:"구글 시트 주소(docs.google.com/spreadsheets/…)나 웹 앱 주소(script.google.com/macros/…)를 붙여 주세요."
+};
+function say(t,cls){const m=$("msg");m.textContent=t;m.className="msg "+(cls||"")}
+$("linkForm").addEventListener("submit",async e=>{
+  e.preventDefault();if(!HCok)return;
+  const p=HC.parse($("src").value);
+  $("result").classList.add("hide");
+  if(p.error){say(PARSE_MSG[p.error],"bad");$("src").focus();return}
+  let note="";
+  if(way()==="B"&&p.mode==="A")note=" (시트 주소라서 '문제만 연결'로 연결했어요. 학생 기록까지 하려면 3번의 웹 앱 URL을 붙여 주세요.)";
+  if(way()==="A"&&p.mode==="B")note=" (웹 앱 주소라서 '문제 + 학생 기록'으로 연결했어요.)";
+  $("go").disabled=true;say("구글 시트에서 문제를 읽는 중…","wait");
+  let res;
+  try{res=await HC.fetch(p.code)}catch(err){$("go").disabled=false;say(HC.explain(err,p.mode),"bad");return}
+  $("go").disabled=false;
+  if(res.problem==="header"){say("첫 줄에 '문제'와 '정답' 머리글이 있어야 해요. 양식의 첫 줄을 그대로 써 주세요.","bad");return}
+  if(!res.count){say("시트는 열었는데 읽을 수 있는 문제가 없어요."+(res.skipped.length?" 아래 건너뛴 줄을 확인해 주세요.":" [문제] 탭에 문제를 적어 주세요."),"bad");showResult(res,false);return}
+  HC.set(p.code,$("cls").value);HC.save(res);
+  say("연결됐어요! 이 컴퓨터와 아래 링크로 들어온 학생 기기에서 우리 반 문제가 나와요."+note,"ok");
+  showResult(res,true);paintClass();
+});
+
+function showResult(res,ok){
+  $("result").classList.remove("hide");
+  $("stats").innerHTML=`<div class="stat"><b>${res.count}</b><span>문제</span></div><div class="stat"><b>${res.units.length}</b><span>단원</span></div>`+
+    (res.skipped.length?`<div class="stat"><b style="color:var(--red)">${res.skipped.length}</b><span>건너뛴 줄</span></div>`:"")+
+    `<div class="stat"><b style="font-size:17px;padding:6px 0 3px">${res.mode==="B"?"기록 켜짐":"문제만"}</b><span>방식</span></div>`;
+  $("units").innerHTML=res.units.map(u=>`<span>${esc(u.name)} · ${u.q.length}</span>`).join("");
+  $("skip").innerHTML=res.skipped.slice(0,6).map(s=>`<li>${s.row}행: ${esc(s.why)} — ${esc(s.q.slice(0,30))}</li>`).join("")+(res.skipped.length>6?`<li>…외 ${res.skipped.length-6}줄</li>`:"")+
+    (res.skipped.some(s=>/정답/.test(s.why))&&res.mode==="A"?`<li>숫자만 적은 정답이 빈칸으로 읽히면: 시트에서 열 전체 선택 → 서식 → 숫자 → <b>일반 텍스트</b></li>`:"");
+  const sample=res.units.flatMap(u=>u.q).slice(0,4);
+  $("peek").innerHTML=sample.map(q=>`<div>${esc(q.q)}<br><em>✓ ${esc(q.o[0])}</em> <small>· ${q.o.slice(1).map(esc).join(" · ")}</small></div>`).join("");
+  $("peek").classList.toggle("hide",!sample.length);
+  document.querySelector("#result .share").classList.toggle("hide",!ok);
+  $("testLog").classList.toggle("hide",!(ok&&res.mode==="B"));
+  $("after").textContent=ok?"엑스탱크는 선생님 방·혼자 연습 설정의 단원 고르기에서 '우리 반'을, 포트리스·탈출은 설정의 '우리 반 문제만 내기'를 켜면 우리 반 문제만 나와요.":"";
+  if(ok){
+    const u=hubLink();$("clsUrl").textContent=u;$("miniQr").innerHTML="";
+    if(window.QRCode)new QRCode($("miniQr"),{text:u,width:232,height:232,correctLevel:QRCode.CorrectLevel.M});
+    else $("miniQr").innerHTML='<small style="color:#6b7180;font-size:12px;text-align:center">QR을 못 불러왔어요<br>링크를 복사해 주세요</small>';
+  }
+}
+$("copyUrl").onclick=()=>copyText($("clsUrl").textContent,$("copyUrl"));
+$("bigQr").onclick=()=>openQR((HC.className()||"우리 반")+" 링크",hubLink());
+$("testLog").onclick=()=>{
+  HC.answer("연결 시험","선생님","연결 시험","기록이 잘 들어오는지 확인하는 줄이에요",1);
+  HC.flush().then(ok=>{$("after").textContent=ok?"보냈어요. 10초쯤 뒤 시트의 [기록] 탭에 줄이 생겼는지 확인해 주세요. 안 생기면 배포의 '액세스 권한: 모든 사용자'와 새 버전 배포 여부를 확인해 주세요.":"보내지 못했어요. 인터넷 연결을 확인해 주세요."});
+};
 </script>
 </body>
 </html>
