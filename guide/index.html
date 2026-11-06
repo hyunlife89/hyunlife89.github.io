@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>오락실 선생님 설명서</title>
+<meta name="description" content="현쌤 과학 오락실을 수업에서 쓰는 방법을 사진과 함께 쉽게 알려 드려요.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#f5f6f8; --paper:#ffffff; --ink:#14171f; --muted:#6b7180; --line:#d9dce3; --soft:#eef1f6;
+  --blue:#2f5bff; --yellow:#ffd23f; --green:#11a36a; --red:#e2483d;
+  --font:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; --soft:#232837; --blue:#6b8bff; color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#11141c; --paper:#1c202b; --ink:#f2f3f6; --muted:#9aa1b2; --line:#2c3242; --soft:#232837; --blue:#6b8bff; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:880px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left))}
+
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1.5px solid var(--ink)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:58px;max-width:1160px}
+.logo{font-weight:900;font-size:20px;letter-spacing:-.03em;text-decoration:none;white-space:nowrap}
+.top .acts{margin-left:auto;display:flex;gap:8px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:7px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn.main{background:var(--ink);color:var(--bg)}
+
+.hero{padding:44px 0 10px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.12em;margin:0 0 10px}
+h1{font-weight:900;font-size:clamp(36px,6vw,56px);line-height:1.12;letter-spacing:-.045em;margin:0 0 16px}
+h1 em{font-style:normal;color:var(--blue)}
+.hero p{margin:0;color:var(--muted);font-size:17px}
+
+/* 한눈에 */
+.three{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--ink)}
+.three li{padding:18px 18px 20px;border-right:1.5px solid var(--ink)}
+.three li:last-child{border-right:0}
+.three b{display:block;font-size:13px;letter-spacing:.1em;color:var(--blue)}
+.three strong{display:block;font-weight:900;font-size:21px;letter-spacing:-.03em;margin:2px 0 4px}
+.three span{font-size:15px;color:var(--muted)}
+
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:26px 0 0}
+.toc a{font-weight:700;font-size:14px;border:1.5px solid var(--line);border-radius:999px;padding:4px 12px;text-decoration:none;background:var(--paper)}
+.toc a:hover{border-color:var(--ink)}
+
+/* 단계 */
+.step{padding:46px 0 6px;border-bottom:1.5px dashed var(--line)}
+.step:last-of-type{border-bottom:0}
+.step .no{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:900;font-size:18px;margin-bottom:10px}
+.step h2{font-weight:900;font-size:clamp(26px,4vw,34px);letter-spacing:-.035em;margin:0 0 8px;line-height:1.25}
+.step h2 small{font-size:15px;font-weight:700;color:var(--muted);letter-spacing:0;margin-left:6px}
+.step > p{margin:0 0 12px}
+.say b,.step b{font-weight:900}
+.hl{background:linear-gradient(transparent 60%,var(--yellow) 60%);color:inherit}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hl{background:linear-gradient(transparent 60%,#7a6418 60%)}}
+:root[data-theme="dark"] .hl{background:linear-gradient(transparent 60%,#7a6418 60%)}
+
+.url{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 16px;border:1.5px solid var(--ink);background:var(--paper);padding:12px 14px}
+.url code{font-family:inherit;font-weight:900;font-size:clamp(16px,3.4vw,21px);color:var(--blue);word-break:break-all;flex:1;min-width:0}
+
+figure{margin:16px 0 8px}
+figure img{display:block;width:100%;height:auto;border:1.5px solid var(--ink);background:#fff;box-shadow:8px 8px 0 var(--ink)}
+figure.narrow img{max-width:520px}
+figcaption{font-size:14px;color:var(--muted);margin-top:14px}
+figcaption b{color:var(--ink)}
+
+.list{margin:12px 0 0;padding-left:22px}
+.list li{margin:6px 0}
+.k{display:inline-block;border:1.5px solid var(--ink);padding:0 7px;font-size:14px;font-weight:700;background:var(--soft);white-space:nowrap;line-height:1.6}
+.k.y{background:var(--yellow);color:#14171f}
+
+.tip{margin:16px 0 0;border-left:5px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:12px 16px;font-size:15px}
+.tip.warn{border-color:var(--red);background:color-mix(in srgb,var(--red) 8%,var(--paper))}
+.tip b{font-weight:900}
+
+/* 게임 종류 */
+.kinds{display:grid;gap:14px;margin:16px 0 0}
+.kind{display:grid;grid-template-columns:150px 1fr;gap:16px;border:1.5px solid var(--ink);background:var(--paper);padding:14px}
+.kind .pics{display:flex;gap:6px;align-items:flex-start}
+.kind .pics img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1.5px solid var(--ink);display:block}
+.kind .pics.two img{width:calc(50% - 3px)}
+.kind h3{margin:0 0 2px;font-weight:900;font-size:19px;letter-spacing:-.02em}
+.kind h3 .tag{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 7px;margin-right:6px;vertical-align:3px}
+.kind .g{font-size:14px;color:var(--muted);margin:0 0 6px}
+.kind ul{margin:0;padding-left:18px;font-size:15px}
+.kind li{margin:3px 0}
+
+/* 묻고 답하기 */
+.faq{margin:14px 0 0;border-top:1.5px solid var(--ink)}
+.faq details{border-bottom:1.5px solid var(--line);padding:12px 2px}
+.faq summary{cursor:pointer;font-weight:900;font-size:17px;list-style:none;display:flex;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"Q";color:var(--blue);font-weight:900}
+.faq details[open] summary{color:var(--blue)}
+.faq p{margin:8px 0 2px 26px;font-size:16px}
+
+/* 체크리스트 */
+.check{list-style:none;margin:14px 0 0;padding:0;border:1.5px solid var(--ink);background:var(--paper)}
+.check li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line);font-size:16px}
+.check li:last-child{border-bottom:0}
+.check li::before{content:"";width:20px;height:20px;border:2px solid var(--ink);flex:none;margin-top:4px}
+.check small{display:block;color:var(--muted);font-size:14px}
+
+footer{text-align:center;color:var(--muted);font-size:13px;padding:40px 0 50px}
+
+@media (max-width:640px){
+  .three{grid-template-columns:1fr;box-shadow:6px 6px 0 var(--ink)}
+  .three li{border-right:0;border-bottom:1.5px solid var(--ink)}
+  .three li:last-child{border-bottom:0}
+  .kind{grid-template-columns:1fr}
+  .kind .pics{max-width:320px}
+  figure img{box-shadow:5px 5px 0 var(--ink)}
+  .top .acts .print{display:none}
+}
+@media print{
+  :root{--bg:#fff;--paper:#fff;--ink:#000;--muted:#444;--soft:#f2f2f2;color-scheme:light}
+  .top,.toc,.noprint{display:none!important}
+  body{font-size:13pt}
+  figure img,.three{box-shadow:none}
+  .step{break-inside:avoid-page;padding-top:24px}
+  .faq details{display:block}
+  .faq details > *{display:block}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="../">← 현쌤 과학 오락실</a>
+  <div class="acts">
+    <button class="btn print" type="button" id="printBtn">인쇄하기</button>
+    <a class="btn main" href="../">오락실 열기</a>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">선생님 설명서</p>
+    <h1>QR 하나면<br><em>수업 준비 끝</em></h1>
+    <p>처음 쓰시는 선생님도 5분이면 돼요. 사진을 보면서 그대로 따라 해 보세요.</p>
+
+    <ol class="three">
+      <li><b>01</b><strong>오락실 열기</strong><span>교실 컴퓨터에서 주소를 열어요</span></li>
+      <li><b>02</b><strong>QR 띄우기</strong><span>게임 카드의 노란 QR 버튼을 눌러 TV에</span></li>
+      <li><b>03</b><strong>학생이 찍기</strong><span>카메라로 찍고 이름 쓰면 바로 시작</span></li>
+    </ol>
+
+    <nav class="toc" aria-label="차례">
+      <a href="#s1">1. 오락실 열기</a><a href="#s2">2. 게임 고르기</a><a href="#s3">3. QR 띄우기</a>
+      <a href="#s4">4. 게임 종류별 진행</a><a href="#s5">5. 우리 반 문제 넣기</a><a href="#faq">이럴 땐</a><a href="#check">수업 전 확인표</a>
+    </nav>
+  </section>
+
+  <section class="step" id="s1">
+    <span class="no">1</span>
+    <h2>오락실 열기</h2>
+    <p>교실 컴퓨터(TV에 연결된 컴퓨터)에서 크롬이나 웨일을 열고 이 주소를 들어가요.</p>
+    <div class="url"><code>hyungame.duckdns.org<wbr>/arcade</code><button class="btn" type="button" data-copy="https://hyungame.duckdns.org/arcade/">주소 복사</button></div>
+    <p class="say">즐겨찾기에 넣어 두면 다음부터는 한 번에 열려요. 학생 계정이나 로그인은 <b>필요 없어요.</b></p>
+    <figure>
+      <img src="img/1-home.jpg" width="1400" height="831" alt="오락실 첫 화면. 왼쪽에 '문제 풀며 노는 과학 오락실' 제목과 검색 칸, 오른쪽에 게임 카드가 부채처럼 펼쳐져 있다." loading="lazy">
+      <figcaption><b>오락실 첫 화면</b> — 검색 칸에 "5학년", "전기"처럼 적어도 게임을 찾을 수 있어요.</figcaption>
+    </figure>
+  </section>
+
+  <section class="step" id="s2">
+    <span class="no">2</span>
+    <h2>게임 고르기</h2>
+    <p>화면을 조금 내리면 게임 카드가 나와요. 위쪽 버튼으로 <b>학년</b>과 <b>종류</b>(혼자·협동·대전·수업 도구)를 고르면 맞는 게임만 남아요.</p>
+    <figure>
+      <img src="img/2-grid.jpg" width="1400" height="697" alt="게임 목록 화면. 5학년 버튼이 눌려 있고 과학 포트리스, 엑스탱크 스쿨, 등대섬 수비대 카드가 보인다. 첫 카드 아래 노란 QR 버튼에 빨간 테두리 표시가 있다." loading="lazy">
+      <figcaption><b>빨간 테두리가 QR 버튼</b>이에요. 카드 그림을 누르면 선생님 컴퓨터에서 게임이 바로 열려요.</figcaption>
+    </figure>
+  </section>
+
+  <section class="step" id="s3">
+    <span class="no">3</span>
+    <h2>QR을 TV에 띄우기</h2>
+    <p>할 게임 카드 아래 <span class="k y">QR</span>을 누르면 큰 QR 창이 떠요. 이 화면을 TV에 띄워 두세요.</p>
+    <figure>
+      <img src="img/3-qr.jpg" width="1400" height="831" alt="과학 포트리스 QR 창. 가운데 큰 QR 코드와 그 아래 게임 주소, 주소 복사·열기·닫기 버튼이 있다." loading="lazy">
+      <figcaption><b>QR 창</b> — QR이 잘 안 찍히면 <b>주소 복사</b>를 눌러 칠판이나 클래스룸에 붙여 주세요.</figcaption>
+    </figure>
+    <p class="say" style="margin-top:20px"><b>학생은 이렇게 해요</b></p>
+    <ol class="list">
+      <li>크롬북·웨일북·태블릿 카메라(또는 QR 앱)로 TV의 QR을 찍어요.</li>
+      <li>게임이 열리면 <b>이름</b>을 쓰고 시작해요.</li>
+      <li>협동·대전 게임은 방 번호를 넣고 친구와 같은 방에 들어가요. (4번에서 자세히)</li>
+    </ol>
+    <div class="tip"><b>모든 학생이 다 들어왔는지</b> 확인한 뒤 시작 신호를 주면 훨씬 매끄러워요.</div>
+  </section>
+
+  <section class="step" id="s4">
+    <span class="no">4</span>
+    <h2>게임 종류별 진행</h2>
+    <p>카드 왼쪽 위에 적힌 <b>종류</b>를 보면 어떻게 진행할지 알 수 있어요.</p>
+
+    <div class="kinds">
+      <article class="kind">
+        <div class="pics two"><img src="../thumbs/canoe.jpg" alt="별빛 카누 항해" loading="lazy"><img src="../thumbs/zzirit.jpg" alt="찌릿 마을의 불빛" loading="lazy"></div>
+        <div>
+          <h3><span class="tag">혼자</span>각자 자기 속도로</h3>
+          <p class="g">별빛 카누 항해(3학년) · 찌릿 마을의 불빛(6학년)</p>
+          <ul><li>QR만 찍으면 끝. 학생마다 따로 플레이해요.</li><li>복습 시간, 일찍 끝난 학생 활동으로 좋아요.</li></ul>
+        </div>
+      </article>
+      <article class="kind">
+        <div class="pics two"><img src="../thumbs/tank.jpg" alt="등대섬 수비대" loading="lazy"><img src="../thumbs/escape.jpg" alt="밤의 과학실 탈출" loading="lazy"></div>
+        <div>
+          <h3><span class="tag">협동</span>모둠이 한 팀으로</h3>
+          <p class="g">등대섬 수비대 · 밤의 과학실 탈출 · 과학섬 생활</p>
+          <ul><li>2~4명 모둠을 만들어요. 한 명이 <b>방을 만들고</b>, 나머지는 그 <b>방 번호</b>로 들어가요.</li><li>과학섬 생활은 섬 주인의 기기가 방이 돼서, 친구가 그 섬에 놀러 가요.</li></ul>
+        </div>
+      </article>
+      <article class="kind">
+        <div class="pics two"><img src="../thumbs/fortress.jpg" alt="과학 포트리스" loading="lazy"><img src="../thumbs/xtank.jpg" alt="엑스탱크 스쿨" loading="lazy"></div>
+        <div>
+          <h3><span class="tag">대전</span>문제 풀고 겨루기</h3>
+          <p class="g">과학 포트리스 · 엑스탱크 스쿨</p>
+          <ul><li>포트리스는 방 하나에 2~8명. 학생이 방을 만들고 방 번호로 모여요.</li><li>엑스탱크는 <b>선생님 컴퓨터에서 선생님 방</b>을 열면 반 전체(최대 40명)가 한 번에 들어와요.</li></ul>
+        </div>
+      </article>
+      <article class="kind">
+        <div class="pics"><img src="../thumbs/roulette.jpg" alt="기상요소 룰렛" loading="lazy"></div>
+        <div>
+          <h3><span class="tag">수업 도구</span>TV에 띄워 다 같이</h3>
+          <p class="g">기상요소 룰렛(5학년 날씨)</p>
+          <ul><li>QR 없이 선생님 컴퓨터에서 열어 TV로 함께 봐요.</li></ul>
+        </div>
+      </article>
+    </div>
+    <div class="tip"><b>난이도·단원은 선생님이 정해요.</b> 게임 안 설정은 선생님 비밀번호로 잠글 수 있어서, 학생은 선생님이 고른 단원만 풀게 돼요.</div>
+  </section>
+
+  <section class="step" id="s5">
+    <span class="no">5</span>
+    <h2>우리 반 문제 넣기 <small>(하고 싶을 때만)</small></h2>
+    <p>기본 문제만으로도 바로 쓸 수 있어요. <b>선생님이 만든 문제</b>로 하고 싶을 때만 해 주세요. 오락실 첫 화면의 <span class="k">선생님</span> 메뉴에서 세 단계로 끝나요.</p>
+    <figure class="narrow">
+      <img src="img/4-panel.jpg" width="944" height="1238" alt="선생님 칸 화면. 1 문제 시트 만들기, 2 링크 공유 켜기, 3 여기에 붙여 넣기 세 단계와 연결하기 버튼이 있다." loading="lazy">
+    </figure>
+    <ol class="list">
+      <li><b>문제 시트 만들기</b> — <span class="k">새 구글 시트 열기</span> → <span class="k">예시 문제 복사</span> → 시트 맨 왼쪽 위 칸(A1)에 Ctrl+V. 그 아래로 문제를 이어 적어요.</li>
+      <li><b>링크 공유 켜기</b> — 시트 오른쪽 위 <span class="k">공유</span> → 일반 액세스를 <span class="hl">링크가 있는 모든 사용자 · 뷰어</span>로 → <span class="k">링크 복사</span></li>
+      <li><b>붙여 넣고 연결하기</b> — 복사한 링크를 칸에 붙여 넣고 <span class="k">연결하기</span></li>
+    </ol>
+    <div class="tip"><b>연결한 다음에는 꼭 그 컴퓨터에서 QR을 띄워 주세요.</b> 그래야 QR에 우리 반 코드가 붙어요. 학생 기기는 한 번 들어오면 기억해요.</div>
+    <div class="tip warn"><b>처음 한 번은 오락실 QR로!</b> 게임 안의 방 번호 화면 QR에는 우리 반 코드가 없어요. 첫 시간에는 오락실 카드의 QR로 들어오게 해 주세요.</div>
+    <p class="say" style="margin-top:18px">구글을 안 쓰면 <b>엑셀</b>로도 돼요. 선생님 칸 아래 <span class="k">엑셀로 우리 반 문제 넣기</span>를 누르세요. (이 방법은 그 컴퓨터에만 저장돼요)</p>
+    <figure class="narrow">
+      <img src="img/5-support.jpg" width="699" height="413" alt="우리 반 문제가 들어가는 게임 목록: 엑스탱크 스쿨, 과학 포트리스, 밤의 과학실 탈출, 등대섬 수비대, 과학섬 생활." loading="lazy">
+      <figcaption><b>우리 반 문제가 들어가는 게임</b> — 카누·찌릿·룰렛은 교과서 이야기에 맞춘 기본 문제만 써요.</figcaption>
+    </figure>
+  </section>
+
+  <section class="step" id="faq">
+    <h2>이럴 땐 이렇게</h2>
+    <div class="faq">
+      <details open><summary>QR이 안 찍혀요</summary><p>QR 창의 <b>주소 복사</b>를 눌러 칠판·클래스룸·패들렛에 붙여 주세요. TV 화면이 너무 밝거나 멀면 잘 안 찍히니 학생이 조금 가까이 와서 찍게 해 주세요.</p></details>
+      <details><summary>오락실 화면에 게임 카드가 안 보여요</summary><p>키보드 <span class="k">Ctrl</span>+<span class="k">F5</span>를 한 번 눌러 새로 고침 해 주세요.</p></details>
+      <details><summary>학생 화면이 느리거나 멈춰요</summary><p>학생 기기에서 다른 탭을 닫고 새로 고침 해 주세요. 협동·대전 게임은 방을 만든 기기가 느리면 방 전체가 느려지니, 방장은 성능 좋은 기기로 정해 주세요.</p></details>
+      <details><summary>학생이 다른 단원 문제를 풀고 있어요</summary><p>게임 설정을 선생님 비밀번호로 잠가 주세요. 선생님이 고른 단원·난이도만 학생에게 나와요.</p></details>
+      <details><summary>우리 반 문제가 안 나와요</summary><p>① 시트 공유가 '링크가 있는 모든 사용자'인지 ② 연결한 그 컴퓨터에서 QR을 띄웠는지 ③ 학생이 처음에 오락실 QR로 들어왔는지 확인해 주세요. 포트리스·탈출은 설정의 '우리 반 문제만 내기'를 켜면 우리 반 문제만 나와요.</p></details>
+      <details><summary>학생 휴대폰으로도 되나요?</summary><p>네, 브라우저가 있으면 돼요. 다만 3D 게임은 크롬북·웨일북·태블릿처럼 화면이 큰 기기가 더 편해요.</p></details>
+    </div>
+  </section>
+
+  <section class="step" id="check">
+    <h2>수업 전 확인표</h2>
+    <p class="noprint" style="color:var(--muted);font-size:15px">인쇄해서 교탁에 두고 쓰세요. <button class="btn" type="button" id="printBtn2" style="padding:3px 10px;font-size:14px">인쇄하기</button></p>
+    <ul class="check">
+      <li><div>교실 컴퓨터에서 오락실이 열려요<small>hyungame.duckdns.org/arcade</small></div></li>
+      <li><div>오늘 할 게임을 정했어요<small>학년 · 종류 버튼으로 골라 보기</small></div></li>
+      <li><div>(협동·대전) 모둠과 방장을 정했어요<small>방장은 성능 좋은 기기로</small></div></li>
+      <li><div>(필요하면) 게임 설정에서 단원·난이도를 고르고 잠갔어요</div></li>
+      <li><div>(우리 반 문제) 이 컴퓨터에서 시트를 연결했어요</div></li>
+      <li><div>QR을 TV에 띄우고, 모든 학생이 들어왔는지 확인했어요</div></li>
+    </ul>
+  </section>
+</main>
+
+<footer>© 2026 현쌤 과학 오락실 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent='복사했어요!'}catch(e){b.textContent='직접 복사해 주세요'}
+  setTimeout(()=>b.textContent='주소 복사',2000);
+}));
+function doPrint(){document.querySelectorAll('.faq details').forEach(d=>d.open=true);window.print()}
+document.getElementById('printBtn').onclick=doPrint;
+document.getElementById('printBtn2').onclick=doPrint;
+</script>
+</body>
+</html>
