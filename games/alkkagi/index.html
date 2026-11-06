@@ -443,7 +443,7 @@ const ITEMS={
   ghost:{e:'👻',n:'유령',d:'우리 편 돌은 스르륵 통과해요.'},
   bomb:{e:'💣',n:'폭탄',d:'처음 부딪힌 곳 주변 돌이 펑! 사방으로 밀려나요.'},
   glove:{e:'🧤',n:'장갑',d:'이번 샷은 삑사리가 절대 안 나요. 마음 놓고 세게!'},
-  banana:{e:'🍌',n:'바나나',d:'상대 다음 샷의 삑사리 확률이 30%로 껑충!'},
+  banana:{e:'🍌',n:'바나나',d:'상대 다음 샷의 삑사리 확률이 45%로 껑충!'},
   curve:{e:'🌀',n:'커브',d:'회전을 걸어 휘어 쳐요. 왼쪽·오른쪽을 골라 돌 뒤를 돌아 맞혀요.'}};
 const IKEYS=Object.keys(ITEMS);
 const ICON_SVG={
@@ -1127,7 +1127,8 @@ function itemStartFx(it,s){
   else if(it==='banana'){tone(300,.3,.18,'sine',900)}
   else if(it==='curve'){tone(500,.4,.15,'sine',1500)}}
 /* ---- 삑사리 ---- */
-const MIS_START=.75,MIS_MAX=.15,MIS_BANANA=.30,CURVE_W=2.4;
+/* 삑사리: 시뮬레이션 기준 전체 샷의 약 10% (힘 60%부터, 끝까지 당기면 25%) */
+const MIS_START=.6,MIS_MAX=.25,MIS_BANANA=.45,CURVE_W=2.4;
 function misChance(p,item,side){if(item==='glove')return 0;if(G.curse&&G.curse[side])return MIS_BANANA;return p>=MIS_START?MIS_MAX*(p-MIS_START)/(1-MIS_START):0}
 function makeShot(side,s,a,p,item,linear){
   let pw=linear?p:Math.pow(p,PCURVE),ang=a,mis='',spin=0;
@@ -1227,7 +1228,7 @@ function renderPanel(){
   else if(G.mode==='watch')m=`${who} 차례예요.`;
   else m=`${who}이(가) 조준하고 있어요…`;
   if(G.streak>0&&G.phase==='aim'){const mx=G.cfg.extraMax!=null?G.cfg.extraMax:2;m+=`<br><span class="small">🔁 한 번 더 ${G.streak}/${mx}${G.streak>=mx?' · 이번이 마지막 연속 기회!':''}</span>`}
-  if(canAct()&&G.curse&&G.curse[G.turn]&&G.sel!=='glove')m+=`<br><span class="small">${ico('banana')} <b>바나나 껍질!</b> 이번 샷은 삑사리 확률 30%${(G.inv[G.turn]||[]).includes('glove')?' · 장갑으로 막을 수 있어요':''}</span>`;
+  if(canAct()&&G.curse&&G.curse[G.turn]&&G.sel!=='glove')m+=`<br><span class="small">${ico('banana')} <b>바나나 껍질!</b> 이번 샷은 삑사리 확률 45%${(G.inv[G.turn]||[]).includes('glove')?' · 장갑으로 막을 수 있어요':''}</span>`;
   if(G.sel&&canAct())m+=`<br><span class="small">${ico(G.sel)} <b>${ITEMS[G.sel].n}</b>: ${ITEMS[G.sel].d}</span>`;
   if(G.sel==='curve'&&canAct())m+=`<div class="btns" style="margin-top:6px"><button class="btn sm ${G.curveDir<0?'sun':''}" data-cd="-1">↺ 왼쪽으로 휘기</button><button class="btn sm ${G.curveDir>0?'sun':''}" data-cd="1">↻ 오른쪽으로 휘기</button></div>`;
   $('#msg').innerHTML=m;
@@ -1414,7 +1415,7 @@ function render(){
   let A=G.aim;
   if(!A&&G.remoteAim){const s=G.stones.find(x=>x.id===G.remoteAim.id);if(s)A={s,a:G.remoteAim.a,p:G.remoteAim.p,bot:true,it:G.remoteAim.it}}
   if(A&&A.p>0&&G.phase!=='moving'){const misP=A.bot?0:misChance(A.p,G.sel,G.turn),jit=misP>0?(Math.random()-.5)*misP*.5:0;
-    if(!A.bot&&misP>0)upright(A.s.x,A.s.y,()=>{ctx.font='30px Jua, sans-serif';ctx.textAlign='center';ctx.lineWidth=7;ctx.lineJoin='round';ctx.strokeStyle='#22305a';ctx.fillStyle=misP>=.25?'#ff6f61':'#ffd23f';const t=`삑사리 ${Math.round(misP*100)}%`;ctx.strokeText(t,-70,R+8);ctx.fillText(t,-70,R+8)});
+    if(!A.bot&&misP>0)upright(A.s.x,A.s.y,()=>{ctx.font='30px Jua, sans-serif';ctx.textAlign='center';ctx.lineWidth=7;ctx.lineJoin='round';ctx.strokeStyle='#22305a';ctx.fillStyle=misP>=.4?'#ff6f61':'#ffd23f';const t=`삑사리 ${Math.round(misP*100)}%`;ctx.strokeText(t,-70,R+8);ctx.fillText(t,-70,R+8)});
     if(!A.bot&&G.sel==='curve'&&!(G.sel==='guide')){const s0=A.s,pw=Math.pow(A.p,PCURVE)*MAXV;let x=s0.x,y=s0.y,vx=Math.cos(A.a)*pw,vy=Math.sin(A.a)*pw,w=(G.curveDir||1)*CURVE_W;ctx.save();ctx.strokeStyle='rgba(47,125,225,.85)';ctx.lineWidth=5;ctx.setLineDash([3,10]);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);
       for(let i=0;i<220;i++){const an=w*DT*4,c=Math.cos(an),sn=Math.sin(an),ox=vx;vx=ox*c-vy*sn;vy=ox*sn+vy*c;w*=(1-.6*DT*4);x+=vx*DT*4;y+=vy*DT*4;const sp=Math.hypot(vx,vy),n=sp-(DECEL+LIN*sp)*DT*4;if(n<20)break;vx*=n/sp;vy*=n/sp;ctx.lineTo(x,y)}ctx.stroke();ctx.restore()}
     const s=A.s,cx=Math.cos(A.a+jit),cy=Math.sin(A.a+jit),boost=(A.bot?A.it:G.sel)==='boost';
