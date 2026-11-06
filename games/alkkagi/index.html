@@ -868,13 +868,17 @@ async function enterApp(){
   if(tea){APP.role=tea.role;APP.teaCls=tea.cls||null;openAdmin();return}
   openLogin();
 }
+const DEMO_ISL={d0:{n:'하늘이',i:'별빛',sh:'#4cc26a',ha:'#7a3e1d',h:'hat_crown',lk:'1.2.1.2.1.0.2.0.3.1'},d2:{n:'서아',i:'무지개',sh:'#ff6f9a',ha:'#2a2522',h:'hat_bunny',lk:'0.3.0.3.1.0.2.0.2.0'},
+  d3:{n:'지호',i:'솔솔',sh:'#2f7de1',ha:'#111111',h:'hat_cap',lk:'2.5.4.0.0.1.1.2.1.0'},d6:{n:'서준',i:'바람',sh:'#6d2aa8',ha:'#c44b8a',h:'hat_wizard',lk:'3.4.3.1.0.2.3.1.0.1'},d7:{n:'예린',i:'꽃잎',sh:'#ff8a3d',ha:'#5b4636',h:'hat_flower',lk:'2.2.0.3.1.0.2.0.2.0'}};
+const DEMO_SAMPLE={n:'체험이',i:'예시',sh:'#3d7cc9',ha:'#f2c14e',h:'hat_straw',lk:'1.0.1.2.1.0.1.0.0.0'};
 async function seedDemo(){
-  const db=APP.db,m=await db.get('meta');if(m&&m.adminHash)return;
+  const db=APP.db,m=await db.get('meta');
+  if(m&&m.adminHash){if(!m.demoV){const u={'meta/demoV':2};for(const k in DEMO_ISL)if(await db.get('players/'+k))u[`players/${k}/isl`]=DEMO_ISL[k];await db.update('',u)}return}
   const cls={'5-1':{name:'5학년 1반',tHash:hash('0000')},'5-2':{name:'5학년 2반',tHash:hash('0000')}};
   const S=[['5-1','김하늘',3650,'🦁'],['5-1','이도윤',2950,'🐲'],['5-1','박서아',2450,'🦄'],['5-1','최지호',1750,'🐼'],['5-1','정하린',1240,'🐰'],['5-1','강시우',880,'🐸'],
            ['5-2','윤서준',2120,'🦊'],['5-2','장예린',1620,'🐱'],['5-2','임도현',650,'🐻'],['5-2','한지안',420,'🐧'],['5-2','오태윤',180,'🐢'],['5-2','신유나',0,'🐥']];
-  const players={};S.forEach(([c,n,pt,av],i)=>{players['d'+i]={name:n,cls:c,pin:'1111',av,pt,w:Math.round(pt/45),l:Math.round(pt/90)+2}});
-  await db.update('',{meta:{adminHash:hash('1234'),school:'데모 초등학교',count:7,items:true,extra:true,extraMax:2,scope:'school',at:now()},classes:cls,players});
+  const players={};S.forEach(([c,n,pt,av],i)=>{players['d'+i]={name:n,cls:c,pin:'1111',av,pt,w:Math.round(pt/45),l:Math.round(pt/90)+2};if(DEMO_ISL['d'+i])players['d'+i].isl=DEMO_ISL['d'+i]});
+  await db.update('',{meta:{adminHash:hash('1234'),school:'데모 초등학교',count:7,items:true,extra:true,extraMax:2,scope:'school',demoV:2,at:now()},classes:cls,players});
 }
 
 /* =========================================================
@@ -1027,6 +1031,9 @@ function startStudent(id){
   APP.subs.push(db.on('queue',v=>{LB.queue=v||{};updateQuickBtn();qmTick()}));
   setPresence(false);clearInterval(LB.hb);LB.hb=setInterval(()=>setPresence(G.mode==='online'),20000);
   showLobby();
+  setTimeout(()=>{const isl=readIsland(),p=myP(),k='alk.islAsk.'+id;if(!isl||(p.isl&&cleanIsl(p.isl).lk===isl.lk&&p.isl.h===isl.h&&p.isl.sh===isl.sh&&p.isl.ha===isl.ha)||!$('#modal').hidden)return;if(LS.get(k,'')===JSON.stringify(isl))return;LS.set(k,JSON.stringify(isl));
+    const c=openModal(`<div style="display:flex;justify-content:center">${avHTML({isl},'lg')}</div><h2>과학섬 캐릭터 발견!</h2><p class="muted">${esc(isl.n||'')}${isl.i?' · '+esc(isl.i)+' 섬':''}<br>이 캐릭터를 알까기 프로필로 쓸까요?</p><div class="btns"><button class="btn grass" id="ia-y">프로필로 쓰기</button><button class="btn" id="ia-n">지금은 괜찮아요</button></div>`);
+    c.querySelector('#ia-y').onclick=()=>{APP.db.update('players/'+id,{isl});closeModal();sfx.pop();toast('과학섬 캐릭터를 불러왔어요!')};c.querySelector('#ia-n').onclick=closeModal},900);
 }
 function myP(){return APP.players[APP.me]||{}}
 function setPresence(busy){if(!APP.me||APP.role!=='student')return;const p=myP();const path='online/'+APP.me;APP.db.set(path,{at:now(),busy:!!busy,cls:p.cls||''});APP.db.onDisconnectRemove(path)}
@@ -1039,12 +1046,13 @@ function renderItemBook(){$('#item-book').innerHTML=IKEYS.map(k=>`<div class="it
 $('#lb-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;LB.tab=b.dataset.t;$$('#lb-tabs button').forEach(x=>x.classList.toggle('on',x===b));renderLobby()};
 $('#lb-scope').onclick=e=>{const b=e.target.closest('button');if(!b)return;LB.scope=b.dataset.v;$$('#lb-scope button').forEach(x=>x.classList.toggle('on',x===b));renderLobby()};
 $('#ai-level').onclick=e=>{const b=e.target.closest('button');if(!b)return;$$('#ai-level button').forEach(x=>x.classList.toggle('on',x===b))};
-$('#me-av').onclick=()=>{const isl=readIsland(),p=myP(),cur=p.isl&&cleanIsl(p.isl);
-  const islBox=`<div class="card" style="margin:10px 0 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;text-align:left;background:#eafbef">${isl?avHTML({isl},'lg'):'<span class="av lg">🏝️</span>'}<div><b style="font-family:var(--display);font-size:20px">과학섬 캐릭터</b><br>${isl?`<span class="small muted">${esc(isl.n||'이름 없음')}${isl.i?' · '+esc(isl.i)+' 섬':''}</span><div class="btns" style="margin-top:6px"><button class="btn sm grass" id="isl-use">${cur?'다시 불러오기':'불러오기'}</button>${cur?'<button class="btn sm" id="isl-off">빼기</button>':''}</div>`:`<span class="small muted">이 기기에 과학섬 기록이 없어요. 과학섬 생활에서 캐릭터를 꾸민 기기로 들어오면 불러올 수 있어요.${location.hostname.includes('hyungame')?'':' (현게임 주소 hyungame.duckdns.org 로 들어와야 해요)'}</span>${cur?'<div class="btns" style="margin-top:6px"><button class="btn sm" id="isl-off">과학섬 캐릭터 빼기</button></div>':''}`}</div></div>`;
+$('#me-av').onclick=()=>openProfile();
+function openProfile(){const real=readIsland(),isl=real||(APP.demo?DEMO_SAMPLE:null),p=myP(),cur=p.isl&&cleanIsl(p.isl);
+  const islBox=`<div class="card" style="margin:10px 0 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;text-align:left;background:#eafbef">${isl?avHTML({isl},'lg'):'<span class="av lg">🏝️</span>'}<div><b style="font-family:var(--display);font-size:20px">과학섬 캐릭터</b><br>${isl?`<span class="small muted">${esc(isl.n||'이름 없음')}${isl.i?' · '+esc(isl.i)+' 섬':''}${real?'':' <b>(데모용 예시 캐릭터)</b>'}</span><div class="btns" style="margin-top:6px"><button class="btn sm grass" id="isl-use">${cur?'다시 불러오기':'불러오기'}</button>${cur?'<button class="btn sm" id="isl-off">빼기</button>':''}</div>`:`<span class="small muted">이 기기·이 브라우저에 과학섬 기록이 없어요. 과학섬 생활에서 캐릭터를 꾸민 기기로 들어오면 불러올 수 있어요.${location.hostname.includes('hyungame')?' <a href="/island/" target="_blank" rel="noopener">과학섬 하러 가기</a>':' (현게임 주소 hyungame.duckdns.org 로 들어와야 해요)'}</span>${cur?'<div class="btns" style="margin-top:6px"><button class="btn sm" id="isl-off">과학섬 캐릭터 빼기</button></div>':''}`}</div></div>`;
   const c0=openModal(`<h2>나의 프로필</h2>${islBox}<div class="eyebrow" style="text-align:left">또는 동물 친구 고르기</div><div class="roster" style="grid-template-columns:repeat(6,1fr)">${AVATARS.map(a=>`<button data-a="${a}" style="font-size:30px;padding:8px">${a}</button>`).join('')}</div><div class="btns"><button class="btn" id="av-x">닫기</button></div>`);
-  if(c0.querySelector('#isl-use'))c0.querySelector('#isl-use').onclick=()=>{APP.db.update('players/'+APP.me,{isl:readIsland()});closeModal();sfx.pop();toast('과학섬 캐릭터를 불러왔어요!')};
+  if(c0.querySelector('#isl-use'))c0.querySelector('#isl-use').onclick=()=>{APP.db.update('players/'+APP.me,{isl});closeModal();sfx.pop();toast('과학섬 캐릭터를 불러왔어요!')};
   if(c0.querySelector('#isl-off'))c0.querySelector('#isl-off').onclick=()=>{APP.db.update('players/'+APP.me,{isl:null});closeModal();toast('동물 친구로 바꿨어요')};
-  c0.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{APP.db.update('players/'+APP.me,{av:b.dataset.a,isl:null});closeModal()});c0.querySelector('#av-x').onclick=closeModal};
+  c0.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{APP.db.update('players/'+APP.me,{av:b.dataset.a,isl:null});closeModal()});c0.querySelector('#av-x').onclick=closeModal}
 $('#me-out').onclick=async()=>{if(await confirmBox('나갈까요?','다음에 다시 들어올 때 비밀번호를 눌러야 해요.','나가기','취소'))logoutStudent()};
 function logoutStudent(){stopQuick();if(APP.me){APP.db.remove('online/'+APP.me)}idStore().set(meKey(),null);clearInterval(LB.hb);APP.me=null;openLogin()}
 function isOnline(id){const o=APP.online[id];return o&&now()-o.at<70000}
