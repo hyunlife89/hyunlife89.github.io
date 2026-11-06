@@ -461,7 +461,8 @@ function dealItems(n){const a=[...IKEYS];for(let i=a.length-1;i>0;i--){const j=M
 /* =========================================================
    physics
    ========================================================= */
-const W=1000,M=70,R=23,MAXV=2600,DECEL=520,LIN=0.9,E=0.9,DT=1/240,PULL=240,VIEW=W+2*M;
+/* 세기: 시뮬레이션으로 정함 — 돌 7개 한 판 약 3분(샷 24번 안팎), 내 돌이 같이 떨어지는 비율 3% */
+const W=1000,M=70,R=23,MAXV=1900,PCURVE=1.4,DECEL=520,LIN=0.9,E=0.9,DT=1/240,PULL=240,VIEW=W+2*M;
 const LAYOUT={5:[[3,6,9,12,15]],7:[[3,5,7,9,11,13,15]],9:[[3,6,9,12,15],[5,7,11,13]]};
 function setupStones(n){const out=[];let id=0;
   (LAYOUT[n]||LAYOUT[7]).forEach((row,ri)=>row.forEach(c=>{
@@ -490,7 +491,7 @@ function obsStep(list,onObs){
     for(const o of OBS){
       if(o.t==='rock'||o.t==='bump'){const dx=s.x-o.x,dy=s.y-o.y,d2=dx*dx+dy*dy,rr=o.r+R;
         if(d2<rr*rr&&d2>1e-9){const d=Math.sqrt(d2),nx=dx/d,ny=dy/d;s.x=o.x+nx*rr;s.y=o.y+ny*rr;const vn=s.vx*nx+s.vy*ny;
-          if(vn<0){const e=o.t==='bump'?1:.75;s.vx-=(1+e)*vn*nx;s.vy-=(1+e)*vn*ny;if(o.t==='bump'){s.vx+=nx*420;s.vy+=ny*420}if(onObs)onObs(o,s,-vn)}}}
+          if(vn<0){const e=o.t==='bump'?1:.75;s.vx-=(1+e)*vn*nx;s.vy-=(1+e)*vn*ny;if(o.t==='bump'){s.vx+=nx*310;s.vy+=ny*310}if(onObs)onObs(o,s,-vn)}}}
       else if(o.t==='hole'){const dx=s.x-o.x,dy=s.y-o.y;if(dx*dx+dy*dy<o.r*o.r){s.out=true;s.outT=0;s.hole=o;s.vx=0;s.vy=0;if(onObs)onObs(o,s,0);break}}}}}
 function drawMapStatic(x,obs){
   let sd=5;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
@@ -539,7 +540,7 @@ function step(list,fx,onHit,onWall,onObs){
         if(fx&&fx.bomb>=0&&!fx.boom&&(a.id===fx.bomb||b.id===fx.bomb)){
           const bx=(a.x+b.x)/2,by=(a.y+b.y)/2;fx.boom={x:bx,y:by};
           for(const s of list){if(s.out)continue;const ex=s.x-bx,ey=s.y-by,ed=Math.sqrt(ex*ex+ey*ey);
-            if(ed<190&&ed>.001){const k=1500*(1-ed/190);s.vx+=ex/ed*k;s.vy+=ey/ed*k}}
+            if(ed<190&&ed>.001){const k=1100*(1-ed/190);s.vx+=ex/ed*k;s.vy+=ey/ed*k}}
         }}}}
   if(OBS.length)obsStep(list,onObs);
   for(const s of list){if(s.out)continue;
@@ -1114,7 +1115,7 @@ function itemStartFx(it,s){
   else if(it==='guide'){tone(1200,.15,.12,'sine',1800)}}
 function myShoot(s,a,p){
   ensureAudio();const item=G.sel&&G.inv[G.turn].includes(G.sel)?G.sel:null;
-  const cap=item==='boost'?1.5:1;const shot={seq:G.seq+1,by:G.turn,id:s.id,vx:Math.cos(a)*p*MAXV*cap,vy:Math.sin(a)*p*MAXV*cap,item};
+  const cap=item==='boost'?1.5:1;const shot={seq:G.seq+1,by:G.turn,id:s.id,vx:Math.cos(a)*Math.pow(p,PCURVE)*MAXV*cap,vy:Math.sin(a)*Math.pow(p,PCURVE)*MAXV*cap,item};
   if(!item)delete shot.item;
   G.sel=null;startShot(shot);
   if(G.mode==='online')APP.db.update('rooms/'+G.rid,{shot,aim:null});
@@ -1304,7 +1305,7 @@ function frame(t){
   G.shake*=.86;if(G.shake<.3)G.shake=0;G.flash=Math.max(0,G.flash-dt*2.5);G.fenceFlash=Math.max(0,G.fenceFlash-dt*3);
   const iceOn=(G.fx&&G.fx.fric<1&&(G.phase==='moving'||G.phase==='wait'))||(canAct()&&G.sel==='ice');
   G.iceA+=((iceOn?1:0)-G.iceA)*Math.min(1,dt*5);
-  if(G.guideDirty&&G.aim&&G.sel==='guide'){G.guideDirty=false;const a=G.aim,tr=[];const r=simulate(G.stones,mkFx(null,a.s,G.shield),a.s.id,Math.cos(a.a)*a.p*MAXV,Math.sin(a.a)*a.p*MAXV,tr);G.guide=tr;G.guideOut=r.filter(x=>x.out).map(x=>x.id)}
+  if(G.guideDirty&&G.aim&&G.sel==='guide'){G.guideDirty=false;const a=G.aim,tr=[];const r=simulate(G.stones,mkFx(null,a.s,G.shield),a.s.id,Math.cos(a.a)*Math.pow(a.p,PCURVE)*MAXV,Math.sin(a.a)*Math.pow(a.p,PCURVE)*MAXV,tr);G.guide=tr;G.guideOut=r.filter(x=>x.out).map(x=>x.id)}
   if(!$('#s-game').hidden)render();
   requestAnimationFrame(frame)}
 function lookOf(s){
