@@ -99,6 +99,36 @@ body.connected .pc .mine{display:block}
 .qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
 
+.under .bts{flex:none;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.mnb{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:900;font-size:13px;padding:4px 8px;cursor:pointer;white-space:nowrap}
+.mnb:hover,.qrb:hover{transform:translateY(-1px)}
+
+/* 게임별 설명서 창 */
+#man{max-width:min(680px,calc(100vw - 32px));text-align:left;padding:0;max-height:min(88vh,900px);overflow:auto}
+#man .mh{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;padding:22px 22px 18px;border-bottom:1.5px solid var(--ink);background:var(--soft)}
+#man .mh img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1.5px solid var(--ink);display:block;background:#fff}
+#man .mh .k{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:700}
+#man h3{font-size:26px;text-align:left;margin:2px 0 8px}
+#man .tags{display:flex;flex-wrap:wrap;gap:5px}
+#man .tags span{font-size:12px;font-weight:700;border:1.5px solid var(--ink);padding:1px 8px;border-radius:999px;background:var(--paper)}
+#man .tags span.m{background:#14171f;color:#fff;border-color:#14171f}
+#man .mb{padding:18px 22px 6px;font-size:15px;line-height:1.65}
+#man .intro{margin:0 0 16px;font-size:16px;color:var(--ink);font-weight:500}
+#man h4{font-size:15px;font-weight:900;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+#man h4::before{content:"";width:10px;height:10px;background:var(--blue)}
+#man ol.st{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:10px}
+#man ol.st li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:10px}
+#man ol.st li::before{content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900;font-size:14px}
+#man ol.st b.t{display:block;font-weight:900;font-size:15px}
+#man .rule{margin:14px 0 0;background:color-mix(in srgb,var(--yellow) 22%,var(--paper));border-left:5px solid var(--yellow);padding:10px 14px}
+#man ul{margin:0;padding-left:20px}
+#man ul li{margin:4px 0}
+#man .tip{border-left:5px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:10px 14px}
+#man .tip ul{padding-left:18px}
+#man .mf{position:sticky;bottom:0;background:var(--paper);border-top:1.5px solid var(--line);padding:14px 22px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#man .mf a.more{margin-right:auto;align-self:center;font-size:14px;font-weight:700;color:var(--muted)}
+@media (max-width:560px){#man .mh{grid-template-columns:96px 1fr;gap:12px;padding:16px}#man h3{font-size:21px}#man .mf .btn{padding:7px 12px}#man .mf a.more{flex-basis:100%}#man .mb{padding:16px 16px 4px}#man .mf{padding:12px 16px}}
+
 /* 선생님 */
 .teach{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:34px;align-items:start;padding-bottom:30px}
 .teach .lead{font-size:17px;margin:0 0 16px}
@@ -185,6 +215,23 @@ body.connected .pc .mine{display:block}
 .share .qr img,.share .qr canvas{width:116px!important;height:116px!important}
 .share .u{font-weight:700;font-size:13px;word-break:break-all;color:var(--blue);margin:4px 0 8px}
 
+/* 선생님 설명서 */
+.manual{padding:44px 0 30px}
+.manual .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px;align-items:center}
+.manual .num{font-size:13px;color:var(--muted);letter-spacing:.1em}
+.manual h2{font-weight:900;font-size:clamp(28px,4.2vw,40px);letter-spacing:-.04em;margin:4px 0 16px;line-height:1.2}
+.manual h2 em{font-style:normal;color:var(--blue)}
+.mpic{display:block;border:1.5px solid var(--ink);box-shadow:10px 10px 0 var(--ink);background:#fff;transform:rotate(-1.2deg);transition:transform .25s}
+.mpic:hover{transform:rotate(0) translateY(-4px)}
+.mpic img{display:block;width:100%;height:auto}
+.msteps{list-style:none;margin:0 0 18px;padding:0;counter-reset:m;display:grid;gap:10px}
+.msteps li{counter-increment:m;display:grid;grid-template-columns:34px 1fr;column-gap:12px;align-items:center}
+.msteps li::before{content:counter(m);grid-row:span 2;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900}
+.msteps b{font-weight:900;font-size:17px}
+.msteps i{font-style:normal;background:var(--yellow);color:#14171f;border:1.5px solid var(--ink);padding:0 6px;font-size:14px}
+.msteps span{font-size:14px;color:var(--muted)}
+@media (max-width:860px){.manual .wrap{grid-template-columns:1fr}.mpic{max-width:520px}}
+
 /* 안내 띠 */
 .band{background:var(--night);color:#fff;margin-top:40px}
 .band .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:40px 16px}
@@ -226,7 +273,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 <header class="top"><div class="wrap">
   <a class="logo" href="./">현쌤 과학 오락실<small>초등 과학 게임함</small></a>
   <nav class="nav">
-    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a>
+    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a>
     <a class="pill" id="pill" href="#teacher" title="우리 반 문제가 연결되어 있어요"></a>
   </nav>
 </div></header>
@@ -271,6 +318,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
         <ul class="facts">
           <li>문제와 학생 기록은 선생님 구글 드라이브에만 저장돼요. 오락실 서버에는 남지 않아요.</li>
           <li>과학이 아니어도 돼요. 객관식(보기 2~4개)과 OX 문제면 어느 과목이든 들어가요.</li>
+          <li>엑셀 파일도 돼요. 각 게임의 선생님 설정에 [엑셀 파일 올리기]와 [엑셀로 받기]가 있어요.</li>
           <li>시트를 고치면 학생이 게임을 다시 열 때 바로 바뀌어요.</li>
           <li>연결하면 이 화면의 QR·링크에 우리 반 코드가 붙어요. 학생은 한 번만 들어오면 기기가 기억해요.</li>
         </ul>
@@ -281,6 +329,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
             <li><b>과학 포트리스</b> — 설정의 '우리 반 문제'에 자동으로 더해져요 ('우리 반 문제만 내기' 가능)</li>
             <li><b>밤의 과학실 탈출</b> — 포트리스와 같아요</li>
             <li><b>등대섬 수비대</b> — 첫 화면 문제 범위에 '우리 반' 탭이 생겨요</li>
+            <li><b>과학섬 생활</b> — 문제 범위에 '우리 반' 탭이 생겨요 (게시판 설정에서 엑셀로도 넣기)</li>
             <li class="no">카누·찌릿·룰렛 — 교과서 이야기에 맞춘 게임이라 기본 문제만 써요</li>
           </ul>
         </div>
@@ -359,6 +408,12 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
           </div>
         </div>
 
+        <div class="adv" style="margin-top:22px">
+          <b style="font-size:16px">구글 없이 엑셀 파일로 넣기</b> <small style="color:var(--muted)">(이 컴퓨터에서만)</small>
+          <p class="say" style="margin-top:6px">엑셀 파일을 올리거나 엑셀 칸을 복사해 넣으면, 이 컴퓨터의 엑스탱크·포트리스·탈출·등대섬·과학섬에 나와요. 엑스탱크 선생님 방에서는 학생 기기로도 함께 보내져요.</p>
+          <div class="btns"><button class="btn" type="button" id="xlOpen">엑셀로 우리 반 문제 넣기</button></div>
+        </div>
+
         <details class="adv" id="adv">
           <summary>학생 점수까지 시트에 남기고 싶다면 <small>(선택 · 10분)</small></summary>
           <p class="say">누가 어떤 문제를 맞혔는지 시트에 쌓여요. 1번 시트에서 이어서 해요.</p>
@@ -382,6 +437,19 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <div><b>함께 하기</b><span>협동·대전 게임은 방 번호로 친구들과 같이 해요.</span></div>
   <div><b>우리 반 문제</b><span>선생님 구글 시트를 연결하면 그 반 문제로 게임해요.</span></div>
 </div></section>
+<section class="manual" id="manual"><div class="wrap">
+  <a class="mpic" href="guide/#s3"><img src="guide/img/3-qr.jpg" alt="QR 창을 TV에 띄운 모습" loading="lazy"></a>
+  <div>
+    <div class="num">03 — 선생님 설명서</div>
+    <h2>처음이세요? <em>사진 보고 따라 하기</em></h2>
+    <ol class="msteps">
+      <li><b>오락실 열기</b><span>교실 컴퓨터에서 이 주소를 열어요</span></li>
+      <li><b>노란 <i>QR</i> 누르기</b><span>할 게임 카드 아래 버튼 → TV에 띄우기</span></li>
+      <li><b>학생이 찍기</b><span>카메라로 찍고 이름 쓰면 시작</span></li>
+    </ol>
+    <div class="btns"><a class="btn main" href="guide/">선생님 설명서 보기 →</a><a class="btn" href="guide/#check">수업 전 확인표</a></div>
+  </div>
+</div></section>
 <footer>© 2026 현쌤 과학 오락실 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
 
 <dialog id="dlg" aria-labelledby="dlgT">
@@ -394,6 +462,11 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
     <a class="btn main" id="dlgGo" href="#">열기</a>
     <button class="btn" id="close" type="button">닫기</button>
   </div>
+</dialog>
+<dialog id="man" aria-labelledby="manT">
+  <div class="mh"><img id="manImg" alt=""><div><div class="k">선생님 설명서</div><h3 id="manT"></h3><div class="tags" id="manTags"></div></div></div>
+  <div class="mb" id="manB"></div>
+  <div class="mf"><a class="more" href="guide/">오락실 전체 사용법 →</a><button class="btn" type="button" id="manQr">QR 띄우기</button><a class="btn main" id="manGo" href="#">게임 열기</a><button class="btn" type="button" id="manClose">닫기</button></div>
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -411,9 +484,11 @@ const TEMPLATE_COPY_URL='';
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
  {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
+ {t:"알까기 아레나",img:"thumbs/alkkagi.jpg",url:"games/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"눈 달린 바둑돌로 친구 돌을 퐁! 아이템 8종·맵 4종, 이기면 롤 티어가 올라가요. 반·전교 리그."},
  {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
  {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
  {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
+ {t:"과학섬 생활",img:"thumbs/island.jpg",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
  {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
@@ -444,11 +519,155 @@ function render(){
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
-    <div class="under"><p class="desc">${esc(x.d)}</p><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts"><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
 }
 $("q").addEventListener("input",render);
 $("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";render();$("all").scrollIntoView()});
-$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url))}});
+$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m)openMan(GAMES[+m.dataset.man])});
+
+/* ── 게임별 선생님 설명서: 카드의 [설명서] 버튼으로 열려요. 게임 이름(t)으로 연결 ── */
+const MANUALS={
+"과학 포트리스":{
+ who:"방 하나에 2~8명",dev:"크롬북·태블릿·컴퓨터",
+ intro:"각도와 힘을 맞춰 쏘는 턴제 탱크 대전이에요. 내 차례마다 과학 문제가 나오고, 맞히면 강력탄과 필살기 게이지가 열려요.",
+ steps:[
+  ["모둠 정하기","2~8명씩 모둠을 만들고, 모둠마다 방장 한 명을 정해요."],
+  ["방 만들기 (방장)","QR로 들어와 <b>[함께 하기]</b> → 이름 쓰기 → <b>[방 만들기]</b>. 화면에 나온 <b>4자리 방 번호</b>를 모둠 친구들에게 알려 줘요."],
+  ["들어가기 (친구들)","<b>[함께 하기]</b> → 이름 → <b>받은 방 번호로 들어가기</b>에 번호를 넣어요. 방장 화면의 <b>이 방 QR 코드</b>를 찍어도 돼요."],
+  ["탱크 고르고 시작","대기실에서 탱크를 고르고 모두 <b>준비 완료</b> → 방장(1P)이 <b>[게임 시작]</b>. 빈 자리는 컴퓨터가 채워요."]
+ ],
+ rule:"정답이면 2번 무기(강력탄)를 쓸 수 있고 SS 게이지 +1, 이동 연료 +40. 오답이면 그 턴은 1번 무기만 쏴요.",
+ teacher:["첫 화면 아래 <b>선생님 설정</b> → 비밀번호","<b>학생이 학년·단원을 못 바꾸게 고정</b>을 켜면 선생님이 고른 범위만 나와요","<b>우리 반 문제 넣기</b> · <b>우리 반 문제만 내기</b> (엑셀 파일로도 넣어요)"],
+ keys:"화면 버튼으로 각도·이동·발사를 해요. 자세한 조작은 첫 화면 <b>조작 방법</b>에 있어요.",
+ tips:["게임은 <b>방장 기기</b>에서 돌아가요. 방장이 화면(탭)을 내리면 모두 멈춰요.","방장이 나가면 남은 사람끼리 대기실로 돌아가고 다음 사람이 방장이 돼요.","기기가 부족하면 <b>[START]</b>로 한 기기에서 옆 친구나 컴퓨터와 대전할 수 있어요."]
+},
+"알까기 아레나":{
+ who:"학생끼리 1:1 (반·전교 리그)",dev:"크롬북·태블릿·컴퓨터",
+ intro:"바둑돌을 당겼다 놓아 친구 돌을 판 밖으로 쳐내는 알까기 대전이에요. 이기면 아이언부터 챌린저까지 롤 티어가 올라가요. 강철돌(질량)·빙판(마찰력) 같은 아이템과 바위섬·모래와 얼음 같은 맵이 있어요.",
+ steps:[
+  ["처음 한 번: 선생님 Firebase 연결","알까기 첫 화면 <b>[선생님: 처음 설정하기]</b>를 따라 선생님 구글 계정의 무료 Firebase를 만들어 연결해요 (10분쯤). 학생 기록은 선생님 Firebase에만 저장돼요."],
+  ["반·학생 만들기","관리 화면 <b>반·학생</b>에서 반을 만들고 이름을 붙여 넣으면 학생마다 PIN 4자리가 생겨요. <b>PIN 카드 보기</b>로 알려 주세요."],
+  ["학생 들어오기","관리 화면의 <b>반 접속 링크·QR</b>로 들어와 내 이름을 누르고 PIN을 눌러요. 한 번 들어오면 기기가 기억해요."],
+  ["대결하기","<b>빠른 대전</b>을 누르면 비슷한 티어 친구와 자동으로 붙고, <b>친구에게 도전</b>으로 직접 고를 수도 있어요."]
+ ],
+ rule:"상대 돌을 떨어뜨리면 한 번 더 (연속 2번까지, 첫 공격은 제외). 돌이 3개 이상 적으면 역전 아이템을 받아요. 컴퓨터·옆 친구와 하는 연습 경기는 티어가 바뀌지 않아요.",
+ teacher:["관리 화면 <b>설정</b>: 돌 개수 · 아이템 켜기/끄기 · 한 번 더 횟수 · <b>리그 맵</b> · 도전 범위(우리 반/전교)","<b>경기 관전</b>: 지금 하는 경기를 TV에 띄워 함께 봐요","<b>새 시즌</b>: 티어와 승패를 처음으로 되돌려요 (명단·PIN은 그대로)","반마다 담임 비밀번호를 걸면 담임 선생님은 자기 반만 관리해요"],
+ keys:"내 돌을 누른 채 뒤로 당겼다 놓으면 날아가요. 아이템은 칸을 눌러 고른 뒤 쏘면 써져요.",
+ tips:["설정 없이 먼저 보고 싶으면 첫 화면 <b>[설정 없이 데모로 체험하기]</b> (반 코드 5-1, PIN 1111).","학생 이름은 실명 대신 별명을 써도 돼요.","소리가 나요. 교실에서는 🔊 버튼으로 끌 수 있어요."]
+},
+"엑스탱크 스쿨":{
+ who:"선생님 방 최대 40명 · 학생 방 최대 8명",dev:"크롬북·웨일북·태블릿·휴대폰(터치)",
+ intro:"교실 책상 위, 과학실, 운동장을 누비는 3D 미니어처 탱크 대전이에요. 물음표 상자와 도전 문제를 맞히면 특수 무기와 마나를 얻어요.",
+ steps:[
+  ["선생님 방 열기","교실 컴퓨터에서 엑스탱크 → <b>[선생님]</b> → 비밀번호. <b>방 번호와 QR</b>이 크게 나와요."],
+  ["학생 들어오기","학생은 <b>[교실 대전 참가]</b> → 방 번호와 이름 → 탱크 고르기 → 대기실에서 기다려요. 선생님 방 QR을 찍으면 번호가 자동으로 들어가요."],
+  ["설정하고 시작","맵 · <b>대전 방식</b>(개인전/팀전/깃발 뺏기/영역 대전) · 목표 처치 수 · 시간 · 문제 단원을 고르고 <b>[게임 시작]</b>."],
+  ["게임 중","선생님 화면은 맵 전체를 비추고, 오른쪽에 학생별 처치 수와 문제 정답 수가 나와요."]
+ ],
+ rule:"40명 가까이 할 때는 큰 맵(대운동장·학교 정원·도서관)을 고르세요. 팀 모드에서는 학생이 대기실에서 빨강/파랑을 골라요.",
+ teacher:["<b>방 하나 더 열기</b> → 새 탭에 방이 하나 더 (8명씩 나눠 열면 학생 기기가 가벼워져요)","<b>모든 방 한눈에 보기</b> → 연 방들을 CCTV처럼 한 화면에서 보고 시작·끝내기","<b>학생끼리 방 만들기 허용</b> 켜고 끄기 · <b>학생 배경음악 모두 끄기</b>"],
+ keys:"WASD 이동 · 마우스 조준 · 클릭/Space 발사 · 우클릭 줌 · Shift 어빌리티 · Q/E 특수 무기 · T 도전 문제 · Tab 점수판. 휴대폰·태블릿은 터치 버튼이 자동으로 나와요.",
+ tips:["수업 중에는 <b>선생님 화면 창을 닫지 마세요</b>. 다른 창을 봐도 괜찮아요.","실수로 새로 고쳤다면 [선생님] → 비밀번호에 <b>같은 방 번호</b>로 다시 열면 점수가 이어져요.","혼자 연습도 있어요. 학생이 맵과 대전 방식을 직접 골라 봇과 싸워요."]
+},
+"등대섬 수비대":{
+ who:"혼자 또는 2~4명 협동",dev:"크롬북·컴퓨터 (마우스가 편해요)",
+ intro:"바다에서 올라오는 괴물을 막는 3D 해안 방어 게임이에요. 문제를 맞히면 포탑이 강해지고, 바다를 하나씩 깨면 다음 바다가 열려요.",
+ steps:[
+  ["문제 범위 고르기","첫 화면에서 학년·단원을 골라요. 우리 반 문제를 연결했다면 <b>'우리 반'</b> 탭도 있어요."],
+  ["혼자 하기","바로 출격하면 돼요. 바다를 깰수록 별과 다음 지역이 열려요."],
+  ["협동 (2~4명)","한 명이 <b>방을 만들면</b> 방 코드가 나와요. 친구들은 그 코드로 들어와 함께 지켜요. 협동에서는 <b>방장이 문제 범위를 골라요.</b>"],
+  ["업그레이드","문제를 맞히고 모은 것으로 탱크·무기·포탑을 강하게 만들어요."]
+ ],
+ rule:"보스마다 특수 기술이 있어요. 협동일 때는 함께 집중 사격해야 막을 수 있는 공격도 있어요.",
+ teacher:["설정을 <b>선생님 비밀번호</b>로 잠그면 학생은 선생님이 정한 난이도·단원으로만 해요","우리 반 문제: 오락실 [선생님]에서 시트를 연결하면 '우리 반' 탭이 생겨요"],
+ keys:"마우스로 조준 · 클릭 발사 · 오른쪽 버튼을 누르고 있으면 줌.",
+ tips:["협동은 <b>방장 기기</b>가 게임을 계산해요. 방장은 성능 좋은 기기로 정해 주세요.","처음 쓰는 반은 혼자 하기로 조작을 익힌 뒤 협동으로 넘어가면 좋아요."]
+},
+"밤의 과학실 탈출":{
+ who:"혼자 또는 2~4명 협동",dev:"크롬북·태블릿·컴퓨터",
+ intro:"불 꺼진 학교 과학실에서 실험 노트 조각을 모으고, 과학 문제로 봉인 문을 열어 탈출하는 게임이에요. 공포 요소가 있어요.",
+ steps:[
+  ["고르기","학년·단원(여러 개 가능), 괴물 속도(느림·보통·빠름), 공포 단계(<b>순한맛·매운맛</b>)를 골라요."],
+  ["혼자 하기","<b>[시작하기]</b>를 누르면 바로 시작해요."],
+  ["협동 (2~4명)","<b>[함께 하기]</b> → 이름 → 한 명이 <b>[방 만들기]</b> → 방 번호를 친구에게. 친구는 번호를 넣고 <b>[들어가기]</b>. 방장이 <b>[시작]</b> → 손전등 들 사람 정하고 <b>출발</b>."],
+  ["탈출 방법","가구를 살피면 문제 쪽지가 나와요. 근처 가구의 ①~④ 중 <b>정답 번호 가구</b>를 열면 노트 조각! 4조각을 모으면 사이렌이 울려요. 봉인 문까지 달려요."]
+ ],
+ rule:"틀린 가구를 열면 쾅 소리에 괴물이 몰려와요. 붙잡혀도 '마지막 기회' 문제를 빨리 맞히면 빠져나와요. 사람이 많을수록 괴물과 조각이 늘어나요.",
+ teacher:["첫 화면 <b>선생님 설정</b> → 비밀번호","<b>학생이 학년·단원을 못 바꾸게 고정</b> · 화면 시점(위에서 내려다보기/어깨 너머)","<b>우리 반 문제</b> · <b>우리 반 문제만 내기</b> · 비밀번호 바꾸기"],
+ keys:"화면의 <b>조작법</b> 버튼에 나와요. 숨기·살피기·아이템은 화면 아래 버튼으로도 돼요.",
+ tips:["겁이 많은 학생이나 저학년은 <b>순한맛</b>으로 해 주세요.","협동은 <b>방장 기기</b>에서 돌아가요. 방장이 나가면 그 방은 끝나요."]
+},
+"과학섬 생활":{
+ who:"혼자 · 친구 섬에 놀러 가기",dev:"크롬북·태블릿·컴퓨터",
+ intro:"작은 섬에서 낚시·곤충 잡기·나무 베기·요리를 하는 힐링 게임이에요. 무언가를 얻을 때마다 2학기 과학 문제가 나오고, 맞힌 만큼 섬이 자라요.",
+ steps:[
+  ["처음 시작","이름과 섬 이름을 쓰고 캐릭터(얼굴·머리·옷)를 꾸민 뒤 <b>섬으로 가기</b>. 진행은 <b>그 기기에 저장</b>돼요."],
+  ["섬 문 열기 (섬 주인)","선착장에서 <b>섬 문 열기 (친구 초대)</b> → <b>4글자 코드</b>가 나와요. 손님에게 낼 <b>환영 퀴즈 3문제</b>도 골라요."],
+  ["놀러 가기 (손님)","선착장에서 <b>친구 섬에 놀러 가기</b> → 친구 화면에 뜬 코드 4글자를 넣어요."],
+  ["기기를 바꿀 때","원래 기기의 <b>섬 게시판 → 이어하기 QR 만들기</b> → 새 기기 첫 화면 <b>다른 기기에서 이어하기</b>. 코드는 한 번만 쓸 수 있어요."]
+ ],
+ rule:"섬 주인의 기기가 방 역할을 해요. 선생님 컴퓨터는 필요 없어요.",
+ teacher:["<b>섬 게시판</b> → <b>선생님 잠금</b>: 비밀번호로 문제 범위(학년·단원)를 고정해요","섬 게시판 아래 <b>엑셀로 우리 반 문제 넣기</b> → 문제 범위의 '우리 반' 탭"],
+ keys:"방향키·WASD 걷기 · 땅을 눌러 이동 · Space 행동 · 휠 확대 · B 가방 · C 만들기 · M 도감 · N 지도.",
+ tips:["공용 기기라면 <b>학생마다 같은 기기</b>를 쓰게 해 주세요. 섬이 그 기기에 저장돼요.","손님이 놀러 와 있는 동안 섬 주인은 게임 화면을 켜 두세요."]
+},
+"별빛 카누 항해":{
+ who:"혼자 (학생마다 각자)",dev:"크롬북·태블릿·컴퓨터",
+ intro:"3학년 2학기 '지구와 바다'(교과서 42~57쪽) 복습 게임이에요. 카누를 몰아 정답 부표로 가면서 일곱 섬의 빌런을 물리쳐요.",
+ steps:[
+  ["시작","QR로 들어와 이름을 쓰고 출발해요."],
+  ["부표로 답하기","문제가 나오면 <b>정답 부표</b> 쪽으로 카누를 움직여요. OX 문제는 맞으면 O, 틀리면 X 부표로!"],
+  ["섬 깨기","하트 3개를 지키며 섬마다 빌런을 물리치고 다음 섬으로 가요."]
+ ],
+ rule:"틀리면 해설이 나와요. 점수는 그 기기의 최고 기록에 남아요.",
+ teacher:["기본 문제만 써요 (우리 반 문제는 안 들어가요)"],
+ keys:"키보드 ← → (또는 A, D) · 태블릿은 화면을 누른 채 좌우로.",
+ tips:["단원 마무리 시간, 일찍 끝난 학생 활동으로 좋아요.","소리가 나요. 교실에서는 이어폰이나 🔊 버튼으로 음악을 꺼 주세요."]
+},
+"찌릿 마을의 불빛":{
+ who:"혼자 (학생마다 각자)",dev:"크롬북·태블릿·컴퓨터",
+ intro:"6학년 2학기 '전기의 이용' 복습 롤플레잉 게임이에요. 단선마왕이 끊어 버린 마을의 전기를, 전기의 원리를 배워 다시 밝혀요.",
+ steps:[
+  ["시작","용사 이름을 쓰고 <b>새로 시작</b>. 다음 시간에는 <b>이어하기</b>."],
+  ["마을 사람과 이야기","말을 걸면 전기 원리를 알려 주고 문제를 내요. 맞히며 이야기가 진행돼요."],
+  ["모험","괴물과 싸우다 다치면 마을 여관에서 쉬어 가요."]
+ ],
+ rule:"진행 상황은 <b>그 기기에 자동 저장</b>돼요.",
+ teacher:["기본 문제만 써요 (교과서 이야기에 맞춘 문제)"],
+ keys:"방향키 이동 · Space/Enter 말 걸기·결정 · Esc 메뉴·취소. 화면의 A·B 버튼으로도 돼요.",
+ tips:["여러 차시에 나눠 하기 좋아요. 학생마다 <b>같은 기기</b>를 쓰게 해 주세요."]
+},
+"기상요소 룰렛":{
+ who:"반 전체 (TV에 띄워서)",dev:"선생님 컴퓨터 + TV",
+ intro:"5학년 2학기 '날씨와 우리 생활' 수업 도구예요. 기온·바람·강수량·습도·구름량을 룰렛으로 정하고, 어떤 날씨일지 예상한 뒤 확인해요.",
+ steps:[
+  ["돌리기","TV에 띄우고 <b>다섯 개 모두 돌리기</b> (하나씩 돌려도 돼요)."],
+  ["예상하기","정해진 수치를 보고 학생들이 어떤 날씨일지 예상해서 말하거나 적어요."],
+  ["확인하기","<b>날씨 확인하기</b>로 답을 보고, <b>이름 적고 기록하기</b>로 남겨요."]
+ ],
+ rule:"<b>기록 보기</b>에서 모은 기록을 <b>엑셀로 저장</b>하거나 <b>인쇄</b>할 수 있어요.",
+ teacher:["QR 없이 선생님 컴퓨터에서 바로 열어요"],
+ keys:"마우스 클릭만 하면 돼요.",
+ tips:["모둠별로 돌아가며 돌리고 예상을 발표하게 하면 좋아요."]
+}
+};
+
+let manGame=null;
+function openMan(x){
+  const m=MANUALS[x.t];if(!m)return;manGame=x;
+  $("manT").textContent=x.t;$("manImg").src=x.img;$("manImg").alt=x.t+" 화면";
+  $("manTags").innerHTML=`<span class="m">${esc(x.mode)}</span><span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</span><span>${esc(m.who)}</span><span>${esc(m.dev)}</span>`;
+  $("manB").innerHTML=`<p class="intro">${m.intro}</p>
+   <h4>수업에서 이렇게</h4><ol class="st">${m.steps.map(s=>`<li><div><b class="t">${s[0]}</b>${s[1]}</div></li>`).join("")}</ol>
+   ${m.rule?`<p class="rule">${m.rule}</p>`:""}
+   <h4>선생님 설정</h4><ul>${m.teacher.map(t=>`<li>${t}</li>`).join("")}</ul>
+   <h4>조작</h4><p style="margin:0">${m.keys}</p>
+   <h4>알아 두면 좋아요</h4><div class="tip"><ul>${m.tips.map(t=>`<li>${t}</li>`).join("")}</ul></div>`;
+  $("manGo").href=link(x.url);$("man").showModal();$("man").scrollTop=0;
+}
+$("manClose").onclick=()=>$("man").close();
+$("man").addEventListener("click",e=>{if(e.target===$("man"))$("man").close()});
+$("manQr").onclick=()=>{$("man").close();if(manGame)openQR(manGame.t,link(manGame.url))};
 
 /* ── QR 창 ── */
 function openQR(title,u){
@@ -478,7 +697,7 @@ function paintClass(){
   if(on){
     const n=c?c.count:null;
     $("cbName").textContent=nm+" 문제가 연결돼 있어요";
-    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·탈출·등대섬에서 나와요";
+    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·탈출·등대섬·과학섬에서 나와요";
     $("stuBox").classList.toggle("on",HC.mode()==="B");
     $("nowT").textContent="이 기기: "+nm+" · "+WAY_NAME[HC.mode()];
     $("nowD").textContent=c?`문제 ${c.count}개 · 단원 ${c.units.length}개 · ${ago(c.at)} 읽음`:"아직 문제를 읽지 못했어요. [다시 읽기]를 눌러 주세요.";
@@ -568,6 +787,7 @@ function showResult(res,ok){
     else $("miniQr").innerHTML='<small style="color:#6b7180;font-size:12px;text-align:center">QR을 못 불러왔어요<br>링크를 복사해 주세요</small>';
   }
 }
+if(HCok&&HC.openEditor)$("xlOpen").onclick=()=>HC.openEditor({onClose:paintClass});
 /* 붙여 넣으면 바로 연결 */
 $("src").addEventListener("paste",()=>setTimeout(()=>{if(HCok&&HC.parse($("src").value).code)$("linkForm").requestSubmit()},60));
 $("copyUrl").onclick=()=>copyText($("clsUrl").textContent,$("copyUrl"));
