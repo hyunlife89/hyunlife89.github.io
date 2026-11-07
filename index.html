@@ -83,6 +83,11 @@ body.connected .pc .mine{display:block}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-weight:700;font-size:15px;border:1.5px solid var(--ink);background:transparent;border-radius:999px;padding:6px 15px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.isl-chip{border-color:#1d8a5c;color:#1d8a5c}
+.isl-chip[aria-pressed="true"]{background:#1d8a5c;color:#fff;border-color:#1d8a5c}
+.pc .isl-tag{position:absolute;left:10px;top:-12px;background:#ffd23f;color:#14171f;font-weight:900;font-size:12px;padding:3px 9px;border:1.5px solid #14171f;transform:rotate(-3deg);box-shadow:2px 2px 0 #14171f;z-index:1}
+.isl-note{margin:-12px 0 22px;padding:12px 16px;border:1.5px solid #1d8a5c;border-radius:12px;background:color-mix(in srgb,#1d8a5c 10%,transparent);font-size:15px;line-height:1.6}
+.isl-note b:first-child{margin-right:6px}
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .sep{width:1.5px;height:22px;background:var(--line)}
 
@@ -305,7 +310,10 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
       <div class="chips" id="grades" role="group" aria-label="학년"></div>
       <span class="sep" aria-hidden="true"></span>
       <div class="chips" id="modes" role="group" aria-label="종류"></div>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="chips"><button class="chip isl-chip" type="button" id="worldChip" aria-pressed="false">🏝️ 과학섬 세계관</button></div>
     </div>
+    <div class="isl-note" id="islNote" hidden><b>🏝️ 과학섬 세계관</b> 과학섬 생활에서 꾸민 내 캐릭터가 함께 나오는 게임이에요. 과학섬을 한 기기로 <b>현게임 주소</b>에서 들어오면 캐릭터가 그대로 따라가요.</div>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -484,16 +492,20 @@ const TEMPLATE_COPY_URL='';
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
  {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
- {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:"games/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
+ {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:"games/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
  {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
  {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
  {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
- {t:"과학섬 생활",img:"thumbs/island.jpg",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
+ {t:"과학섬 생활",img:"thumbs/island.jpg",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
+ {t:"과학 이어달리기",img:"thumbs/relay.jpg",url:SRV+"/relay/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"과학섬 캐릭터로 달리는 반 대항 계주. 바통 터치와 정답 게이트에서 2학기 과학 문제!"},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
  {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
 ];
-const MODES=["전체","혼자","협동","대전","수업 도구"];
+const MODES=["전체","혼자","협동","대전","반 전체","수업 도구"];
+/* 과학섬 세계관: 과학섬에서 꾸민 캐릭터가 함께 나오는 게임 (서버가 나중에 넣은 카드도 주소로 알아봐요) */
+const isIsland=x=>x.world==="island"||/\/(island|relay)\//.test(x.url||"");
+let world=false;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const gtxt=g=>g.length>1?`${g[0]}~${g[g.length-1]}학년`:`${g[0]}학년`;
@@ -505,7 +517,7 @@ try{grade=+localStorage.getItem("arcade-grade")||0}catch(e){}
 function toast(t,ms){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),ms||3200)}
 
 /* ── 게임 카드 ── */
-function card(x){return `<a class="pc" href="${esc(link(x.url))}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
+function card(x){return `<a class="pc" href="${esc(link(x.url))}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}${isIsland(x)?'<span class="isl-tag">🏝️ 과학섬</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
 const FAN=GAMES.slice().reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");
 
 function chips(el,items,cur,label,onPick){
@@ -516,13 +528,15 @@ function render(){
   chips($("grades"),[0,3,4,5,6],grade,v=>v==0?"모든 학년":v+"학년",v=>{grade=+v;try{localStorage.setItem("arcade-grade",grade)}catch(e){}render()});
   chips($("modes"),MODES,mode,v=>v,v=>{mode=v;render()});
   const q=$("q").value.trim().replace(/학년/,"");
-  const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&
+  $("worldChip").setAttribute("aria-pressed",String(world));$("islNote").hidden=!world;
+  const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
     <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts"><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
 }
 $("q").addEventListener("input",render);
-$("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";render();$("all").scrollIntoView()});
+$("worldChip").onclick=()=>{world=!world;render()};
+$("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";world=false;render();$("all").scrollIntoView()});
 $("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m)openMan(GAMES[+m.dataset.man])});
 
 /* ── 게임별 선생님 설명서: 카드의 [설명서] 버튼으로 열려요. 게임 이름(t)으로 연결 ── */
