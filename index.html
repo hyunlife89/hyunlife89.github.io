@@ -491,16 +491,18 @@ const TEMPLATE_COPY_URL='';
    img: public/thumbs 안의 그림 (가로:세로 4:3)   hc:true → 우리 반 문제가 들어가는 게임 */
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
- {t:"과학 포트리스",img:"thumbs/fortress.jpg",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
- {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:"games/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
- {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
+ {t:"과학 포트리스",img:"thumbs/fortress.jpg?v=1794014000",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
+ {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:SRV+"/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
+ {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg?v=1794014000",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
  {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
- {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
- {t:"과학섬 생활",img:"thumbs/island.jpg",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
+ {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg?v=1794013023",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
+ {t:"과학섬 생활",img:"thumbs/island.jpg?v=1794033097",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
  {t:"과학 이어달리기",img:"thumbs/relay.jpg",url:SRV+"/relay/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"과학섬 캐릭터로 달리는 반 대항 계주. 바통 터치와 정답 게이트에서 2학기 과학 문제!"},
- {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:"games/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
- {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:"games/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
- {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:"games/weather-roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
+ {t:"이어쓰기 교실",img:"thumbs/story.jpg?v=1794033363",url:SRV+"/story/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"반 전체가 이음말 뒤에 한 문장씩! 과학섬 캐릭터가 나오는 3D 뽑기로 이야기를 이어 가요. 과학 단원·핵심 용어 모드."},
+ {t:"이어그리기 교실",img:"thumbs/draw.jpg?v=1794033097",url:SRV+"/draw/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"장면 카드가 쾅! 반 전체가 다음 장면을 그려 그림 이야기를 이어 가요. 캐치마인드식 그림 맞히기도 있어요."},
+ {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:SRV+"/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
+ {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:SRV+"/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
+ {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:SRV+"/roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
 ];
 const MODES=["전체","혼자","협동","대전","반 전체","수업 도구"];
 /* 과학섬 세계관: 과학섬에서 꾸민 캐릭터가 함께 나오는 게임 (서버가 나중에 넣은 카드도 주소로 알아봐요) */
