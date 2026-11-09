@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>현쌤 과학 오락실</title>
+<title>현게임</title>
 <meta name="description" content="초등 3~6학년 과학 복습 게임과 수업 도구 모음 · 선생님 구글 시트 문제로도 플레이">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -272,13 +272,28 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   .band .wrap{grid-template-columns:1fr;gap:18px}
 }
 @media (prefers-reduced-motion:reduce){.fan .pc,.item .pc,.toast{transition:none}html{scroll-behavior:auto}}
+.pc.soon{cursor:not-allowed}.pc.soon img{filter:grayscale(.85) blur(1.5px) brightness(.9)}
+.soon-tag{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) rotate(-6deg);background:#14171f;color:#fff;font-weight:800;font-size:15px;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 0 rgba(0,0,0,.25);z-index:2}
+.soon-tag.t{top:14px;left:auto;right:10px;transform:none;font-size:11px;padding:3px 9px;background:#c0392b}
+.soon-note{font-size:13px;color:#6b7280;font-weight:700}
+#soonDlg{max-width:min(620px,calc(100vw - 32px));width:100%;border:1.5px solid #14171f;border-radius:14px;padding:20px}
+#soonDlg::backdrop{background:rgba(20,23,31,.55)}
+.soon-help{font-size:14px;line-height:1.6;margin:6px 0 12px}
+.soon-row{display:flex;gap:8px;margin:8px 0}.soon-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border:1.5px solid #14171f;border-radius:10px}
+.soon-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:46vh;overflow:auto;margin:6px 0}
+.soon-item{display:flex;align-items:center;gap:8px;border:1.5px solid #d6d8de;border-radius:10px;padding:6px 8px;cursor:pointer}
+.soon-item:has(input:checked){border-color:#c0392b;background:#fff3f0}
+.soon-item img{width:52px;height:39px;object-fit:cover;border-radius:6px}
+.soon-item span{display:flex;flex-direction:column;min-width:0}.soon-item small{color:#6b7280;font-size:12px}
+.soon-chk{display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0}
+.soon-msg{font-size:14px;font-weight:700;min-height:1.2em;margin:6px 0}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="logo" href="./">현쌤 과학 오락실<small>초등 과학 게임함</small></a>
+  <a class="logo" href="./">현게임<small>초등 과학 게임함</small></a>
   <nav class="nav">
-    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a>
+    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a><a href="#" id="soonLink" title="아직 공개하지 않을 게임을 잠가요 (선생님 비밀번호)">🔒 공개 관리</a>
     <a class="pill" id="pill" href="#teacher" title="우리 반 문제가 연결되어 있어요"></a>
   </nav>
 </div></header>
@@ -287,7 +302,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <section class="hero">
     <div>
       <p class="eyebrow">초등 3~6학년 과학 복습 게임</p>
-      <h1>문제 풀며<br>노는 과학<br><em>오락실</em></h1>
+      <h1>문제 풀며<br>노는 과학<br><em>현게임</em></h1>
       <form class="find" id="findForm" role="search">
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
@@ -324,7 +339,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
       <div>
         <p class="lead">선생님이 <b>구글 시트에 문제를 적으면</b>, 그 반 학생들 게임에 그 문제가 나와요.</p>
         <ul class="facts">
-          <li>문제와 학생 기록은 선생님 구글 드라이브에만 저장돼요. 오락실 서버에는 남지 않아요.</li>
+          <li>문제와 학생 기록은 선생님 구글 드라이브에만 저장돼요. 현게임 서버에는 남지 않아요.</li>
           <li>과학이 아니어도 돼요. 객관식(보기 2~4개)과 OX 문제면 어느 과목이든 들어가요.</li>
           <li>엑셀 파일도 돼요. 각 게임의 선생님 설정에 [엑셀 파일 올리기]와 [엑셀로 받기]가 있어요.</li>
           <li>시트를 고치면 학생이 게임을 다시 열 때 바로 바뀌어요.</li>
@@ -451,14 +466,14 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
     <div class="num">03 — 선생님 설명서</div>
     <h2>처음이세요? <em>사진 보고 따라 하기</em></h2>
     <ol class="msteps">
-      <li><b>오락실 열기</b><span>교실 컴퓨터에서 이 주소를 열어요</span></li>
+      <li><b>현게임 열기</b><span>교실 컴퓨터에서 이 주소를 열어요</span></li>
       <li><b>노란 <i>QR</i> 누르기</b><span>할 게임 카드 아래 버튼 → TV에 띄우기</span></li>
       <li><b>학생이 찍기</b><span>카메라로 찍고 이름 쓰면 시작</span></li>
     </ol>
     <div class="btns"><a class="btn main" href="guide/">선생님 설명서 보기 →</a><a class="btn" href="guide/#check">수업 전 확인표</a></div>
   </div>
 </div></section>
-<footer>© 2026 현쌤 과학 오락실 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
+<footer>© 2026 현게임 · 교사투자동행<br>이 사이트의 게임과 그림은 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용을 금지합니다.</footer>
 
 <dialog id="dlg" aria-labelledby="dlgT">
   <h3 id="dlgT"></h3>
@@ -474,7 +489,22 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 <dialog id="man" aria-labelledby="manT">
   <div class="mh"><img id="manImg" alt=""><div><div class="k">선생님 설명서</div><h3 id="manT"></h3><div class="tags" id="manTags"></div></div></div>
   <div class="mb" id="manB"></div>
-  <div class="mf"><a class="more" href="guide/">오락실 전체 사용법 →</a><button class="btn" type="button" id="manQr">QR 띄우기</button><a class="btn main" id="manGo" href="#">게임 열기</a><button class="btn" type="button" id="manClose">닫기</button></div>
+  <div class="mf"><a class="more" href="guide/">현게임 전체 사용법 →</a><button class="btn" type="button" id="manQr">QR 띄우기</button><a class="btn main" id="manGo" href="#">게임 열기</a><button class="btn" type="button" id="manClose">닫기</button></div>
+</dialog>
+<dialog id="soonDlg" aria-labelledby="soonT">
+  <h3 id="soonT">🔒 공개 예정 관리</h3>
+  <div id="soonLogin">
+    <p class="soon-help">아직 학생에게 보이고 싶지 않은 게임을 <b>공개 예정</b>으로 잠가요. 잠긴 게임은 홈페이지에서 '🔒 공개 예정' 카드로만 보이고 눌러도 열리지 않아요.<br>선생님 비밀번호를 넣어 주세요. (처음 비밀번호: 선생님 열쇠와 같은 번호)</p>
+    <div class="soon-row"><input id="soonPw" type="password" autocomplete="off" placeholder="선생님 비밀번호"><button class="btn main" type="button" id="soonIn">열기</button></div>
+  </div>
+  <div id="soonEdit" hidden>
+    <p class="soon-help">체크한 게임이 <b>공개 예정(잠금)</b>이 돼요. 저장하면 모든 학생 기기에 바로 적용돼요.<br>※ 홈페이지 카드만 잠가요. 게임 주소를 직접 아는 학생은 들어갈 수 있어요.</p>
+    <div id="soonList" class="soon-list"></div>
+    <div class="soon-row"><input id="soonNew" type="password" autocomplete="off" placeholder="새 비밀번호 (바꿀 때만, 4글자 이상)"></div>
+    <label class="soon-chk"><input type="checkbox" id="soonSee"> 이 컴퓨터에서는 잠긴 게임도 열어 보기 (선생님 확인용, 창을 닫으면 꺼져요)</label>
+  </div>
+  <p class="soon-msg" id="soonMsg"></p>
+  <div class="acts"><button class="btn main" type="button" id="soonSave" hidden>저장</button><button class="btn" type="button" id="soonClose">닫기</button></div>
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -502,7 +532,11 @@ const GAMES=[
  {t:"이어그리기 교실",img:"thumbs/draw.jpg?v=1794033097",url:SRV+"/draw/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"장면 카드가 쾅! 반 전체가 다음 장면을 그려 그림 이야기를 이어 가요. 캐치마인드식 그림 맞히기도 있어요."},
  {t:"별빛 카누 항해",img:"thumbs/canoe.jpg",url:SRV+"/canoe/",g:[3],mode:"혼자",kind:"게임",unit:"지구와 바다",d:"정답 부표로 카누를 몰아 일곱 섬의 빌런을 물리쳐요. 교과서 42~57쪽."},
  {t:"찌릿 마을의 불빛",img:"thumbs/zzirit.jpg",url:SRV+"/zzirit/",g:[6],mode:"혼자",kind:"게임",unit:"전기의 이용",d:"전기의 원리를 배워 마을에 불을 밝히는 드래곤 퀘스트식 RPG."},
- {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:SRV+"/roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."}
+ {t:"기상요소 룰렛",img:"thumbs/roulette.jpg",url:SRV+"/roulette/",g:[5],mode:"수업 도구",kind:"도구",unit:"날씨와 우리 생활",d:"기온·바람·강수량·습도·구름량을 돌려 날씨를 예상하고 확인해요."},
+ {t:"빈 발명섬",img:"thumbs/invent.jpg",url:SRV+"/island/invent.html",g:[3,4,5,6],mode:"혼자",kind:"게임",world:"island",d:"넓은 빈 섬에서 부품을 조립해 자동차·배·비행기·로켓을 진짜로 움직여요. 발명 학교 5장을 끝내면 섬 전체가 열려요."},
+ {t:"거북선 승선기",img:"thumbs/turtle.jpg",url:SRV+"/turtle/",g:[5,6],mode:"혼자",kind:"게임",unit:"임진왜란 (사회 연계)",d:"격군·타수·화포장·사부가 되어 북 장단에 맞춰 싸우는 3D 리듬게임. 사천부터 노량까지 실제 해전 6곳, 이순신 장군이 함께해요."},
+ {t:"내 냉장고를 부탁해",img:"thumbs/fridge.jpg",url:SRV+"/fridge/",g:[5,6],mode:"반 전체",kind:"게임",unit:"실과 요리",d:"친구 냉장고의 재료로 3D 주방에서 요리해요. 손 씻기부터 설거지까지가 실과 점수! 마지막엔 요리 경연과 투표."}
+
 ];
 const MODES=["전체","혼자","협동","대전","반 전체","수업 도구"];
 /* 과학섬 세계관: 과학섬에서 꾸민 캐릭터가 함께 나오는 게임 (서버가 나중에 넣은 카드도 주소로 알아봐요) */
@@ -518,9 +552,15 @@ try{grade=+localStorage.getItem("arcade-grade")||0}catch(e){}
 
 function toast(t,ms){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),ms||3200)}
 
+/* ── 공개 예정(잠금): 서버(/arcade/api/)에 저장된 목록. 선생님 비밀번호로 바꿔요. 서버가 없으면(GitHub) GAMES 의 soon:true 만 ── */
+let SOON=new Set(GAMES.filter(x=>x.soon).map(x=>x.t));const TEACH={on:false,pw:""};
+try{if(sessionStorage.getItem("arcade-teach")==="1")TEACH.on=true}catch(e){}
+const isSoon=x=>SOON.has(x.t);
+const SOON_API="/arcade/api/";
+fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);render();fanRender()}}).catch(()=>{});
 /* ── 게임 카드 ── */
-function card(x){return `<a class="pc" href="${esc(link(x.url))}"><img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}${isIsland(x)?'<span class="isl-tag">🏝️ 과학섬</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
-const FAN=GAMES.slice().reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");
+function card(x){if(isSoon(x)&&!TEACH.on)return `<div class="pc soon" role="img" aria-label="${esc(x.t)} 공개 예정"><img src="${esc(x.img)}" alt="" loading="lazy"><span class="soon-tag">🔒 공개 예정</span><div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></div>`;return `<a class="pc" href="${esc(link(x.url))}">${isSoon(x)?'<span class="soon-tag t">🔒 공개 예정 · 선생님만 보여요</span>':''}<img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}${isIsland(x)?'<span class="isl-tag">🏝️ 과학섬</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
+function fanRender(){const FAN=GAMES.filter(x=>!isSoon(x)).reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");}fanRender();
 
 function chips(el,items,cur,label,onPick){
   el.innerHTML=items.map(v=>`<button class="chip" type="button" data-v="${v}" aria-pressed="${v==cur}">${label(v)}</button>`).join("");
@@ -534,12 +574,27 @@ function render(){
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
-    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts"><button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
 }
 $("q").addEventListener("input",render);
 $("worldChip").onclick=()=>{world=!world;render()};
 $("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";world=false;render();$("all").scrollIntoView()});
-$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m)openMan(GAMES[+m.dataset.man])});
+$("grid").addEventListener("click",e=>{if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m)openMan(GAMES[+m.dataset.man])});
+
+/* ── 공개 예정 관리 창 ── */
+function soonMsg(t,bad){const m=$("soonMsg");m.textContent=t||"";m.style.color=bad?"#c0392b":""}
+function soonOpen(){$("soonLogin").hidden=!!TEACH.pw;$("soonEdit").hidden=!TEACH.pw;$("soonSave").hidden=!TEACH.pw;soonMsg("");if(TEACH.pw)soonFill();else{$("soonPw").value="";setTimeout(()=>$("soonPw").focus(),50)}$("soonDlg").showModal()}
+function soonFill(){$("soonList").innerHTML=GAMES.map((x,i)=>`<label class="soon-item"><input type="checkbox" data-i="${i}" ${isSoon(x)?"checked":""}><img src="${esc(x.img)}" alt=""><span><b>${esc(x.t)}</b><small>${esc(x.mode)} · ${gtxt(x.g)}</small></span></label>`).join("");$("soonSee").checked=TEACH.on}
+async function soonPost(path,body){const r=await fetch(SOON_API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),cache:"no-store"});if(!r.ok)throw new Error("서버 "+r.status);return r.json()}
+$("soonLink").onclick=e=>{e.preventDefault();soonOpen()};
+$("soonClose").onclick=()=>$("soonDlg").close();
+$("soonIn").onclick=async()=>{const pw=$("soonPw").value;if(!pw){soonMsg("비밀번호를 넣어 주세요",1);return}
+  try{const j=await soonPost("check",{pw});if(!j.ok){soonMsg(j.error||"비밀번호가 달라요",1);return}TEACH.pw=pw;SOON=new Set(j.soon||[]);soonOpen()}catch(e){soonMsg("설정 서버에 연결하지 못했어요. (GitHub 주소에서는 바꿀 수 없어요 · 현게임 주소에서 열어 주세요)",1)}};
+$("soonPw").addEventListener("keydown",e=>{if(e.key==="Enter")$("soonIn").click()});
+$("soonSave").onclick=async()=>{const soon=[...$("soonList").querySelectorAll("input:checked")].map(c=>GAMES[+c.dataset.i].t);const newPw=$("soonNew").value.trim();
+  try{const j=await soonPost("config",{pw:TEACH.pw,soon,newPw});if(!j.ok){soonMsg(j.error||"저장하지 못했어요",1);return}if(newPw){TEACH.pw=newPw;$("soonNew").value=""}
+   SOON=new Set(j.soon||soon);TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render();fanRender();soonMsg("저장했어요! 공개 예정 "+SOON.size+"개"+(newPw?" · 비밀번호도 바꿨어요":""))}catch(e){soonMsg("설정 서버에 연결하지 못했어요",1)}};
+$("soonSee").onchange=()=>{TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render()};
 
 /* ── 게임별 선생님 설명서: 카드의 [설명서] 버튼으로 열려요. 게임 이름(t)으로 연결 ── */
 const MANUALS={
@@ -595,7 +650,7 @@ const MANUALS={
   ["업그레이드","문제를 맞히고 모은 것으로 탱크·무기·포탑을 강하게 만들어요."]
  ],
  rule:"보스마다 특수 기술이 있어요. 협동일 때는 함께 집중 사격해야 막을 수 있는 공격도 있어요.",
- teacher:["설정을 <b>선생님 비밀번호</b>로 잠그면 학생은 선생님이 정한 난이도·단원으로만 해요","우리 반 문제: 오락실 [선생님]에서 시트를 연결하면 '우리 반' 탭이 생겨요"],
+ teacher:["설정을 <b>선생님 비밀번호</b>로 잠그면 학생은 선생님이 정한 난이도·단원으로만 해요","우리 반 문제: 현게임 [선생님]에서 시트를 연결하면 '우리 반' 탭이 생겨요"],
  keys:"마우스로 조준 · 클릭 발사 · 오른쪽 버튼을 누르고 있으면 줌.",
  tips:["협동은 <b>방장 기기</b>가 게임을 계산해요. 방장은 성능 좋은 기기로 정해 주세요.","처음 쓰는 반은 혼자 하기로 조작을 익힌 뒤 협동으로 넘어가면 좋아요."]
 },
@@ -666,7 +721,94 @@ const MANUALS={
  keys:"마우스 클릭만 하면 돼요.",
  tips:["모둠별로 돌아가며 돌리고 예상을 발표하게 하면 좋아요."]
 }
-};
+,
+"과학 이어달리기":{
+ who:"반 전체 (팀 대항 계주)",dev:"학생마다 기기 1대 + 선생님 컴퓨터(TV)",
+ intro:"과학섬 생활에서 꾸민 내 캐릭터로 달리는 반 대항 계주예요. 바통을 받을 때와 코스 중간의 정답 게이트에서 2학기 과학 문제를 풀어요.",
+ steps:[
+  ["선생님: 방 만들기","TV 컴퓨터에서 <b>선생님 → 방 만들기</b>. 팀 수와 문제 범위(2학기 단원)를 고르면 <b>방 번호·QR</b>이 떠요."],
+  ["학생: 참가하기","QR을 찍거나 <b>반 계주 참가하기</b> → 이름·방 번호 → <b>들어가기</b>. 과학섬을 한 기기라면 그 캐릭터로 나와요."],
+  ["대기실 → 출발","모두 들어오면 대기실에서 팀이 나뉘어요. 선생님이 출발시키면 첫 주자부터 달려요."],
+  ["바통 터치","내 차례가 되면 문제를 풀고 출발! 정답 게이트를 맞히면 빨라지고, 틀리면 잠깐 느려져요. 결승선에서 다음 주자에게 바통을 넘겨요."]
+ ],
+ rule:"팀원 모두가 한 번씩 달려야 끝나요. TV 화면에서 팀 순위와 결승 장면을 함께 봐요.",
+ teacher:["방을 만들 때 <b>문제 범위</b>를 정해요 (2학기 전 단원 중 선택)","<b>혼자 연습하기</b>로 학생이 미리 조작을 익힐 수 있어요"],
+ keys:"화면의 버튼(또는 방향키)으로 달리고, 문제는 보기를 눌러 답해요.",
+ tips:["처음 한 번은 과학섬 생활을 같은 기기에서 열어 캐릭터를 만들어 두면 더 재미있어요.","방은 선생님 컴퓨터가 계산해요. 계주가 끝날 때까지 선생님 창을 닫지 마세요."]
+},
+"이어쓰기 교실":{
+ who:"반 전체 (학생마다 기기 1대)",dev:"선생님 컴퓨터(TV) + 학생 태블릿·크롬북",
+ intro:"선생님이 첫 문장을 내면, 반 전체가 '그런데·갑자기' 같은 이음말 뒤에 한 문장씩 써요. 뽑기로 한 명의 문장이 채택되어 반 전체 이야기가 이어져요.",
+ steps:[
+  ["방 열기","TV 컴퓨터에서 <b>① 학생 입장</b>의 방 번호·QR을 띄워요. 학생은 QR을 찍고 이름을 써서 들어와요."],
+  ["주제와 첫 문장","<b>② 주제와 첫 문장</b>에서 고르거나 직접 써요. <b>이음말과 과학 용어</b>를 정하면 학생 화면에 용어 칩이 떠요."],
+  ["이음말 쾅!","<b>이음말 쾅!</b>을 누르면 '그런데' 같은 이음말이 크게 나와요. 학생들은 각자 기기로 다음 문장을 써서 <b>보내기</b>."],
+  ["뽑기로 이어 가기","다 모이면 <b>뽑기</b> → 돌림판·슬롯·카드·달리기 등으로 한 명이 뽑혀 <b>이야기에 붙이기</b>. 다음 이음말로 반복해요."],
+  ["이야기 완성","<b>이야기 완성</b>을 누르면 원고지에 완성된 이야기와 함께 쓴 친구들 이름이 나와요. <b>이야기 글로 복사</b>로 가져갈 수 있어요."]
+ ],
+ rule:"과학 용어를 쓴 문장에는 ★가 붙어요. 이상한 문장은 선생님이 <b>빼기</b>로 뺄 수 있고, 모둠을 2개 이상으로 하면 모둠마다 다른 이야기를 동시에 써요.",
+ teacher:["<b>뽑기 스타일</b>: 심플형(밝은 무대) / 다이나믹형(3D 경기장) · 매번 무작위","<b>진행 규칙</b>: 이음말 수, 모둠 수, 마감 방식","<b>과학 시간에 쓰는 법</b> 칸에 단원별 활용 예시가 있어요"],
+ keys:"학생은 글 쓰고 <b>보내기</b>만 하면 돼요. 뽑기 때는 학생 화면의 큰 버튼을 눌러 참여해요.",
+ tips:["과학섬 생활을 한 기기라면 그 캐릭터가 뽑기 무대에 나와요.","첫 시간에는 한 문장 길이를 짧게 정해 주면 진행이 빨라요."]
+},
+"이어그리기 교실":{
+ who:"반 전체 (학생마다 기기 1대)",dev:"선생님 컴퓨터(TV) + 학생 태블릿·크롬북",
+ intro:"이어쓰기 교실의 그림판 버전이에요. 장면 카드가 나오면 반 전체가 다음 장면을 그리고, 뽑힌 그림이 그림책 다음 쪽이 돼요. '그림 맞히기'(캐치마인드식) 모드도 있어요.",
+ steps:[
+  ["폰으로 들어오기","TV의 QR을 찍거나 방 번호를 넣어요."],
+  ["모드 고르기","<b>이어그리기</b>(장면을 이어 그림책 만들기) 또는 <b>그림 맞히기</b>(한 명이 그리고 나머지가 맞히기)."],
+  ["첫 문장 → 장면 카드","오른쪽에서 첫 문장을 고르고 이야기를 시작해요. 장면 카드를 뽑으면 '그런데', '갑자기' 같은 이음말이 나와요."],
+  ["다 같이 그리기","학생은 각자 기기에서 크레용·붓·도장으로 다음 장면을 그리고 짧은 글을 붙여 보내요."],
+  ["한 장 뽑아 붙이기","뽑기로 한 장이 골라져 그림책 다음 쪽이 돼요. 반복하면 반 전체 그림책 완성!"]
+ ],
+ rule:"그림 맞히기에서는 제한 시간 안에 먼저 맞힌 순서대로 점수가 쌓이고, 마지막에 시상대가 나와요.",
+ teacher:["그림에 붙이는 글: 자유 / 권하기 / 꼭 쓰기 중에서 고르기","뽑기 스타일(심플형·다이나믹형)은 이어쓰기 교실과 같아요"],
+ keys:"손가락(또는 펜)으로 그려요. 지우개·되돌리기·굵기·색 버튼이 그림판 아래에 있어요.",
+ tips:["웨일북은 펜으로 그리면 훨씬 잘 그려져요.","처음에는 그림 시간을 넉넉히(2~3분) 주세요."]
+},
+"빈 발명섬":{
+ who:"혼자 · 친구 섬에서 같이 짓기(반 협동)",dev:"크롬북·웨일북·컴퓨터",
+ intro:"과학섬 캐릭터로 넓은 빈 섬에서 부품을 조립해 자동차·배·비행기·로켓을 실제로 움직여 보는 발명 게임이에요. 먼저 예상하고 작동해 보는 과학적 사고를 연습해요.",
+ steps:[
+  ["처음 시작","과학섬 생활을 한 기기라면 그 캐릭터로 들어와요. 부엉 박사가 첫 발명(자동차)을 도와줘요."],
+  ["발명 학교 5장","🚗 자동차 → ⛵ 배 → ✈️ 하늘 → 🚀 로켓 → 🏗️ 건축. 각 장은 <b>만들기 → 예상하고 작동 → 목표 달성</b>. 위쪽 <b>🔩 N장 가기</b>를 누르면 그 장의 조립대로 바로 가요."],
+  ["졸업하면","F1 랜드·대회·달·화성·놀이공원·탐험 미션·친구 초대가 모두 열려요. 놀이기구는 장을 끝낼 때마다 하나씩 열려요."],
+  ["반 협동 건축","선생님이 ☰ 더보기 → 👫 친구 → 섬 문 열기(비밀번호 가능) → <b>🏫 반 협동</b> → 🏛️ 세계 건축 도전. 학생은 QR을 찍어 들어와 함께 지어요."]
+ ],
+ rule:"졸업 전에는 다음 장 무대·놀이공원·대회가 🔒 잠겨 있어요. 걷기·블록 놓기·지금 장의 조립대는 늘 열려 있어요.",
+ teacher:["☰ 더보기 → <b>🔑 선생님 열쇠</b>(비밀번호): 이 기기에서 잠금 모두 해제","같은 창의 <b>🧙 시범 선생님으로 변신</b>: 날기·모든 재료·순간이동·완성품 바로 보기 (끝내면 원래대로)","섬 문 열기 때 비밀번호를 걸 수 있어요"],
+ keys:"WASD·방향키 걷기 · Space 행동 · Z/X 시점 돌리기 · 휠 확대 · 화면 오른쪽 ⟲⟳➖➕🎥🧭 단추.",
+ tips:["진행은 그 기기에 저장돼요. 학생마다 같은 기기를 쓰게 해 주세요.","수업 시범은 🧙 시범 선생님으로 완성품과 세계 건축을 바로 보여 주면 좋아요."]
+},
+"거북선 승선기":{
+ who:"혼자 · 선생님 방(같은 곡 동시 출전)",dev:"크롬북·웨일북(터치)·컴퓨터",
+ intro:"임진왜란 거북선의 승조원이 되어 북 장단에 맞춰 싸우는 3D 리듬게임이에요. 사천·당항포·한산도·부산포·명량·노량 해전을 실제 고증과 함께 배우고, 이순신 장군이 중간중간 전세를 알려 줘요.",
+ steps:[
+  ["역할 고르기","<b>격군</b>(노 젓기) · <b>타수</b>(키 잡기·돌격) · <b>화포장</b>(총통 쏘기) · <b>사부</b>(활쏘기·등선 막기) 중 하나."],
+  ["해전 고르기","해전마다 날짜·시간·역사 이야기가 나와요. 쉬움·보통·어려움·극악 난이도를 골라요."],
+  ["장단에 맞춰 누르기","노트가 판정선에 닿을 때 누르기. 긴 노트는 끝까지 누르고, 연타는 빠르게, 쌍북은 두 손으로 동시에. 연속으로 맞히면 <b>신명</b> 게이지가 차요."],
+  ["결과와 역사","점수·등급·별과 함께 그 해전이 실제로 어떻게 끝났는지 읽어요."]
+ ],
+ rule:"선생님 방: 선생님이 방을 만들어 번호를 알려 주면, 학생들이 같은 해전·역할로 동시에 출전하고 실시간 순위가 TV에 떠요.",
+ teacher:["첫 화면 <b>선생님 방</b> → 방 만들기 → 번호를 칠판에 · 모두 들어오면 시작","난이도는 학생이 고르지만, 선생님 방에서는 선생님이 고른 해전·역할·난이도로 출전해요"],
+ keys:"화면 왼쪽·오른쪽(또는 4등분)을 터치 · 키보드 D·F·J·K (타수는 Q·E로 급선회).",
+ tips:["전체화면 단추를 누르면 1인칭 화면이 크게 보여요.","소리가 중요한 게임이라 이어폰이나 스피커를 켜 주세요."]
+},
+"내 냉장고를 부탁해":{
+ who:"반 전체 (학생마다 기기 1대)",dev:"선생님 컴퓨터(TV) + 학생 크롬북·웨일북",
+ intro:"실과 요리 단원 수업 게임이에요. 학생이 고른 재료로 반 냉장고를 채우고, 이어달리기식 뽑기로 친구의 냉장고를 맡아 3D 주방에서 요리한 뒤 경연해요.",
+ steps:[
+  ["방 만들기","선생님 컴퓨터에서 <b>방 만들기</b> → 방 번호·QR을 띄워요. 학생은 QR을 찍거나 번호+이름으로 들어와요."],
+  ["냉장고 채우기","학생이 고른 재료가 TV의 냉장고에 실시간으로 들어가요. 옆에 우리 반 '식품 구성 자전거' 그래프가 올라가요."],
+  ["랜덤 매칭","첫 주자 뽑기 → 그 사람의 냉장고를 요리할 셰프 뽑기 → 뽑힌 셰프가 다음 냉장고 주인. 냉장고 주인 기기에 <b>멈춰!</b> 버튼이 떠요."],
+  ["요리","손 씻기 → 재료 꺼내 씻기 → 고양이 손으로 썰기 → 볶기·삶기 → 담기 → 불 끄기 → 설거지. 이 과정이 실과 점수가 돼요."],
+  ["경연과 시상","요리를 하나씩 띄워 😋🥗💡 투표, 냉장고 주인은 별 1~3개. 합계 = 실과 점수 + 친구 투표×3 + 주인 별×10."]
+ ],
+ rule:"실과 점수 100점: 손 씻기 10 · 재료 씻기 15 · 알맞게 익히기 20 · 식품군 4가지 이상 20 · 칼 안전 10 · 불 끄기 10 · 설거지·정리 10 · 재료 활용 5.",
+ teacher:["<b>연습용 로봇 셰프 추가</b>로 학생 없이 전체 흐름을 미리 확인","<b>한 번에 매칭</b>으로 뽑기를 빠르게 진행"],
+ keys:"W A S D + 마우스, E로 사용 (칼질 등은 E를 리듬에 맞춰 눌러요) · 터치 기기는 왼쪽 조이스틱 + 사용 버튼.",
+ tips:["선생님 컴퓨터가 방 역할을 해요. 수업이 끝날 때까지 선생님 창을 닫지 마세요.","처음엔 첫 화면 <b>혼자 연습</b>으로 주방 조작을 익히게 해 주세요."]
+}};
 
 let manGame=null;
 function openMan(x){
