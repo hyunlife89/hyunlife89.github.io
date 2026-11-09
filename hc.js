@@ -1,5 +1,5 @@
 /* =====================================================================
-   현쌤 과학 오락실 — 우리 반 문제 연결 (hc.js)
+   현게임 — 우리 반 문제 연결 (hc.js)
    - 선생님 구글 시트의 문제를 게임에 넣어 줍니다.
    - A 방식: 시트를 '링크가 있는 모든 사용자 · 뷰어'로 공유 (문제만 읽음)
    - B 방식: 시트에 Apps Script 웹 앱 배포 (문제 읽기 + 학생 기록 저장)
@@ -564,7 +564,7 @@
     });
   }
 
-  /* 우리 반 문제 창 (엑스탱크·과학섬·오락실에서 엶) — 이 기기에 저장 */
+  /* 우리 반 문제 창 (엑스탱크·과학섬·현게임에서 엶) — 이 기기에 저장 */
   function openEditor(opt) {
     opt = opt || {}; css();
     var back = el('div', { 'class': 'hcx-back', role: 'dialog', 'aria-modal': 'true', 'aria-label': '우리 반 문제 넣기' });
@@ -586,7 +586,7 @@
           (L.count ? '<button type="button" data-a="down">넣은 문제 엑셀로 받기</button><button type="button" data-a="clear">모두 지우기</button>' : '') + '</div>' +
         '<textarea placeholder="엑셀에서 칸을 복사해 여기에 Ctrl+V&#10;칸 순서: 단원 | 문제 | 정답 | 오답1 | 오답2 | 오답3 | 해설"></textarea>' +
         '<p class="msg ' + (cls || '') + '">' + (msg || '') + '</p><div class="pvbox"></div>' +
-        '<div class="foot"><small>반 전체 기기에 나눠 주려면 오락실 [선생님]에서 구글 시트를 연결하세요.</small><button type="button" data-a="close">닫기</button></div>';
+        '<div class="foot"><small>반 전체 기기에 나눠 주려면 현게임 [선생님]에서 구글 시트를 연결하세요.</small><button type="button" data-a="close">닫기</button></div>';
       d.querySelector('textarea').addEventListener('paste', function (e) {
         var t = e.clipboardData && e.clipboardData.getData('text/plain'); if (!t) return;
         e.preventDefault(); show(rowsToQuestions(parseDelimited(t, t.indexOf('\t') >= 0 ? '\t' : '|')));
