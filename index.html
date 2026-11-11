@@ -44,6 +44,17 @@ a{color:inherit}
 .eyebrow{font-size:13px;color:var(--muted);letter-spacing:.12em;margin:0 0 14px}
 .hero h1{font-weight:900;font-size:clamp(46px,7.4vw,84px);line-height:1.08;letter-spacing:-.045em;margin:0 0 30px}
 .hero h1 em{font-style:normal;color:var(--blue)}
+/* 9999 모자이크: 드래그하면 보여요 */
+.secret{position:relative;display:inline-block;cursor:text;touch-action:none}
+.secret .d{filter:blur(14px);transition:filter .5s}
+.secret::after{content:"";position:absolute;inset:-6px -4px;pointer-events:none;transition:opacity .5s;
+ background:repeating-conic-gradient(rgba(120,126,140,.85) 0 25%,rgba(176,181,192,.85) 0 50%) 0 0/34px 34px,repeating-conic-gradient(rgba(60,64,76,.55) 0 25%,rgba(220,223,230,.35) 0 50%) 17px 9px/51px 51px}
+.secret-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap;font-size:15px;font-weight:800;letter-spacing:0;line-height:1;color:#fff;background:var(--blue);padding:8px 12px;border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.2);pointer-events:none;animation:hintBob 1.6s ease-in-out infinite;transition:opacity .3s;z-index:2}
+.secret-hint i{display:inline-block;font-style:normal;animation:hintSwipe 1.6s ease-in-out infinite}
+@keyframes hintBob{50%{transform:translate(-50%,calc(-50% - 4px))}}
+@keyframes hintSwipe{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+.secret.show .d{filter:none}.secret.show::after,.secret.show .secret-hint{opacity:0}
+@media (prefers-reduced-motion:reduce){.secret-hint,.secret-hint i{animation:none}}
 .find{display:flex;max-width:430px;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--paper)}
 .find input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:15px 18px;outline:none}
 .find button{border:0;background:var(--ink);color:var(--bg);font-weight:700;padding:0 22px;cursor:pointer}
@@ -338,7 +349,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <section class="hero">
     <div>
       <p class="eyebrow">초등 3~6학년 과학 복습 게임</p>
-      <h1>모든 비번<br>9999입니다<br><em>현게임</em></h1>
+      <h1>모든 비번<br><span class="secret" id="secret"><span class="secret-hint" aria-hidden="true"><i>👆</i> 드래그해 보세요</span><span class="d">9999</span></span>입니다<br><em>현게임</em></h1>
       <form class="find" id="findForm" role="search">
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
@@ -959,6 +970,13 @@ $("rvList").addEventListener("click",async e=>{const b=e.target.closest("[data-a
   try{const body={pw:TEACH.pw,g:RV.g,id};if(!del)body.text=post.querySelector("textarea").value;
    const j=await soonPost(del?"board/del":"board/answer",body);if(!j.ok){rvMsg(j.error||"하지 못했어요",1);return}RV.items=j.items||[];rvDraw();rvSync();rvMsg(del?"삭제했어요":"답변을 저장했어요")}
   catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}});
+
+/* ── 첫 화면 9999 모자이크: 글자를 드래그(끌어서 선택)하면 보여요 ── */
+(()=>{const el=$("secret");if(!el)return;const show=()=>el.classList.add("show");
+  document.addEventListener("selectionchange",()=>{const sel=getSelection();if(sel&&!sel.isCollapsed&&sel.containsNode(el,true))show()});
+  let down=false;addEventListener("pointerdown",e=>{down=true;if(el.contains(e.target))el.dataset.x=e.clientX});addEventListener("pointerup",()=>{down=false;delete el.dataset.x});
+  el.addEventListener("pointermove",e=>{if(!down)return;if(el.dataset.x===undefined||Math.abs(e.clientX-el.dataset.x)>12)show()});
+  el.addEventListener("pointerenter",e=>{if(down&&e.pointerType!=="mouse"||e.buttons)show()});})();
 
 /* ── QR 창 ── */
 function openQR(title,u){
