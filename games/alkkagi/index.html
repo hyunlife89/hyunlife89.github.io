@@ -64,7 +64,10 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;l
 .btn.sm{font-size:15px;padding:5px 12px;border-radius:12px;box-shadow:0 3px 0 var(--ink)}
 .btn.big{font-size:22px;padding:12px 22px}
 .btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px;font-size:14px}
+.link{background:none;border:0;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:4px;font-size:14px;cursor:pointer}
+#setup-home,#login-switch{display:inline-flex;align-items:center;gap:6px;background:#fffdf7;border:2.5px solid var(--ink);border-radius:999px;color:var(--ink);font-weight:900;font-size:15px;text-decoration:none;padding:8px 18px;box-shadow:0 3px 0 var(--ink)}
+#setup-home:hover,#login-switch:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--ink)}
+#setup-home:focus-visible,#login-switch:focus-visible{outline:3px solid #ffd23f;outline-offset:3px}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 .eyebrow{font-family:var(--display);font-size:15px;color:var(--muted);letter-spacing:.04em}
@@ -1029,7 +1032,7 @@ function unsubAll(){APP.subs.forEach(f=>{try{f()}catch(e){}});APP.subs=[]}
 /* ---- 화면 테마: 날씨 따라 자동 / 겨울 고정 / 기본 하늘 ----
    날씨는 Open-Meteo(무료·열쇠 없음)에서 30분마다 받아요. 위치는 선생님이 정한 학교 동네, 설정을 켜면 각자 기기 위치. */
 const WX={st:null,loc:null,t:0,busy:false};
-const themeMode=()=>(APP.meta&&APP.meta.theme)||LS.get('alk.theme','auto');
+const themeMode=()=>(APP.meta&&APP.meta.theme)||LS.get('alk.theme','basic');
 function wxKind(code){if(code==null)return null;if([71,73,75,77,85,86].includes(code))return'snow';if((code>=51&&code<=67)||(code>=80&&code<=82)||code>=95)return'rain';if(code===3||code===45||code===48)return'cloudy';return'clear'}
 const WXI={snow:'❄️',rain:'🌧️',cloudy:'☁️',clear:'☀️'},WXN={snow:'눈',rain:'비',cloudy:'흐림',clear:'맑음'};
 function applyTheme(){
@@ -2181,7 +2184,7 @@ function renderAdmin0(){
     if(l){$('#lk2c').onclick=()=>copyText(l,$('#lk2'));qrInto($('#lk2q'),l);$('#ccc').onclick=()=>copyText($('#cc').value,$('#cc'))}
   }
   else if(AD.tab==='set'&&APP.role==='master'){
-    const m=APP.meta;const seg=(k,opts)=>`<div class="seg" data-k="${k}">${opts.map(([v,n])=>`<button data-v="${v}" class="${String(k==='extraMax'?extraMaxOf(m):k==='map'?(m.map||'classic'):k==='theme'?(m.theme||'auto'):k==='wdev'?String(!!m.wdev):m[k])===String(v)?'on':''}">${n}</button>`).join('')}</div>`;
+    const m=APP.meta;const seg=(k,opts)=>`<div class="seg" data-k="${k}">${opts.map(([v,n])=>`<button data-v="${v}" class="${String(k==='extraMax'?extraMaxOf(m):k==='map'?(m.map||'classic'):k==='theme'?(m.theme||'basic'):k==='wdev'?String(!!m.wdev):m[k])===String(v)?'on':''}">${n}</button>`).join('')}</div>`;
     B.innerHTML=`<div class="card"><div class="sec"><h3 style="font-size:22px">경기 규칙</h3>
       <div class="form-row"><div class="f"><span class="eyebrow">돌 개수</span>${seg('count',[[5,'5개'],[7,'7개'],[9,'9개']])}</div><div class="f"><span class="eyebrow">아이템</span>${seg('items',[[true,'켜기'],[false,'끄기']])}</div><div class="f"><span class="eyebrow">한 번 더 (연속 최대)</span>${seg('extraMax',[[0,'끄기'],[1,'1번'],[2,'2번'],[3,'3번']])}</div></div>
       <p class="small muted">한 번 더: 상대 돌을 떨어뜨리고 내 돌이 판에 남으면 한 번 더 쳐요. 여기서 정한 횟수까지만 연속으로 칠 수 있고, 경기 첫 공격에는 한 번 더가 없어요. 아이템은 경기마다 3개씩 받고, 한 번에 2개 이상 떨어뜨리면 하나 더, 남은 돌이 상대보다 3개 이상 적으면 자기 차례에 역전 아이템을 하나 받아요.</p></div>
