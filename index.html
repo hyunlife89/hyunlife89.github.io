@@ -106,7 +106,38 @@ body.connected .pc .mine{display:block}
 
 .under .bts{flex:none;display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .mnb{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:900;font-size:13px;padding:4px 8px;cursor:pointer;white-space:nowrap}
-.mnb:hover,.qrb:hover{transform:translateY(-1px)}
+.mnb:hover,.qrb:hover,.rvb:hover{transform:translateY(-1px)}
+.rvb{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:900;font-size:12px;padding:4px 6px;cursor:pointer;white-space:nowrap;line-height:1.25;display:flex;flex-direction:column;align-items:center}
+.rvb small{font-weight:700;font-size:11px;color:var(--muted)}.rvb small b{color:#e0a800}
+#rv{max-width:min(640px,calc(100vw - 32px));text-align:left;padding:0;max-height:min(90vh,920px);overflow:hidden;display:none;flex-direction:column}
+#rv[open]{display:flex}
+#rv .rh{display:flex;gap:14px;align-items:center;padding:16px 18px;border-bottom:1.5px solid var(--ink);background:var(--soft)}
+#rv .rh img{width:92px;aspect-ratio:4/3;object-fit:cover;border:1.5px solid var(--ink);background:#fff;flex:none}
+#rv .rh h3{margin:0;font-size:21px;text-align:left}
+#rv .rh .sc{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px}#rv .rh .sc b{color:#e0a800;font-size:16px}
+#rv .tabs{display:flex;border-bottom:1.5px solid var(--ink)}
+#rv .tabs button{flex:1;font:inherit;font-weight:900;font-size:15px;padding:11px;border:0;background:var(--paper);color:var(--muted);cursor:pointer;border-bottom:4px solid transparent}
+#rv .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue)}
+#rv .rbody{overflow:auto;flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:10px;min-height:120px}
+#rv .post{border:1.5px solid var(--line);padding:10px 12px;background:var(--paper)}
+#rv .post .who{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}#rv .post .who b{color:var(--ink);font-size:14px}
+#rv .post .st{color:#e0a800;letter-spacing:1px}
+#rv .post .tx{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.55}
+#rv .post .qk{display:inline-block;font-weight:900;color:var(--blue);margin-right:4px}
+#rv .post .an{margin-top:8px;border-left:4px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:8px 10px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+#rv .post .an b{display:block;font-size:12px;color:var(--green)}
+#rv .post .wait{margin-top:6px;font-size:12px;color:var(--muted)}
+#rv .adm{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}#rv .adm textarea{flex:1 1 100%;min-height:54px}
+#rv .adm button{font:inherit;font-size:12px;font-weight:700;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:3px 10px;cursor:pointer}#rv .adm .del{border-color:var(--red);color:var(--red)}
+#rv .none{color:var(--muted);text-align:center;padding:24px 0;font-size:14px}
+#rv form{border-top:1.5px solid var(--ink);padding:12px 18px;display:grid;gap:8px;background:var(--soft)}
+#rv .fr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#rv input[type=text],#rv textarea{font:inherit;font-size:16px;padding:8px 10px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:0;min-width:0}
+#rv input[type=text]{width:130px}#rv textarea{width:100%;min-height:64px;resize:vertical}
+#rv .stars{display:flex}#rv .stars button{font-size:26px;line-height:1;border:0;background:none;cursor:pointer;color:var(--line);padding:0 2px}#rv .stars button.on{color:#e0a800}
+#rv .msg{font-size:13px;font-weight:700;min-height:1em}
+#rv .fb{display:flex;gap:8px;justify-content:flex-end;align-items:center}#rv .fb .msg{margin-right:auto}
+@media (max-width:560px){#rv .rh img{width:70px}#rv .rh h3{font-size:18px}#rv .rbody,#rv form{padding-left:12px;padding-right:12px}}
 
 /* 게임별 설명서 창 */
 #man{max-width:min(680px,calc(100vw - 32px));text-align:left;padding:0;max-height:min(88vh,900px);overflow:auto}
@@ -280,8 +311,13 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 #soonDlg::backdrop{background:rgba(20,23,31,.55)}
 .soon-help{font-size:14px;line-height:1.6;margin:6px 0 12px}
 .soon-row{display:flex;gap:8px;margin:8px 0}.soon-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border:1.5px solid #14171f;border-radius:10px}
-.soon-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:46vh;overflow:auto;margin:6px 0}
-.soon-item{display:flex;align-items:center;gap:8px;border:1.5px solid #d6d8de;border-radius:10px;padding:6px 8px;cursor:pointer}
+.soon-list{display:flex;flex-direction:column;gap:6px;max-height:52vh;overflow:auto;margin:6px 0}
+.soon-item{display:flex;align-items:center;gap:8px;border:1.5px solid #d6d8de;border-radius:10px;padding:6px 8px;background:#fff}
+.soon-item.drag{opacity:.4}.soon-item.over{box-shadow:0 -3px 0 #2f6bff inset}
+.soon-item .no{width:22px;text-align:center;font-weight:900;color:#6b7280;flex:none}
+.soon-item label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:pointer}
+.soon-item .grip{cursor:grab;color:#9aa0aa;font-size:18px;flex:none;user-select:none;touch-action:none}
+.soon-item .soon-mv{display:flex;flex-direction:row;gap:4px;flex:none}.soon-mv button{font:inherit;font-size:13px;width:32px;height:32px;border:1.5px solid #14171f;border-radius:8px;background:#fff;cursor:pointer}.soon-mv button:disabled{opacity:.25;cursor:default}
 .soon-item:has(input:checked){border-color:#c0392b;background:#fff3f0}
 .soon-item img{width:52px;height:39px;object-fit:cover;border-radius:6px}
 .soon-item span{display:flex;flex-direction:column;min-width:0}.soon-item small{color:#6b7280;font-size:12px}
@@ -505,6 +541,16 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <p class="soon-msg" id="soonMsg"></p>
   <div class="acts"><button class="btn main" type="button" id="soonSave" hidden>저장</button><button class="btn" type="button" id="soonClose">닫기</button></div>
 </dialog>
+<dialog id="rv" aria-labelledby="rvT">
+  <div class="rh"><img id="rvImg" alt=""><div><h3 id="rvT"></h3><div class="sc" id="rvSc"></div></div><button class="btn" type="button" id="rvClose" style="margin-left:auto;align-self:flex-start">닫기</button></div>
+  <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="r" id="rvTabR">후기</button><button type="button" role="tab" data-tab="q" id="rvTabQ">Q&amp;A</button></div>
+  <div class="rbody" id="rvList"></div>
+  <form id="rvForm" autocomplete="off">
+    <div class="fr"><input type="text" id="rvName" maxlength="12" placeholder="이름 (안 쓰면 익명)"><div class="stars" id="rvStars"></div></div>
+    <textarea id="rvText" maxlength="500"></textarea>
+    <div class="fb"><span class="msg" id="rvMsg"></span><button class="btn main" type="submit" id="rvSend">올리기</button></div>
+  </form>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="hc.js"></script>
@@ -553,7 +599,10 @@ let SOON=new Set(GAMES.filter(x=>x.soon).map(x=>x.t));const TEACH={on:false,pw:"
 try{if(sessionStorage.getItem("arcade-teach")==="1")TEACH.on=true}catch(e){}
 const isSoon=x=>SOON.has(x.t);
 const SOON_API="/arcade/api/";
-fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);render();fanRender()}}).catch(()=>{});
+/* 게임 순서: 서버에 저장된 이름 순서대로. 목록에 없는(새로 생긴) 게임은 원래 순서대로 맨 뒤에 */
+const BASE=GAMES.map(x=>x.t);
+function applyOrder(order){if(!Array.isArray(order))return;const pos=t=>{const i=order.indexOf(t);return i<0?1000+BASE.indexOf(t):i};GAMES.sort((a,b)=>pos(a.t)-pos(b.t))}
+fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);applyOrder(j.order);render();fanRender()}}).catch(()=>{});
 /* ── 게임 카드 ── */
 function card(x){if(isSoon(x)&&!TEACH.on)return `<div class="pc soon" role="img" aria-label="${esc(x.t)} 공개 예정"><img src="${esc(x.img)}" alt="" loading="lazy"><span class="soon-tag">🔒 공개 예정</span><div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></div>`;return `<a class="pc" href="${esc(link(x.url))}">${isSoon(x)?'<span class="soon-tag t">🔒 공개 예정 · 선생님만 보여요</span>':''}<img src="${esc(x.img)}" alt="${esc(x.t)} 화면" loading="lazy">${x.hc?'<span class="mine">우리 반 문제</span>':''}${isIsland(x)?'<span class="isl-tag">🏝️ 과학섬</span>':''}<div class="meta"><span class="mode">${esc(x.mode)}</span>${gtxt(x.g)}${x.unit?" · "+esc(x.unit):""}</div><div class="nm">${esc(x.t)}</div></a>`}
 function fanRender(){const FAN=GAMES.filter(x=>!isSoon(x)).reverse();$("fan").innerHTML=FAN.map((x,i)=>`<div class="pc" style="--i:${i}"><img src="${esc(x.img)}" alt=""><div class="meta">${x.kind} · ${gtxt(x.g)}</div><div class="nm">${esc(x.t)}</div></div>`).join("");}fanRender();
@@ -570,26 +619,39 @@ function render(){
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
-    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
 }
 $("q").addEventListener("input",render);
 $("worldChip").onclick=()=>{world=!world;render()};
 $("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";world=false;render();$("all").scrollIntoView()});
-$("grid").addEventListener("click",e=>{if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m)openMan(GAMES[+m.dataset.man])});
+$("grid").addEventListener("click",e=>{if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m){openMan(GAMES[+m.dataset.man]);return}const v=e.target.closest("[data-rv]");if(v)openRv(GAMES[+v.dataset.rv])});
 
 /* ── 공개 예정 관리 창 ── */
 function soonMsg(t,bad){const m=$("soonMsg");m.textContent=t||"";m.style.color=bad?"#c0392b":""}
 function soonOpen(){$("soonLogin").hidden=!!TEACH.pw;$("soonEdit").hidden=!TEACH.pw;$("soonSave").hidden=!TEACH.pw;soonMsg("");if(TEACH.pw)soonFill();else{$("soonPw").value="";setTimeout(()=>$("soonPw").focus(),50)}$("soonDlg").showModal()}
-function soonFill(){$("soonList").innerHTML=GAMES.map((x,i)=>`<label class="soon-item"><input type="checkbox" data-i="${i}" ${isSoon(x)?"checked":""}><img src="${esc(x.img)}" alt=""><span><b>${esc(x.t)}</b><small>${esc(x.mode)} · ${gtxt(x.g)}</small></span></label>`).join("");$("soonSee").checked=TEACH.on}
+function soonFill(){$("soonList").innerHTML=GAMES.map((x,i)=>`<div class="soon-item" draggable="true" data-t="${esc(x.t)}"><span class="grip" aria-hidden="true">⠿</span><span class="no"></span><label><input type="checkbox" ${isSoon(x)?"checked":""}><img src="${esc(x.img)}" alt=""><span><b>${esc(x.t)}</b><small>${esc(x.mode)} · ${gtxt(x.g)}</small></span></label><span class="soon-mv"><button type="button" data-mv="-1" aria-label="${esc(x.t)} 위로">▲</button><button type="button" data-mv="1" aria-label="${esc(x.t)} 아래로">▼</button></span></div>`).join("");soonNums();$("soonSee").checked=TEACH.on}
+function soonNums(){const it=[...$("soonList").children];it.forEach((el,i)=>{el.querySelector(".no").textContent=i+1;const b=el.querySelectorAll("[data-mv]");b[0].disabled=i===0;b[1].disabled=i===it.length-1})}
+$("soonList").addEventListener("click",e=>{const b=e.target.closest("[data-mv]");if(!b)return;const el=b.closest(".soon-item"),L=$("soonList");
+  if(b.dataset.mv==="-1"&&el.previousElementSibling)L.insertBefore(el,el.previousElementSibling);else if(b.dataset.mv==="1"&&el.nextElementSibling)L.insertBefore(el.nextElementSibling,el);
+  soonNums();b.disabled?el.querySelector(`[data-mv="${-b.dataset.mv}"]`).focus():b.focus()});
+/* 끌어서 옮기기: 컴퓨터는 마우스로 끌기, 태블릿은 ⠿ 손잡이를 눌러 끌기 */
+let soonDrag=null;
+$("soonList").addEventListener("dragstart",e=>{soonDrag=e.target.closest(".soon-item");if(soonDrag){soonDrag.classList.add("drag");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",soonDrag.dataset.t)}catch(_){}}});
+$("soonList").addEventListener("dragover",e=>{if(!soonDrag)return;e.preventDefault();const o=e.target.closest(".soon-item");if(!o||o===soonDrag)return;const r=o.getBoundingClientRect();$("soonList").insertBefore(soonDrag,e.clientY<r.top+r.height/2?o:o.nextElementSibling)});
+$("soonList").addEventListener("dragend",()=>{if(soonDrag)soonDrag.classList.remove("drag");soonDrag=null;soonNums()});
+$("soonList").addEventListener("pointerdown",e=>{const g=e.target.closest(".grip");if(!g||e.pointerType==="mouse")return;e.preventDefault();const el=g.closest(".soon-item"),L=$("soonList");el.classList.add("drag");
+  const mv=ev=>{const o=document.elementFromPoint(ev.clientX,ev.clientY);const t=o&&o.closest(".soon-item");if(t&&t!==el&&t.parentNode===L){const r=t.getBoundingClientRect();L.insertBefore(el,ev.clientY<r.top+r.height/2?t:t.nextElementSibling)}const lr=L.getBoundingClientRect();if(ev.clientY<lr.top+30)L.scrollTop-=10;else if(ev.clientY>lr.bottom-30)L.scrollTop+=10};
+  const up=()=>{el.classList.remove("drag");soonNums();removeEventListener("pointermove",mv);removeEventListener("pointerup",up);removeEventListener("pointercancel",up)};
+  addEventListener("pointermove",mv);addEventListener("pointerup",up);addEventListener("pointercancel",up)});
 async function soonPost(path,body){const r=await fetch(SOON_API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),cache:"no-store"});if(!r.ok)throw new Error("서버 "+r.status);return r.json()}
 $("soonLink").onclick=e=>{e.preventDefault();soonOpen()};
 $("soonClose").onclick=()=>$("soonDlg").close();
 $("soonIn").onclick=async()=>{const pw=$("soonPw").value;if(!pw){soonMsg("비밀번호를 넣어 주세요",1);return}
-  try{const j=await soonPost("check",{pw});if(!j.ok){soonMsg(j.error||"비밀번호가 달라요",1);return}TEACH.pw=pw;SOON=new Set(j.soon||[]);soonOpen()}catch(e){soonMsg("설정 서버에 연결하지 못했어요. (GitHub 주소에서는 바꿀 수 없어요 · 현게임 주소에서 열어 주세요)",1)}};
+  try{const j=await soonPost("check",{pw});if(!j.ok){soonMsg(j.error||"비밀번호가 달라요",1);return}TEACH.pw=pw;SOON=new Set(j.soon||[]);applyOrder(j.order);render();fanRender();soonOpen()}catch(e){soonMsg("설정 서버에 연결하지 못했어요. (GitHub 주소에서는 바꿀 수 없어요 · 현게임 주소에서 열어 주세요)",1)}};
 $("soonPw").addEventListener("keydown",e=>{if(e.key==="Enter")$("soonIn").click()});
-$("soonSave").onclick=async()=>{const soon=[...$("soonList").querySelectorAll("input:checked")].map(c=>GAMES[+c.dataset.i].t);const newPw=$("soonNew").value.trim();
-  try{const j=await soonPost("config",{pw:TEACH.pw,soon,newPw});if(!j.ok){soonMsg(j.error||"저장하지 못했어요",1);return}if(newPw){TEACH.pw=newPw;$("soonNew").value=""}
-   SOON=new Set(j.soon||soon);TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render();fanRender();soonMsg("저장했어요! 공개 예정 "+SOON.size+"개"+(newPw?" · 비밀번호도 바꿨어요":""))}catch(e){soonMsg("설정 서버에 연결하지 못했어요",1)}};
+$("soonSave").onclick=async()=>{const items=[...$("soonList").children];const order=items.map(el=>el.dataset.t);const soon=items.filter(el=>el.querySelector("input").checked).map(el=>el.dataset.t);const newPw=$("soonNew").value.trim();
+  try{const j=await soonPost("config",{pw:TEACH.pw,soon,order,newPw});if(!j.ok){soonMsg(j.error||"저장하지 못했어요",1);return}if(newPw){TEACH.pw=newPw;$("soonNew").value=""}
+   SOON=new Set(j.soon||soon);applyOrder(j.order||order);TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render();fanRender();soonMsg("저장했어요! 순서도 바뀌었어요 · 공개 예정 "+SOON.size+"개"+(newPw?" · 비밀번호도 바꿨어요":""))}catch(e){soonMsg("설정 서버에 연결하지 못했어요",1)}};
 $("soonSee").onchange=()=>{TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render()};
 
 /* ── 게임별 선생님 설명서: 카드의 [설명서] 버튼으로 열려요. 게임 이름(t)으로 연결 ── */
@@ -852,6 +914,51 @@ function openMan(x){
 $("manClose").onclick=()=>$("man").close();
 $("man").addEventListener("click",e=>{if(e.target===$("man"))$("man").close()});
 $("manQr").onclick=()=>{$("man").close();if(manGame)openQR(manGame.t,link(manGame.url))};
+
+/* ── 게임별 Q&A·후기: 서버(/arcade/api/board)에 저장. 누구나 쓰고, 답변·삭제는 공개 관리 비밀번호로 들어온 선생님만 ── */
+let BSUM={};const RV={g:null,tab:"r",items:[],star:0};
+const rvBtn=x=>{const b=BSUM[x.t]||{};const n=(b.r||0)+(b.q||0);return `<button class="rvb" type="button" data-rv="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} Q&A·후기">Q&amp;A·후기${n?`<small>${b.r?`<b>★${b.avg}</b> `:""}${n}개</small>`:""}</button>`};
+function bsumLoad(){fetch(SOON_API+"board",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok){BSUM=j.sum||{};render()}}).catch(()=>{})}
+bsumLoad();
+const rvAgo=t=>{const d=Date.now()/1000-t;if(d<60)return"방금";if(d<3600)return Math.floor(d/60)+"분 전";if(d<86400)return Math.floor(d/3600)+"시간 전";if(d<86400*30)return Math.floor(d/86400)+"일 전";const D=new Date(t*1000);return `${D.getFullYear()}.${D.getMonth()+1}.${D.getDate()}`};
+const starTxt=n=>"★".repeat(n)+"☆".repeat(5-n);
+function rvMsg(t,bad){const m=$("rvMsg");m.textContent=t||"";m.style.color=bad?"var(--red)":"var(--green)"}
+function rvHead(){const r=RV.items.filter(x=>x.k==="r"),q=RV.items.filter(x=>x.k==="q");const avg=r.length?(r.reduce((a,x)=>a+x.stars,0)/r.length).toFixed(1):0;
+  $("rvSc").innerHTML=r.length?`<b>★ ${avg}</b> · 후기 ${r.length} · 질문 ${q.length}`:`후기 0 · 질문 ${q.length}`;$("rvTabR").textContent=`후기 ${r.length}`;$("rvTabQ").textContent=`Q&A ${q.length}`}
+function rvDraw(){rvHead();const T=RV.tab;$("rvTabR").setAttribute("aria-selected",T==="r");$("rvTabQ").setAttribute("aria-selected",T==="q");
+  $("rvStars").hidden=T!=="r";$("rvText").placeholder=T==="r"?"이 게임 해 보니 어땠나요?":"궁금한 점을 물어보세요";$("rvSend").textContent=T==="r"?"후기 올리기":"질문 올리기";
+  const L=RV.items.filter(x=>x.k===T);const adm=!!TEACH.pw;
+  $("rvList").innerHTML=L.length?L.map(x=>`<div class="post" data-id="${esc(x.id)}"><div class="who"><b>${esc(x.name)}</b>${x.k==="r"?`<span class="st">${starTxt(x.stars)}</span>`:""}<span>${rvAgo(x.t)}</span></div>
+    <p class="tx">${x.k==="q"?'<span class="qk">Q.</span>':""}${esc(x.text)}</p>
+    ${x.ans?`<div class="an"><b>현쌤 답변 · ${rvAgo(x.at)}</b>${esc(x.ans)}</div>`:x.k==="q"?'<div class="wait">답변을 기다리고 있어요</div>':""}
+    ${adm?`<div class="adm">${x.k==="q"?`<textarea placeholder="답변">${esc(x.ans||"")}</textarea><button type="button" data-act="ans">${x.ans?"답변 고치기":"답변 달기"}</button>`:""}<button type="button" class="del" data-act="del">삭제</button></div>`:""}</div>`).join("")
+   :`<p class="none">${T==="r"?"아직 후기가 없어요. 첫 후기를 남겨 주세요!":"아직 질문이 없어요."}</p>`}
+function rvStarsDraw(){$("rvStars").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-s="${n}" class="${n<=RV.star?"on":""}" aria-label="별 ${n}개">★</button>`).join("")}
+async function openRv(x,tab){RV.g=x.t;RV.tab=tab||RV.tab||"r";RV.items=[];RV.star=0;rvStarsDraw();
+  $("rvT").textContent=x.t;$("rvImg").src=x.img;$("rvText").value="";rvMsg("");
+  try{$("rvName").value=localStorage.getItem("arcade-name")||""}catch(e){}
+  $("rvList").innerHTML='<p class="none">불러오는 중…</p>';rvHead();$("rv").showModal();
+  try{const j=await fetch(SOON_API+"board?g="+encodeURIComponent(x.t),{cache:"no-store"}).then(r=>r.json());if(RV.g!==x.t)return;RV.items=j.items||[];rvDraw()}
+  catch(e){$("rvList").innerHTML='<p class="none">게시판 서버에 연결하지 못했어요. 현게임 주소(hyungame.duckdns.org)에서 열어 주세요.</p>'}}
+function rvSync(){const r=RV.items.filter(x=>x.k==="r");BSUM[RV.g]={r:r.length,q:RV.items.filter(x=>x.k==="q").length,avg:r.length?Math.round(r.reduce((a,x)=>a+x.stars,0)/r.length*10)/10:0};render()}
+$("rvClose").onclick=()=>$("rv").close();
+$("rv").addEventListener("click",e=>{if(e.target===$("rv"))$("rv").close()});
+$("rvTabR").onclick=()=>{RV.tab="r";rvMsg("");rvDraw()};$("rvTabQ").onclick=()=>{RV.tab="q";rvMsg("");rvDraw()};
+$("rvStars").onclick=e=>{const b=e.target.closest("[data-s]");if(b){RV.star=+b.dataset.s;rvStarsDraw()}};
+$("rvForm").onsubmit=async e=>{e.preventDefault();const text=$("rvText").value.trim(),name=$("rvName").value.trim();
+  if(RV.tab==="r"&&!RV.star){rvMsg("별점을 골라 주세요",1);return}if(text.length<2){rvMsg("두 글자 이상 써 주세요",1);return}
+  let last=0;try{localStorage.setItem("arcade-name",name);last=+localStorage.getItem("arcade-posted")||0}catch(e){}
+  const wait=Math.ceil(15-(Date.now()-last)/1000);if(wait>0){rvMsg(wait+"초 뒤에 다시 올릴 수 있어요",1);return}
+  $("rvSend").disabled=true;
+  try{const j=await fetch(SOON_API+"board/post",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,k:RV.tab,name,text,stars:RV.star}),cache:"no-store"}).then(r=>r.json());
+   if(!j.ok){rvMsg(j.error||"올리지 못했어요",1);return}try{localStorage.setItem("arcade-posted",Date.now())}catch(e){}RV.items.unshift(j.item);$("rvText").value="";RV.star=0;rvStarsDraw();rvDraw();rvSync();rvMsg(RV.tab==="r"?"후기를 올렸어요. 고마워요!":"질문을 올렸어요. 답변을 기다려 주세요!")}
+  catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}finally{$("rvSend").disabled=false}};
+$("rvList").addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b||!TEACH.pw)return;const post=b.closest(".post"),id=post.dataset.id;
+  const del=b.dataset.act==="del";
+  if(del&&b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="정말 삭제?";setTimeout(()=>{if(b.isConnected){b.dataset.sure="";b.textContent="삭제"}},3000);return}
+  try{const body={pw:TEACH.pw,g:RV.g,id};if(!del)body.text=post.querySelector("textarea").value;
+   const j=await soonPost(del?"board/del":"board/answer",body);if(!j.ok){rvMsg(j.error||"하지 못했어요",1);return}RV.items=j.items||[];rvDraw();rvSync();rvMsg(del?"삭제했어요":"답변을 저장했어요")}
+  catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}});
 
 /* ── QR 창 ── */
 function openQR(title,u){
