@@ -235,6 +235,20 @@ body.connected .pc .mine{display:block}
 .support li{margin:3px 0}
 .support .no{color:var(--muted)}
 
+.w2-lead{margin:0 0 14px;font-size:17px;font-weight:700}
+.w2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.w2-c{font:inherit;text-align:left;display:flex;flex-direction:column;gap:5px;padding:16px 16px 14px;border:1.5px solid var(--ink);border-radius:14px;background:var(--bg);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .12s,box-shadow .12s,background .12s}
+.w2-c:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
+.w2-c:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.w2-c b{font-size:19px;font-weight:900;letter-spacing:-.03em}
+.w2-n{font-size:12.5px;font-weight:800;color:var(--muted)}.w2-n em{font-style:normal;background:var(--green);color:#fff;border-radius:999px;padding:1px 8px;margin-left:4px}
+.w2-d{font-size:13.5px;line-height:1.5;color:color-mix(in srgb,var(--ink) 75%,var(--bg))}
+.w2-more{margin-top:4px;font-size:13px;font-weight:800;color:var(--blue)}
+.w2-c[aria-expanded="true"]{background:color-mix(in srgb,var(--yellow) 28%,var(--paper))}
+.w2-c[aria-expanded="true"] .w2-more{color:var(--ink)}
+.w2-b{margin-top:16px;padding:18px 18px 6px;border:1.5px solid var(--ink);border-radius:14px;background:var(--paper)}
+.w2-b[hidden]{display:none}
+@media (max-width:620px){.w2{grid-template-columns:1fr}.w2-b{padding:14px 12px 4px}}
 .panel{border:1.5px solid var(--ink);background:var(--paper);box-shadow:10px 10px 0 var(--ink);padding:24px}
 .now{display:none;border:1.5px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:14px 16px;margin-bottom:20px}
 .now.on{display:block}
@@ -397,7 +411,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <a class="logo" href="./">현게임<small>초등 과학 게임함</small></a>
+  <a class="logo" href="./">현게임</a>
   <nav class="nav">
     <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a><a href="#" id="soonLink">🔒 공개 관리</a>
     <a class="pill" id="pill" href="#teacher" title="우리 반 문제가 연결되어 있어요"></a>
@@ -408,7 +422,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <section class="hero">
     <div>
       <p class="eyebrow">초등 3~6학년 과학 복습 게임</p>
-      <h1>모든 비번<br><span class="secret" id="secret"><span class="secret-hint" aria-hidden="true"><i>👆</i> 드래그해 보세요</span><span class="d">9999</span></span>입니다<br><em>현게임</em></h1>
+      <h1>모든 비번<br><span class="secret" id="secret"><span class="secret-hint" aria-hidden="true"><i>👆</i> 드래그해 보세요</span><span class="d">9999</span></span>입니다</h1>
       <form class="find" id="findForm" role="search">
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
@@ -477,7 +491,13 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
           </div>
         </div>
 
-        <p class="intro">세 단계면 끝나요. 구글에 로그인된 컴퓨터에서 해 주세요.</p>
+        <p class="w2-lead">우리 반 문제를 넣는 방법은 <b>두 가지</b>예요. 맞는 쪽을 눌러 자세히 보세요.</p>
+        <div class="w2" role="group" aria-label="우리 반 문제 넣는 방법">
+          <button type="button" class="w2-c" id="w2G" aria-expanded="false" aria-controls="w2GB"><span class="w2-n">방법 1 <em>추천</em></span><b>📗 구글 시트로 연결</b><span class="w2-d">어느 컴퓨터에서든 · 시트를 고치면 바로 바뀌어요 · 학생 점수 기록도</span><span class="w2-more">자세히 보기 ▾</span></button>
+          <button type="button" class="w2-c" id="w2X" aria-expanded="false" aria-controls="w2XB"><span class="w2-n">방법 2</span><b>📄 엑셀 파일로 넣기</b><span class="w2-d">구글 없이 바로 · 지금 이 컴퓨터에서만 쓸 수 있어요</span><span class="w2-more">자세히 보기 ▾</span></button>
+        </div>
+        <div class="w2-b" id="w2GB" hidden>
+          <p class="intro">세 단계면 끝나요. 구글에 로그인된 컴퓨터에서 해 주세요.</p>
 
         <div class="step">
           <h3><i>1</i>문제 시트 만들기</h3>
@@ -539,12 +559,6 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
           </div>
         </div>
 
-        <div class="adv" style="margin-top:22px">
-          <b style="font-size:16px">구글 없이 엑셀 파일로 넣기</b> <small style="color:var(--muted)">(이 컴퓨터에서만)</small>
-          <p class="say" style="margin-top:6px">엑셀 파일을 올리거나 엑셀 칸을 복사해 넣으면, 이 컴퓨터의 엑스탱크·포트리스·탈출·과학섬에 나와요. 엑스탱크 선생님 방에서는 학생 기기로도 함께 보내져요.</p>
-          <div class="btns"><button class="btn" type="button" id="xlOpen">엑셀로 우리 반 문제 넣기</button></div>
-        </div>
-
         <details class="adv" id="adv">
           <summary>학생 점수까지 시트에 남기고 싶다면 <small>(선택 · 10분)</small></summary>
           <p class="say">누가 어떤 문제를 맞혔는지 시트에 쌓여요. 1번 시트에서 이어서 해요.</p>
@@ -557,6 +571,12 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
             <li>나온 <b>웹 앱 URL</b>(…/exec)을 복사해서 위 3번 칸에 붙여 넣기</li>
           </ol>
         </details>
+        </div>
+        <div class="w2-b" id="w2XB" hidden>
+          <p class="say" style="margin-top:0">구글 계정이 없어도 돼요. 엑셀 파일을 올리거나 엑셀 칸을 복사해 넣으면, <b>이 컴퓨터</b>의 엑스탱크·포트리스·탈출·과학섬에 우리 반 문제가 나와요. 엑스탱크 선생님 방에서는 학생 기기로도 함께 보내져요.</p>
+          <p class="say">양식이 필요하면 <a href="teacher/question-template.xlsx">엑셀 양식 받기</a> → 단원·문제·정답·오답을 적어 저장한 뒤 아래 버튼을 누르세요.</p>
+          <div class="btns"><button class="btn main" type="button" id="xlOpen">엑셀로 우리 반 문제 넣기</button></div>
+        </div>
       </div>
     </div>
   </section>
@@ -1084,6 +1104,10 @@ $("rvList").addEventListener("click",async e=>{const o=e.target.closest('[data-a
   el.addEventListener("pointermove",e=>{if(!down)return;if(el.dataset.x===undefined||Math.abs(e.clientX-el.dataset.x)>12)show()});
   el.addEventListener("pointerenter",e=>{if(down&&e.pointerType!=="mouse"||e.buttons)show()});})();
 
+/* ── 우리 반 문제: 두 가지 방법 펼치기 ── */
+(()=>{const P=[["w2G","w2GB"],["w2X","w2XB"]];P.forEach(([c,b])=>{$(c).onclick=()=>{const open=$(c).getAttribute("aria-expanded")!=="true";
+  P.forEach(([c2,b2])=>{$(c2).setAttribute("aria-expanded","false");$(b2).hidden=true;$(c2).querySelector(".w2-more").textContent="자세히 보기 ▾"});
+  if(open){$(c).setAttribute("aria-expanded","true");$(b).hidden=false;$(c).querySelector(".w2-more").textContent="접기 ▴";$(b).scrollIntoView({behavior:"smooth",block:"nearest"})}}})})();
 /* ── QR 창 ── */
 function openQR(title,u){
   const url=new URL(u,location.href).href;
