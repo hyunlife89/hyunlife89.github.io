@@ -55,12 +55,20 @@ a{color:inherit}
 @keyframes hintSwipe{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
 .secret.show .d{filter:none}.secret.show::after,.secret.show .secret-hint{opacity:0}
 @media (prefers-reduced-motion:reduce){.secret-hint,.secret-hint i{animation:none}}
+@media (max-width:560px){.secret-hint{font-size:11.5px;padding:5px 8px}.hero .tlink b{font-size:17px}.hero .tlink small{font-size:12px}}
 .find{display:flex;max-width:430px;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--paper)}
 .find input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:15px 18px;outline:none}
 .find button{border:0;background:var(--ink);color:var(--bg);font-weight:700;padding:0 22px;cursor:pointer}
 .find:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 35%,transparent)}
-.hero .tlink{display:inline-block;margin-top:18px;font-weight:700;font-size:15px;color:var(--muted)}
-.hero .tlink:hover{color:var(--blue)}
+.hero .tlink{display:flex;align-items:center;gap:14px;max-width:430px;margin-top:18px;padding:14px 18px;border:1.5px solid var(--ink);border-radius:14px;background:var(--yellow);color:#14171f;text-decoration:none;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s}
+.hero .tlink .tl-ic{font-size:28px;line-height:1;flex:none}
+.hero .tlink .tl-tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.hero .tlink b{font-size:19px;font-weight:900;letter-spacing:-.03em}
+.hero .tlink small{font-size:13px;font-weight:600;color:#3d3a2a}
+.hero .tlink .tl-go{font-size:24px;font-weight:900;flex:none;transition:transform .15s}
+.hero .tlink:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}.hero .tlink:hover .tl-go{transform:translateX(4px)}
+.hero .tlink:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
 
 .fan{position:relative;height:440px}
 .fan .pc{position:absolute;left:calc(50% - 125px);top:70px;width:250px;transform-origin:50% 190%;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform:rotate(calc(var(--i) * 9deg - 27deg))}
@@ -102,7 +110,7 @@ body.connected .pc .mine{display:block}
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .sep{width:1.5px;height:22px;background:var(--line)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:34px 26px;padding-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:44px 28px;padding-bottom:20px}
 .item{position:relative}
 .ord-bar[hidden]{display:none}
 .ord-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1.5px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 var(--ink)}
@@ -121,16 +129,27 @@ body.connected .pc .mine{display:block}
 .item:nth-child(3n) .pc{transform:rotate(-.4deg)}
 .item .pc:hover{transform:rotate(0) translateY(-6px);box-shadow:0 28px 40px -20px rgba(0,0,0,.5)}
 .pc .mode{display:inline-block;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 6px;margin-right:4px}
-.under{display:flex;gap:10px;align-items:flex-start;margin:12px 4px 0}
-.item .desc{margin:2px 0 0;flex:1;min-width:0;font-size:14.5px;line-height:1.55;font-weight:500;letter-spacing:-.2px;color:color-mix(in srgb,var(--ink) 78%,var(--bg));word-break:keep-all;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
-.qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
+.under{display:flex;flex-direction:column;gap:12px;margin:14px 2px 0}
+@media (min-width:561px){.item .desc{min-height:3.1em}}
+.item .desc{margin:0;min-width:0;font-size:14.5px;line-height:1.55;font-weight:500;letter-spacing:-.2px;color:color-mix(in srgb,var(--ink) 78%,var(--bg));word-break:keep-all;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.bts .qrb,.bts .mnb,.bts .rvb{display:flex;align-items:center;justify-content:center;gap:5px;height:40px;padding:0 6px;border:1.5px solid var(--ink);border-radius:10px;font:inherit;font-weight:800;font-size:13.5px;letter-spacing:-.2px;white-space:nowrap;cursor:pointer;box-shadow:0 2px 0 var(--ink);transition:transform .12s,box-shadow .12s,background .12s;min-width:0}
+.bts .qrb{background:var(--yellow);color:#14171f}
+.bts .mnb{background:color-mix(in srgb,#3b6cff 14%,var(--paper));color:color-mix(in srgb,#2448d8 80%,var(--ink))}
+.bts .rvb{background:color-mix(in srgb,#ff6b9a 15%,var(--paper));color:color-mix(in srgb,#c2185b 80%,var(--ink))}
+.bts .mnb:hover{background:color-mix(in srgb,#3b6cff 24%,var(--paper))}.bts .rvb:hover{background:color-mix(in srgb,#ff6b9a 25%,var(--paper))}
+.bts .rvb .n{background:#c2185b;color:#fff}
+.bts button:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}
+.bts button:active{transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
+.bts button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.bts .ic{font-size:15px;line-height:1}
+.bts .rvb .n{font-size:11.5px;font-weight:800;background:#c2185b;color:#fff;border-radius:999px;padding:1px 7px;line-height:1.5}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
 
-.under .bts{flex:none;display:flex;flex-direction:column;gap:6px;align-items:stretch}
-.mnb{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:900;font-size:13px;padding:4px 8px;cursor:pointer;white-space:nowrap}
-.mnb:hover,.qrb:hover,.rvb:hover{transform:translateY(-1px)}
-.rvb{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);font-weight:900;font-size:12px;padding:4px 6px;cursor:pointer;white-space:nowrap;line-height:1.25;display:flex;flex-direction:column;align-items:center}
-.rvb small{font-weight:700;font-size:11px;color:var(--muted)}.rvb small b{color:#e0a800}
+.under .bts{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:7px}
+
+
+
+
 #rv{max-width:min(640px,calc(100vw - 32px));text-align:left;padding:0;max-height:min(90vh,920px);overflow:hidden;display:none;flex-direction:column}
 #rv[open]{display:flex}
 #rv .rh{display:flex;gap:14px;align-items:center;padding:16px 18px;border-bottom:1.5px solid var(--ink);background:var(--soft)}
@@ -344,7 +363,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 .pc.soon{cursor:not-allowed}.pc.soon img{filter:grayscale(.85) blur(1.5px) brightness(.9)}
 .soon-tag{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) rotate(-6deg);background:#14171f;color:#fff;font-weight:800;font-size:15px;padding:6px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 0 rgba(0,0,0,.25);z-index:2}
 .soon-tag.t{top:14px;left:auto;right:10px;transform:none;font-size:11px;padding:3px 9px;background:#c0392b}
-.soon-note{font-size:13px;color:#6b7280;font-weight:700}
+.soon-note{grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:40px;border:1.5px dashed var(--line);border-radius:10px;font-size:13.5px;color:var(--muted);font-weight:800}
 #soonDlg{max-width:min(620px,calc(100vw - 32px));width:100%;border:1.5px solid #14171f;border-radius:14px;padding:20px}
 #soonDlg::backdrop{background:rgba(20,23,31,.55)}
 .soon-help{font-size:14px;line-height:1.6;margin:6px 0 12px}
@@ -394,7 +413,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
       </form>
-      <a class="tlink" href="#teacher">선생님 — 우리 반 문제로 게임하기 →</a>
+      <a class="tlink" href="#teacher"><span class="tl-ic" aria-hidden="true">📝</span><span class="tl-tx"><b>우리 반 문제로 게임하기</b><small>선생님이 낸 문제가 게임에 나와요 · 3단계로 끝</small></span><span class="tl-go" aria-hidden="true">→</span></a>
     </div>
     <div class="fan" id="fan" aria-hidden="true"></div>
   </section>
@@ -673,7 +692,7 @@ function render(){
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map((x,i)=>`<div class="item" data-t="${esc(x.t)}" data-no="${i+1}">${card(x)}
-    <div class="under"><p class="desc" title="${esc(x.d)}">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+    <div class="under"><p class="desc" title="${esc(x.d)}">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기"><span class="ic" aria-hidden="true">▦</span>QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
   $("grid").classList.toggle("ordering",!!ORD);ordBarState();
 }
 $("q").addEventListener("input",render);
@@ -995,7 +1014,7 @@ $("grid").addEventListener("pointerdown",e=>{if(!ORD||e.button>0)return;const el
 
 /* ── 게임별 Q&A·후기: 서버(/arcade/api/board)에 저장. 누구나 쓰고, 답변·삭제는 공개 관리 비밀번호로 들어온 선생님만 ── */
 let BSUM={};const RV={g:null,tab:"r",items:[],star:0};
-const rvBtn=x=>{const b=BSUM[x.t]||{};const n=(b.r||0)+(b.q||0);return `<button class="rvb" type="button" data-rv="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} Q&A·후기">Q&amp;A·후기${n?`<small>${b.r?`<b>★${b.avg}</b> `:""}${n}개</small>`:""}</button>`};
+const rvBtn=x=>{const b=BSUM[x.t]||{};const n=(b.r||0)+(b.q||0);return `<button class="rvb" type="button" data-rv="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} Q&A·후기${n?` ${n}개`:""}" title="${b.r?`별점 ★${b.avg} · `:""}후기·질문 ${n}개">후기·Q&amp;A${n?`<span class="n">${n}</span>`:""}</button>`}
 function bsumLoad(){fetch(SOON_API+"board",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok){BSUM=j.sum||{};render()}}).catch(()=>{})}
 bsumLoad();
 const rvAgo=t=>{const d=Date.now()/1000-t;if(d<60)return"방금";if(d<3600)return Math.floor(d/60)+"분 전";if(d<86400)return Math.floor(d/3600)+"시간 전";if(d<86400*30)return Math.floor(d/86400)+"일 전";const D=new Date(t*1000);return `${D.getFullYear()}.${D.getMonth()+1}.${D.getDate()}`};
