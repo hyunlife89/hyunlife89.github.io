@@ -122,7 +122,7 @@ body.connected .pc .mine{display:block}
 .item .pc:hover{transform:rotate(0) translateY(-6px);box-shadow:0 28px 40px -20px rgba(0,0,0,.5)}
 .pc .mode{display:inline-block;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 6px;margin-right:4px}
 .under{display:flex;gap:10px;align-items:flex-start;margin:12px 4px 0}
-.item .desc{margin:0;flex:1;min-width:0;font-size:15.5px;line-height:1.6;font-weight:600;color:var(--ink);opacity:.86;word-break:keep-all}
+.item .desc{margin:2px 0 0;flex:1;min-width:0;font-size:14.5px;line-height:1.55;font-weight:500;letter-spacing:-.2px;color:color-mix(in srgb,var(--ink) 78%,var(--bg));word-break:keep-all;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
 .qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
 
@@ -620,18 +620,18 @@ const TEMPLATE_COPY_URL='';
    img: public/thumbs 안의 그림 (가로:세로 4:3)   hc:true → 우리 반 문제가 들어가는 게임 */
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
- {t:"과학 포트리스",img:"thumbs/fortress.jpg?v=1794014000",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
- {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:SRV+"/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
- {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg?v=1794014000",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
- {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg?v=1794013023",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
- {t:"과학섬 생활",img:"thumbs/island.jpg?v=1794033097",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
- {t:"과학 이어달리기",img:"thumbs/relay.jpg",url:SRV+"/relay/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"과학섬 캐릭터로 달리는 반 대항 계주. 바통 터치와 정답 게이트에서 2학기 과학 문제!"},
- {t:"이어쓰기 교실",img:"thumbs/story.jpg?v=1794033363",url:SRV+"/story/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"반 전체가 이음말 뒤에 한 문장씩! 과학섬 캐릭터가 나오는 3D 뽑기로 이야기를 이어 가요. 과학 단원·핵심 용어 모드."},
- {t:"이어그리기 교실",img:"thumbs/draw.jpg?v=1794033097",url:SRV+"/draw/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"장면 카드가 쾅! 반 전체가 다음 장면을 그려 그림 이야기를 이어 가요. 캐치마인드식 그림 맞히기도 있어요."},
- {t:"사물놀이 한마당",soon:true,img:"thumbs/samul.jpg?v=1",url:SRV+"/samul/",g:[3,4,5,6],mode:"혼자 · 반 전체",kind:"게임",unit:"음악 국악 (장단 · 사물놀이)",d:"꽹과리·장구·북·징 중 하나를 맡아 장단을 연주하는 국악 리듬게임. 세마치·굿거리·자진모리·동살풀이·휘모리, 우리 반이 악기 모둠으로 나눠 합주해요."},
- {t:"내 냉장고를 부탁해",img:"thumbs/fridge.jpg?v=3",url:SRV+"/fridge/",g:[5,6],mode:"반 전체",kind:"게임",unit:"실과 요리",d:"친구 냉장고의 재료로 3D 주방에서 요리해요. 손 씻기부터 설거지까지가 실과 점수! 마지막엔 요리 경연과 투표."},
- {t:"과학섬 마블",img:"thumbs/marble.jpg?v=2",url:SRV+"/marble/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"모두의 마블처럼 3D 과학섬을 돌며 땅을 사고 랜드마크를 세워요. 땅 사기·통행료 방패는 과학 문제로! 한 화면이나 노트북 한 대에 한 명씩."},
- {t:"명심 필사실",img:"thumbs/pilsa.jpg?v=1",url:SRV+"/pilsa/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",unit:"생활지도 · 인성",d:"잘못한 일을 고르면 맞는 명심보감 구절이 나와요. 원고지에 한 자 한 자 바르게 따라 쓰며 반성하는 수묵 필사실. 기록은 학생 기기에 남아요."}
+ {t:"과학 포트리스",img:"thumbs/fortress.jpg?v=1794014000",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"각도·힘을 맞춰 쏘는 턴제 탱크 대전 (2~8명)"},
+ {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:SRV+"/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"바둑돌 튕기기 대결! 이기면 티어가 올라가요"},
+ {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg?v=1794014000",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실을 누비는 3D 탱크 대전 (최대 40명)"},
+ {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg?v=1794013023",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실, 문제를 풀어 탈출해요"},
+ {t:"과학섬 생활",img:"thumbs/island.jpg?v=1794033097",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"문제를 풀며 내 섬을 키우는 3D 힐링 게임"},
+ {t:"과학 이어달리기",img:"thumbs/relay.jpg",url:SRV+"/relay/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"내 캐릭터로 달리는 반 대항 과학 계주"},
+ {t:"이어쓰기 교실",img:"thumbs/story.jpg?v=1794033363",url:SRV+"/story/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"반 전체가 한 문장씩 이어 쓰는 이야기"},
+ {t:"이어그리기 교실",img:"thumbs/draw.jpg?v=1794033097",url:SRV+"/draw/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"이어 그리는 그림책 + 그림 맞히기"},
+ {t:"사물놀이 한마당",soon:true,img:"thumbs/samul.jpg?v=1",url:SRV+"/samul/",g:[3,4,5,6],mode:"혼자 · 반 전체",kind:"게임",unit:"음악 국악 (장단 · 사물놀이)",d:"사물놀이 장단을 치는 국악 리듬게임"},
+ {t:"내 냉장고를 부탁해",img:"thumbs/fridge.jpg?v=3",url:SRV+"/fridge/",g:[5,6],mode:"반 전체",kind:"게임",unit:"실과 요리",d:"친구 냉장고 재료로 요리하는 3D 실과 게임"},
+ {t:"과학섬 마블",img:"thumbs/marble.jpg?v=2",url:SRV+"/marble/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"과학 문제로 땅을 사는 3D 보드게임"},
+ {t:"명심 필사실",img:"thumbs/pilsa.jpg?v=1",url:SRV+"/pilsa/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",unit:"생활지도 · 인성",d:"명심보감 구절을 따라 쓰며 반성해요"}
 
 ];
 const MODES=["전체","혼자","협동","대전","반 전체","수업 도구"];
@@ -673,7 +673,7 @@ function render(){
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   $("grid").innerHTML=list.length?list.map((x,i)=>`<div class="item" data-t="${esc(x.t)}" data-no="${i+1}">${card(x)}
-    <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+    <div class="under"><p class="desc" title="${esc(x.d)}">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
   $("grid").classList.toggle("ordering",!!ORD);ordBarState();
 }
 $("q").addEventListener("input",render);
