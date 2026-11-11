@@ -1030,9 +1030,12 @@ function rvDraw(){rvHead();const T=RV.tab;$("rvTabR").setAttribute("aria-selecte
     ${lock?`<div class="sec">선생님과 글쓴이만 볼 수 있어요.<input type="password" maxlength="12" placeholder="비밀번호" aria-label="비밀글 비밀번호"><button type="button" data-act="open">열어 보기</button></div>${x.hasAns?'<div class="wait">✅ 답변이 달렸어요</div>':'<div class="wait">답변을 기다리고 있어요</div>'}`
      :`<p class="tx">${x.k==="q"?'<span class="qk">Q.</span>':""}${esc(x.text)}</p>
     ${x.ans?`<div class="an"><b>현쌤 답변 · ${rvAgo(x.at)}</b>${esc(x.ans)}</div>`:x.k==="q"?'<div class="wait">답변을 기다리고 있어요</div>':""}`}
-    ${adm?`<div class="adm">${x.k==="q"?`<textarea placeholder="답변">${esc(x.ans||"")}</textarea><button type="button" data-act="ans">${x.ans?"답변 고치기":"답변 달기"}</button>`:""}<button type="button" class="del" data-act="del">삭제</button></div>`:""}</div>`}).join("")
+    ${adm?`<div class="adm">${x.k==="q"?`<textarea placeholder="답변">${esc(x.ans||"")}</textarea><button type="button" data-act="ans">${x.ans?"답변 고치기":"답변 달기"}</button>`:""}<button type="button" class="del" data-act="del">삭제</button></div>`:rvIsMine(x)?'<div class="adm"><button type="button" class="del" data-act="mydel">내 글 삭제</button></div>':""}</div>`}).join("")
    :`<p class="none">${T==="r"?"아직 후기가 없어요. 첫 후기를 남겨 주세요!":"아직 질문이 없어요. 궁금한 점을 물어보세요!"}</p>`}
 /* 내가 쓴 비밀글은 이 기기에 비밀번호를 기억해 두고 자동으로 열어요 */
+function rvKeys(){try{return JSON.parse(localStorage.getItem("arcade-mykeys")||"{}")}catch(e){return {}}}
+function rvKeySet(id,k){try{const m=rvKeys();m[id]=k;localStorage.setItem("arcade-mykeys",JSON.stringify(m))}catch(e){}}
+const rvIsMine=x=>!!(rvKeys()[x.id]||(x.secret&&rvMine()[x.id]));
 function rvMine(){try{return JSON.parse(localStorage.getItem("arcade-secret")||"{}")}catch(e){return {}}}
 function rvMineSet(id,pw){try{const m=rvMine();m[id]=pw;localStorage.setItem("arcade-secret",JSON.stringify(m))}catch(e){}}
 async function rvOpenSecret(id,pw){const j=await fetch(SOON_API+"board/view",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,id,spw:pw}),cache:"no-store"}).then(r=>r.json());
@@ -1060,10 +1063,13 @@ $("rvForm").onsubmit=async e=>{e.preventDefault();const text=$("rvText").value.t
   const wait=Math.ceil(15-(Date.now()-last)/1000);if(wait>0){rvMsg(wait+"초 뒤에 다시 올릴 수 있어요",1);return}
   $("rvSend").disabled=true;
   try{const j=await fetch(SOON_API+"board/post",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,k:RV.tab,name,text,stars:RV.star,secret:sec,spw:sec?spw:""}),cache:"no-store"}).then(r=>r.json());
-   if(!j.ok){rvMsg(j.error||"올리지 못했어요",1);return}try{localStorage.setItem("arcade-posted",Date.now())}catch(e){}if(sec)rvMineSet(j.item.id,spw);RV.items.unshift(j.item);$("rvText").value="";$("rvCnt").textContent="0 / 500";$("rvSec").checked=false;$("rvSpw").hidden=true;$("rvSpw").value="";RV.star=0;rvStarsDraw();rvDraw();rvSync();rvMsg(RV.tab==="r"?"후기를 올렸어요. 고마워요!":sec?"비밀글을 올렸어요. 이 기기에서는 바로 볼 수 있어요":"질문을 올렸어요. 답변을 기다려 주세요!")}
+   if(!j.ok){rvMsg(j.error||"올리지 못했어요",1);return}try{localStorage.setItem("arcade-posted",Date.now())}catch(e){}if(sec)rvMineSet(j.item.id,spw);if(j.item.dk){rvKeySet(j.item.id,j.item.dk);delete j.item.dk}RV.items.unshift(j.item);$("rvText").value="";$("rvCnt").textContent="0 / 500";$("rvSec").checked=false;$("rvSpw").hidden=true;$("rvSpw").value="";RV.star=0;rvStarsDraw();rvDraw();rvSync();rvMsg(RV.tab==="r"?"후기를 올렸어요. 고마워요!":sec?"비밀글을 올렸어요. 이 기기에서는 바로 볼 수 있어요":"질문을 올렸어요. 답변을 기다려 주세요!")}
   catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}finally{$("rvSend").disabled=false}};
 $("rvList").addEventListener("click",async e=>{const o=e.target.closest('[data-act="open"]');if(o){const post=o.closest(".post"),pw=post.querySelector(".sec input").value.trim();if(!pw){rvMsg("비밀번호를 넣어 주세요",1);return}
    try{const j=await rvOpenSecret(post.dataset.id,pw);if(!j.ok){rvMsg(j.error||"열지 못했어요",1);return}rvMineSet(post.dataset.id,pw);rvDraw();rvMsg("비밀글을 열었어요")}catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}return}
+  const md=e.target.closest('[data-act="mydel"]');if(md){if(md.dataset.sure!=="1"){md.dataset.sure="1";md.textContent="정말 지울까요?";setTimeout(()=>{if(md.isConnected){md.dataset.sure="";md.textContent="내 글 삭제"}},3000);return}
+   const id=md.closest(".post").dataset.id;try{const j=await fetch(SOON_API+"board/mydel",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,id,key:rvKeys()[id]||"",spw:rvMine()[id]||""}),cache:"no-store"}).then(r=>r.json());
+    if(!j.ok){rvMsg(j.error||"지우지 못했어요",1);return}RV.items=j.items||[];rvDraw();rvSync();rvMsg("내 글을 지웠어요");rvAutoOpen()}catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}return}
   const b=e.target.closest("[data-act]");if(!b||!TEACH.pw)return;const post=b.closest(".post"),id=post.dataset.id;
   const del=b.dataset.act==="del";
   if(del&&b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="정말 삭제?";setTimeout(()=>{if(b.isConnected){b.dataset.sure="";b.textContent="삭제"}},3000);return}
