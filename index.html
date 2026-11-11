@@ -293,7 +293,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 <header class="top"><div class="wrap">
   <a class="logo" href="./">현게임<small>초등 과학 게임함</small></a>
   <nav class="nav">
-    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a><a href="#" id="soonLink" title="아직 공개하지 않을 게임을 잠가요 (선생님 비밀번호)">🔒 공개 관리</a>
+    <a href="#all">전체 게임</a><a href="#teacher">선생님</a><a href="#how">쓰는 법</a><a href="guide/">설명서</a><a href="#" id="soonLink">🔒 공개 관리</a>
     <a class="pill" id="pill" href="#teacher" title="우리 반 문제가 연결되어 있어요"></a>
   </nav>
 </div></header>
@@ -302,7 +302,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <section class="hero">
     <div>
       <p class="eyebrow">초등 3~6학년 과학 복습 게임</p>
-      <h1>문제 풀며<br>노는 과학<br><em>현게임</em></h1>
+      <h1>모든 비번<br>9999입니다<br><em>현게임</em></h1>
       <form class="find" id="findForm" role="search">
         <input id="q" type="search" placeholder="5학년, 전기, 날씨…" aria-label="게임 찾기">
         <button type="submit">찾기</button>
@@ -351,8 +351,9 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
             <li><b>엑스탱크 스쿨</b> — 단원 고르기에 '우리 반' 묶음이 생겨요 (선생님 방·혼자 연습)</li>
             <li><b>과학 포트리스</b> — 설정의 '우리 반 문제'에 자동으로 더해져요 ('우리 반 문제만 내기' 가능)</li>
             <li><b>밤의 과학실 탈출</b> — 포트리스와 같아요</li>
-            <li><b>등대섬 수비대</b> — 첫 화면 문제 범위에 '우리 반' 탭이 생겨요</li>
             <li><b>과학섬 생활</b> — 문제 범위에 '우리 반' 탭이 생겨요 (게시판 설정에서 엑셀로도 넣기)</li>
+            <li><b>과학 이어달리기</b> — 선생님 설정의 문제 범위에 '우리 반'이 생겨요 (방을 열면 학생 기기로 문제가 함께 가요)</li>
+            <li><b>과학섬 마블</b> — 문제 단원 고르기에 '우리 반' 줄이 생겨요 ([우리 반 문제 넣기]로 엑셀도 돼요)</li>
             <li class="no">카누·찌릿·룰렛 — 교과서 이야기에 맞춘 게임이라 기본 문제만 써요</li>
           </ul>
         </div>
@@ -433,7 +434,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 
         <div class="adv" style="margin-top:22px">
           <b style="font-size:16px">구글 없이 엑셀 파일로 넣기</b> <small style="color:var(--muted)">(이 컴퓨터에서만)</small>
-          <p class="say" style="margin-top:6px">엑셀 파일을 올리거나 엑셀 칸을 복사해 넣으면, 이 컴퓨터의 엑스탱크·포트리스·탈출·등대섬·과학섬에 나와요. 엑스탱크 선생님 방에서는 학생 기기로도 함께 보내져요.</p>
+          <p class="say" style="margin-top:6px">엑셀 파일을 올리거나 엑셀 칸을 복사해 넣으면, 이 컴퓨터의 엑스탱크·포트리스·탈출·과학섬에 나와요. 엑스탱크 선생님 방에서는 학생 기기로도 함께 보내져요.</p>
           <div class="btns"><button class="btn" type="button" id="xlOpen">엑셀로 우리 반 문제 넣기</button></div>
         </div>
 
@@ -494,14 +495,12 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 <dialog id="soonDlg" aria-labelledby="soonT">
   <h3 id="soonT">🔒 공개 예정 관리</h3>
   <div id="soonLogin">
-    <p class="soon-help">아직 학생에게 보이고 싶지 않은 게임을 <b>공개 예정</b>으로 잠가요. 잠긴 게임은 홈페이지에서 '🔒 공개 예정' 카드로만 보이고 눌러도 열리지 않아요.<br>선생님 비밀번호를 넣어 주세요. (처음 비밀번호: 선생님 열쇠와 같은 번호)</p>
-    <div class="soon-row"><input id="soonPw" type="password" autocomplete="off" placeholder="선생님 비밀번호"><button class="btn main" type="button" id="soonIn">열기</button></div>
+    <div class="soon-row"><input id="soonPw" type="password" autocomplete="off" placeholder="비밀번호"><button class="btn main" type="button" id="soonIn">열기</button></div>
   </div>
   <div id="soonEdit" hidden>
-    <p class="soon-help">체크한 게임이 <b>공개 예정(잠금)</b>이 돼요. 저장하면 모든 학생 기기에 바로 적용돼요.<br>※ 홈페이지 카드만 잠가요. 게임 주소를 직접 아는 학생은 들어갈 수 있어요.</p>
     <div id="soonList" class="soon-list"></div>
-    <div class="soon-row"><input id="soonNew" type="password" autocomplete="off" placeholder="새 비밀번호 (바꿀 때만, 4글자 이상)"></div>
-    <label class="soon-chk"><input type="checkbox" id="soonSee"> 이 컴퓨터에서는 잠긴 게임도 열어 보기 (선생님 확인용, 창을 닫으면 꺼져요)</label>
+    <div class="soon-row"><input id="soonNew" type="password" autocomplete="off" placeholder="새 비밀번호"></div>
+    <label class="soon-chk"><input type="checkbox" id="soonSee"> 잠긴 게임도 열어 보기</label>
   </div>
   <p class="soon-msg" id="soonMsg"></p>
   <div class="acts"><button class="btn main" type="button" id="soonSave" hidden>저장</button><button class="btn" type="button" id="soonClose">닫기</button></div>
@@ -524,7 +523,6 @@ const GAMES=[
  {t:"과학 포트리스",img:"thumbs/fortress.jpg?v=1794014000",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"탱크마다 고유 스킬! 각도와 힘을 맞춰 쏘는 턴제 대전. 방 하나에 2~8명."},
  {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:SRV+"/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"그 시절 TV 알까기 명인전! 눈 달린 바둑돌로 친구 돌을 퐁~ 아이템 11종·맵 4종, 이기면 롤 티어가 올라가요."},
  {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg?v=1794014000",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실 책상 위를 누비는 3D 미니어처 탱크 대전. 선생님 방은 최대 40명."},
- {t:"등대섬 수비대",img:"thumbs/tank.jpg",url:"https://hyungame.duckdns.org/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"바다 괴물을 막는 3D 해안 방어. 문제를 맞히면 포탑이 강해져요. 2~4명 협동."},
  {t:"밤의 과학실 탈출",img:"thumbs/escape.jpg?v=1794013023",url:SRV+"/escape/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,d:"불 꺼진 과학실에서 문제를 풀어 탈출해요. 공포 단계는 학생이 골라요."},
  {t:"과학섬 생활",img:"thumbs/island.jpg?v=1794033097",url:SRV+"/island/",g:[3,4,5,6],mode:"협동",kind:"게임",hc:true,world:"island",d:"동물의 숲 느낌 3D 힐링 섬. 무언가 얻을 때마다 2학기 과학 문제! 친구 섬에 놀러 가요."},
  {t:"과학 이어달리기",img:"thumbs/relay.jpg",url:SRV+"/relay/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"과학섬 캐릭터로 달리는 반 대항 계주. 바통 터치와 정답 게이트에서 2학기 과학 문제!"},
@@ -532,6 +530,7 @@ const GAMES=[
  {t:"이어그리기 교실",img:"thumbs/draw.jpg?v=1794033097",url:SRV+"/draw/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",world:"island",d:"장면 카드가 쾅! 반 전체가 다음 장면을 그려 그림 이야기를 이어 가요. 캐치마인드식 그림 맞히기도 있어요."},
  {t:"사물놀이 한마당",soon:true,img:"thumbs/samul.jpg?v=1",url:SRV+"/samul/",g:[3,4,5,6],mode:"혼자 · 반 전체",kind:"게임",unit:"음악 국악 (장단 · 사물놀이)",d:"꽹과리·장구·북·징 중 하나를 맡아 장단을 연주하는 국악 리듬게임. 세마치·굿거리·자진모리·동살풀이·휘모리, 우리 반이 악기 모둠으로 나눠 합주해요."},
  {t:"내 냉장고를 부탁해",img:"thumbs/fridge.jpg?v=3",url:SRV+"/fridge/",g:[5,6],mode:"반 전체",kind:"게임",unit:"실과 요리",d:"친구 냉장고의 재료로 3D 주방에서 요리해요. 손 씻기부터 설거지까지가 실과 점수! 마지막엔 요리 경연과 투표."},
+ {t:"과학섬 마블",img:"thumbs/marble.jpg?v=2",url:SRV+"/marble/",g:[3,4,5,6],mode:"반 전체",kind:"게임",hc:true,world:"island",d:"모두의 마블처럼 3D 과학섬을 돌며 땅을 사고 랜드마크를 세워요. 땅 사기·통행료 방패는 과학 문제로! 한 화면이나 노트북 한 대에 한 명씩."},
  {t:"명심 필사실",img:"thumbs/pilsa.jpg?v=1",url:SRV+"/pilsa/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",unit:"생활지도 · 인성",d:"잘못한 일을 고르면 맞는 명심보감 구절이 나와요. 원고지에 한 자 한 자 바르게 따라 쓰며 반성하는 수묵 필사실. 기록은 학생 기기에 남아요."}
 
 ];
@@ -805,6 +804,36 @@ const MANUALS={
  teacher:["<b>연습용 로봇 셰프 추가</b>로 학생 없이 전체 흐름을 미리 확인","<b>한 번에 매칭</b>으로 뽑기를 빠르게 진행"],
  keys:"W A S D + 마우스, E로 사용 (칼질 등은 E를 리듬에 맞춰 눌러요) · 터치 기기는 왼쪽 조이스틱 + 사용 버튼.",
  tips:["선생님 컴퓨터가 방 역할을 해요. 수업이 끝날 때까지 선생님 창을 닫지 마세요.","처음엔 첫 화면 <b>혼자 연습</b>으로 주방 조작을 익히게 해 주세요."]
+},
+"과학섬 마블":{
+ who:"한 화면 2~4모둠 · 노트북 모드 최대 4명",dev:"TV·전자칠판 하나, 또는 학생 노트북·크롬북 각자",
+ intro:"모두의 마블처럼 3D 과학섬을 돌며 땅을 사고 별장·빌딩·호텔·랜드마크를 세우는 보드게임이에요. 땅을 살 때와 통행료를 낼 때 과학 문제가 나오고, 맞히면 땅을 사거나 <b>과학 방패</b>로 통행료를 줄여요. 캐릭터마다 고유 능력이 있어요.",
+ steps:[
+  ["모드 고르기","<b>한 화면 모드</b>: TV나 전자칠판 하나로 2~4모둠이 돌아가며 해요. <b>노트북 모드</b>: 학생이 각자 노트북에서 같은 주소를 열고 방 번호로 한 명씩 들어와요."],
+  ["방 만들기 (노트북 모드)","선생님 컴퓨터에서 <b>방 만들기 · 선생님/방장</b> → 이 컴퓨터가 방이 돼요. 화면의 <b>방 번호 4자리</b>를 학생들에게 알려 줘요."],
+  ["캐릭터와 설정","모둠마다 캐릭터와 이름을 골라요(캐릭터마다 능력이 달라요). 문제 단원(3~6학년 2학기), 문제가 나오는 때, 게임 길이(15·20·30턴·끝까지)를 정하고 시작해요."],
+  ["주사위 굴리기","<b>꾹 눌러 굴리기</b>: 누르고 있다가 바늘이 짧게·보통·멀리 중 원하는 곳에 올 때 떼요. 더블이면 한 번 더!"],
+  ["땅 사고 짓기","빈 땅에 멈추면 문제를 맞혀 살 수 있어요. 내 땅에 다시 오면 건물을 올리고, 랜드마크를 세우면 통행료가 크게 오르고 아무도 인수할 수 없어요."]
+ ],
+ rule:"이기는 방법: 색깔 묶음 3개(트리플 독점) · 한 줄 전부(라인 독점) · 관광지 4곳(관광지 독점) · 다른 모둠 모두 파산. 정한 턴이 끝나면 자산이 가장 많은 모둠이 1등이에요. 무인도·황금열쇠(미니게임)·세계여행·과학 올림픽·섬 뉴스 같은 칸과 이벤트가 있어요.",
+ teacher:["단원 고르기에서 <b>우리 반 문제 넣기</b> → 창을 닫으면 단원 목록에 「우리 반」 줄이 생겨요","<b>문제가 나오는 때</b>: 땅 살 때 + 통행료 / 통행료·황금열쇠만","<b>게임 길이</b>로 수업 시간에 맞춰요 (40분 수업이면 15~20턴)"],
+ keys:"마우스·터치로 버튼을 눌러요. 주사위는 <b>꾹 눌러 굴리기</b> 버튼을 누르고 있다가 떼요. 카메라는 위쪽 <b>카메라 자동</b>으로 켜고 꺼요.",
+ tips:["노트북 모드는 <b>방장(선생님) 컴퓨터</b>에서 게임이 돌아가요. 수업이 끝날 때까지 그 창을 닫지 마세요.","연결이 끊긴 학생은 같은 방 번호와 이름으로 다시 들어가면 이어서 해요.","한 화면 모드는 모둠마다 대표 한 명이 나와서 굴리게 하면 진행이 빨라요."]
+},
+"명심 필사실":{
+ who:"학생 한 명씩",dev:"웨일북·태블릿(펜 추천) · 컴퓨터는 마우스로도",
+ intro:"잘못한 일을 고르면 그에 맞는 명심보감 구절이 나오고, 원고지 칸에 한 자 한 자 따라 쓰며 반성하는 필사 도구예요. 삐뚤게 쓴 글자는 다시 써야 넘어가요. 마지막에 다짐을 쓰고 손글씨로 돌아보기를 남기면 필사 확인서가 나와요.",
+ steps:[
+  ["선생님이 정해 주기 (師席)","학생 기기에서 <b>오늘 반성할 일</b>을 최대 3개 고르고, 학생 이름과 있었던 일(선택, 확인서에 적혀요)을 넣어요. 구절 수와 글씨 검사 정도를 정하고 <b>필사 시작</b>."],
+  ["먼저 생각해 보기 (生覺)","비슷한 상황이 나오고 어떻게 했어야 할지 골라요. 맞게 고르면 구절로 넘어가요."],
+  ["따라 쓰기","검은 테두리 칸부터 회색 글자를 따라 써요. 선 밖으로 나가거나 획이 빠지면 그 칸을 다시 써요. 한 장을 쓰면 방금 쓴 구절의 뜻을 보지 않고 골라요."],
+  ["다짐과 돌아보기","오늘의 다짐을 원고지에 쓰고(決心), 빈 종이에 두 줄 이상 내 생각을 손글씨로 써요(反省)."],
+  ["필사 확인","쓴 글자 수 · 다시 쓴 칸 · 걸린 시간이 적힌 확인서가 나오고, 이 기기의 <b>필사 기록부</b>에 저장돼요."]
+ ],
+ rule:"반성할 일: 친구와 싸움·화냄 · 나쁜 말·욕·놀림 · 수업 시간 떠들기 · 선생님 말씀 안 듣기 · 거짓말 · 남의 물건 함부로 하기 · 숙제 안 함 · 차례·규칙 안 지킴 · 남 탓 · 친구 무시·따돌림.",
+ teacher:["<b>구절 수</b>로 분량을 정해요 (화면에 따라 쓸 글자 수와 걸리는 시간이 나와요)","<b>글씨 검사</b>: 너그럽게 / 엄격하게","<b>뜻 따라 쓰기</b>, <b>펜+손가락</b> 입력 같은 옵션도 골라요"],
+ keys:"펜이나 손가락으로 원고지 칸에 직접 써요. 컴퓨터에서는 마우스로 써요. <b>이 칸 지우기</b>로 한 칸만 다시 쓸 수 있어요.",
+ tips:["기록은 <b>그 기기에만</b> 남아요. 첫 화면 <b>필사 기록부 보기</b>에서 학생별로 볼 수 있어요.","쓰다가 화면을 닫아도 다시 열면 <b>이어 쓰기</b>로 계속할 수 있어요.","웨일북 펜을 쓰면 글씨 검사가 가장 정확해요."]
 }};
 
 let manGame=null;
@@ -852,7 +881,7 @@ function paintClass(){
   if(on){
     const n=c?c.count:null;
     $("cbName").textContent=nm+" 문제가 연결돼 있어요";
-    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·탈출·등대섬·과학섬에서 나와요";
+    $("cbSub").textContent=(n==null?"문제를 불러오는 중…":`우리 반 문제 ${n}개`)+" · 엑스탱크·포트리스·탈출·과학섬에서 나와요";
     $("stuBox").classList.toggle("on",HC.mode()==="B");
     $("nowT").textContent="이 기기: "+nm+" · "+WAY_NAME[HC.mode()];
     $("nowD").textContent=c?`문제 ${c.count}개 · 단원 ${c.units.length}개 · ${ago(c.at)} 읽음`:"아직 문제를 읽지 못했어요. [다시 읽기]를 눌러 주세요.";
