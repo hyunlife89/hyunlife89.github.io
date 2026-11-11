@@ -47,8 +47,8 @@ a{color:inherit}
 /* 9999 모자이크: 드래그하면 보여요 */
 .secret{position:relative;display:inline-block;cursor:text;touch-action:none}
 .secret .d{filter:blur(14px);transition:filter .5s}
-.secret::after{content:"";position:absolute;inset:-6px -4px;pointer-events:none;transition:opacity .5s;
- background:repeating-conic-gradient(rgba(120,126,140,.85) 0 25%,rgba(176,181,192,.85) 0 50%) 0 0/34px 34px,repeating-conic-gradient(rgba(60,64,76,.55) 0 25%,rgba(220,223,230,.35) 0 50%) 17px 9px/51px 51px}
+.secret::after{content:"";position:absolute;inset:14% 4% 10%;pointer-events:none;transition:opacity .5s;
+ background:repeating-conic-gradient(rgba(120,126,140,.85) 0 25%,rgba(176,181,192,.85) 0 50%) 0 0/24px 24px,repeating-conic-gradient(rgba(60,64,76,.55) 0 25%,rgba(220,223,230,.35) 0 50%) 12px 6px/36px 36px}
 .secret-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap;font-size:15px;font-weight:800;letter-spacing:0;line-height:1;color:#fff;background:var(--blue);padding:8px 12px;border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.2);pointer-events:none;animation:hintBob 1.6s ease-in-out infinite;transition:opacity .3s;z-index:2}
 .secret-hint i{display:inline-block;font-style:normal;animation:hintSwipe 1.6s ease-in-out infinite}
 @keyframes hintBob{50%{transform:translate(-50%,calc(-50% - 4px))}}
@@ -104,6 +104,17 @@ body.connected .pc .mine{display:block}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:34px 26px;padding-bottom:20px}
 .item{position:relative}
+.ord-bar[hidden]{display:none}
+.ord-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border:1.5px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 var(--ink)}
+.ord-bar .ord-msg{flex:1;min-width:200px;font-weight:700;font-size:15px}
+.ord-bar.on{background:color-mix(in srgb,var(--yellow) 30%,var(--paper))}
+.grid.ordering .item{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s}
+.grid.ordering .item *{pointer-events:none}
+.grid.ordering .item img{-webkit-user-drag:none}
+.grid.ordering .item .under .bts{visibility:hidden}
+.grid.ordering .item::after{content:attr(data-no);position:absolute;right:-10px;top:-14px;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:900;font-size:15px;z-index:3;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.grid.ordering .item.lift{opacity:.45;transform:scale(.96);cursor:grabbing}
+.grid.ordering .item.lift .pc{outline:3px dashed var(--blue);outline-offset:4px}
 .item .pc{transition:transform .25s ease,box-shadow .25s ease}
 .item:nth-child(3n+1) .pc{transform:rotate(-1.2deg)}
 .item:nth-child(3n+2) .pc{transform:rotate(.8deg)}
@@ -111,7 +122,7 @@ body.connected .pc .mine{display:block}
 .item .pc:hover{transform:rotate(0) translateY(-6px);box-shadow:0 28px 40px -20px rgba(0,0,0,.5)}
 .pc .mode{display:inline-block;font-weight:700;color:#fff;background:#14171f;border-radius:4px;padding:0 6px;margin-right:4px}
 .under{display:flex;gap:10px;align-items:flex-start;margin:12px 4px 0}
-.item .desc{margin:0;flex:1;font-size:14px;color:var(--muted)}
+.item .desc{margin:0;flex:1;min-width:0;font-size:15.5px;line-height:1.6;font-weight:600;color:var(--ink);opacity:.86;word-break:keep-all}
 .qrb{flex:none;border:1.5px solid var(--ink);background:var(--yellow);color:#14171f;font-weight:900;font-size:13px;padding:4px 10px;cursor:pointer}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
 
@@ -130,24 +141,40 @@ body.connected .pc .mine{display:block}
 #rv .tabs button{flex:1;font:inherit;font-weight:900;font-size:15px;padding:11px;border:0;background:var(--paper);color:var(--muted);cursor:pointer;border-bottom:4px solid transparent}
 #rv .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue)}
 #rv .rbody{overflow:auto;flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:10px;min-height:120px}
-#rv .post{border:1.5px solid var(--line);padding:10px 12px;background:var(--paper)}
-#rv .post .who{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}#rv .post .who b{color:var(--ink);font-size:14px}
-#rv .post .st{color:#e0a800;letter-spacing:1px}
-#rv .post .tx{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font-size:15px;line-height:1.55}
+#rv .post{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--paper);display:grid;grid-template-columns:38px 1fr;gap:4px 12px;align-content:start}#rv .post .av{align-self:start}
+#rv .post .av{grid-row:span 3;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:16px;color:#fff;background:var(--blue)}
+#rv .post .who{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}#rv .post .who b{color:var(--ink);font-size:15px}
+#rv .post .st{color:#e0a800;letter-spacing:1px;font-size:14px}
+#rv .post .lockb{font-size:11px;font-weight:800;color:#8a5a00;background:#fff1c2;border:1px solid #e8c766;border-radius:999px;padding:1px 8px}
+#rv .post .tx{margin:2px 0 0;white-space:pre-wrap;word-break:break-word;font-size:15.5px;line-height:1.6;color:var(--ink)}
 #rv .post .qk{display:inline-block;font-weight:900;color:var(--blue);margin-right:4px}
-#rv .post .an{margin-top:8px;border-left:4px solid var(--green);background:color-mix(in srgb,var(--green) 9%,var(--paper));padding:8px 10px;font-size:14px;white-space:pre-wrap;word-break:break-word}
-#rv .post .an b{display:block;font-size:12px;color:var(--green)}
-#rv .post .wait{margin-top:6px;font-size:12px;color:var(--muted)}
+#rv .post .sec{margin:4px 0 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:14px}
+#rv .post .sec input{width:120px;font:inherit;font-size:14px;padding:5px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+#rv .post .sec button{font:inherit;font-size:13px;font-weight:800;border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);padding:4px 10px;cursor:pointer}
+#rv .post .an{margin-top:8px;border-radius:10px;border-left:4px solid var(--green);background:color-mix(in srgb,var(--green) 10%,var(--paper));padding:9px 12px;font-size:14.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+#rv .post .an b{display:block;font-size:12px;color:var(--green);margin-bottom:2px}
+#rv .post .wait{margin-top:4px;font-size:12.5px;color:var(--muted)}
+#rv .post .an,#rv .post .wait,#rv .post .adm,#rv .post .sec{grid-column:2}
 #rv .adm{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}#rv .adm textarea{flex:1 1 100%;min-height:54px}
-#rv .adm button{font:inherit;font-size:12px;font-weight:700;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:3px 10px;cursor:pointer}#rv .adm .del{border-color:var(--red);color:var(--red)}
-#rv .none{color:var(--muted);text-align:center;padding:24px 0;font-size:14px}
-#rv form{border-top:1.5px solid var(--ink);padding:12px 18px;display:grid;gap:8px;background:var(--soft)}
-#rv .fr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#rv input[type=text],#rv textarea{font:inherit;font-size:16px;padding:8px 10px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:0;min-width:0}
-#rv input[type=text]{width:130px}#rv textarea{width:100%;min-height:64px;resize:vertical}
-#rv .stars{display:flex}#rv .stars button{font-size:26px;line-height:1;border:0;background:none;cursor:pointer;color:var(--line);padding:0 2px}#rv .stars button.on{color:#e0a800}
+#rv .adm button{font:inherit;font-size:12px;font-weight:700;border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);padding:4px 10px;cursor:pointer}#rv .adm .del{border-color:var(--red);color:var(--red)}
+#rv .none{color:var(--muted);text-align:center;padding:30px 0;font-size:15px}
+#rv form{border-top:1.5px solid var(--ink);padding:14px 18px 16px;display:grid;gap:10px;background:var(--soft)}
+#rv .fr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#rv input[type=text],#rv input[type=password],#rv textarea{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);min-width:0}
+#rv #rvName{flex:1 1 220px}
+#rv textarea{width:100%;min-height:96px;resize:vertical;line-height:1.55}
+#rv .stars{display:flex;align-items:center;gap:2px}#rv .stars[hidden]{display:none}
+#rv .stars button{font-size:30px;line-height:1;border:0;background:none;cursor:pointer;color:var(--line);padding:0 1px;transition:transform .1s}#rv .stars button:hover{transform:scale(1.15)}#rv .stars button.on{color:#e0a800}
+#rv .stars .sl{font-size:13px;font-weight:700;color:var(--muted);margin-left:6px}
+#rv .secrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px;font-weight:700}#rv .secrow[hidden]{display:none}
+#rv .secrow label{display:flex;gap:6px;align-items:center;cursor:pointer}
+#rv .secrow input[type=checkbox]{width:18px;height:18px;accent-color:var(--blue)}
+#rv #rvSpw{width:170px}#rv #rvSpw[hidden]{display:none}
+#rv .secrow small{font-weight:500;color:var(--muted);font-size:12.5px}
+#rv .cnt{font-size:12px;color:var(--muted);text-align:right;margin-top:-6px}
 #rv .msg{font-size:13px;font-weight:700;min-height:1em}
 #rv .fb{display:flex;gap:8px;justify-content:flex-end;align-items:center}#rv .fb .msg{margin-right:auto}
+#rv .fb .btn{border-radius:10px;padding:10px 20px}
 @media (max-width:560px){#rv .rh img{width:70px}#rv .rh h3{font-size:18px}#rv .rbody,#rv form{padding-left:12px;padding-right:12px}}
 
 /* 게임별 설명서 창 */
@@ -329,7 +356,20 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 .soon-item label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:pointer}
 .soon-item .grip{cursor:grab;color:#9aa0aa;font-size:18px;flex:none;user-select:none;touch-action:none}
 .soon-item .soon-mv{display:flex;flex-direction:row;gap:4px;flex:none}.soon-mv button{font:inherit;font-size:13px;width:32px;height:32px;border:1.5px solid #14171f;border-radius:8px;background:#fff;cursor:pointer}.soon-mv button:disabled{opacity:.25;cursor:default}
-.soon-item:has(input:checked){border-color:#c0392b;background:#fff3f0}
+.soon-item:has(.sw-in:not(:checked)){background:#f3f4f6;border-color:#d6d8de}
+.soon-item:has(.sw-in:not(:checked)) img{filter:grayscale(1);opacity:.6}
+.soon-item:has(.sw-in:not(:checked)) b{color:#6b7280}
+.sw-in{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.sw{position:relative;flex:none;width:52px;height:30px;border-radius:999px;background:#c9ccd3;border:1.5px solid #14171f;transition:background .2s,box-shadow .2s;margin-left:auto}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:23px;height:23px;border-radius:50%;background:#fff;border:1.5px solid #14171f;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s}
+.sw-in:checked~.sw{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25),0 0 12px rgba(34,197,94,.55)}
+.sw-in:checked~.sw::after{transform:translateX(22px)}
+.sw-in:focus-visible~.sw{outline:3px solid #2f6bff;outline-offset:2px}
+.sw-t{flex:none;width:58px;font-style:normal;font-weight:900;font-size:13px;text-align:center;color:#9aa0aa}
+.sw-t::after{content:"공개 예정"}
+.sw-in:checked~.sw-t{color:#16a34a}.sw-in:checked~.sw-t::after{content:"공개"}
+@media (prefers-reduced-motion:reduce){.sw,.sw::after{transition:none}}
+@media (max-width:520px){.soon-item img,.sw-t{display:none}.soon-item{gap:6px;padding:6px}.soon-mv button{width:28px;height:28px}.soon-item small{font-size:11px}}
 .soon-item img{width:52px;height:39px;object-fit:cover;border-radius:6px}
 .soon-item span{display:flex;flex-direction:column;min-width:0}.soon-item small{color:#6b7280;font-size:12px}
 .soon-chk{display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0}
@@ -376,6 +416,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
       <div class="chips"><button class="chip isl-chip" type="button" id="worldChip" aria-pressed="false">🏝️ 과학섬 세계관</button></div>
     </div>
     <div class="isl-note" id="islNote" hidden><b>🏝️ 과학섬 세계관</b> 과학섬 생활에서 꾸민 내 캐릭터가 함께 나오는 게임이에요. 과학섬을 한 기기로 <b>현게임 주소</b>에서 들어오면 캐릭터가 그대로 따라가요.</div>
+    <div class="ord-bar" id="ordBar" hidden><span class="ord-msg" id="ordMsg">✋ 선생님 모드예요. 카드를 끌어서 게임 순서를 바꿀 수 있어요.</span><button class="btn" type="button" id="ordGo">순서 바꾸기</button><button class="btn main" type="button" id="ordSave" style="display:none">순서 저장</button><button class="btn" type="button" id="ordCancel" style="display:none">취소</button></div>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -559,6 +600,8 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
   <form id="rvForm" autocomplete="off">
     <div class="fr"><input type="text" id="rvName" maxlength="12" placeholder="이름 (안 쓰면 익명)"><div class="stars" id="rvStars"></div></div>
     <textarea id="rvText" maxlength="500"></textarea>
+    <div class="cnt" id="rvCnt">0 / 500</div>
+    <div class="secrow" id="rvSecRow"><label><input type="checkbox" id="rvSec"> 🔒 비밀글로 쓰기</label><input type="password" id="rvSpw" maxlength="12" placeholder="비밀번호 (4자 이상)" hidden><small id="rvSecTip">선생님과 나만 볼 수 있어요</small></div>
     <div class="fb"><span class="msg" id="rvMsg"></span><button class="btn main" type="submit" id="rvSend">올리기</button></div>
   </form>
 </dialog>
@@ -629,18 +672,19 @@ function render(){
   $("worldChip").setAttribute("aria-pressed",String(world));$("islNote").hidden=!world;
   const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
-  $("grid").innerHTML=list.length?list.map(x=>`<div class="item">${card(x)}
+  $("grid").innerHTML=list.length?list.map((x,i)=>`<div class="item" data-t="${esc(x.t)}" data-no="${i+1}">${card(x)}
     <div class="under"><p class="desc">${esc(x.d)}</p><div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기">QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+  $("grid").classList.toggle("ordering",!!ORD);ordBarState();
 }
 $("q").addEventListener("input",render);
 $("worldChip").onclick=()=>{world=!world;render()};
 $("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";world=false;render();$("all").scrollIntoView()});
-$("grid").addEventListener("click",e=>{if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m){openMan(GAMES[+m.dataset.man]);return}const v=e.target.closest("[data-rv]");if(v)openRv(GAMES[+v.dataset.rv])});
+$("grid").addEventListener("click",e=>{if(ORD){e.preventDefault();return}if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m){openMan(GAMES[+m.dataset.man]);return}const v=e.target.closest("[data-rv]");if(v)openRv(GAMES[+v.dataset.rv])});
 
 /* ── 공개 예정 관리 창 ── */
 function soonMsg(t,bad){const m=$("soonMsg");m.textContent=t||"";m.style.color=bad?"#c0392b":""}
 function soonOpen(){$("soonLogin").hidden=!!TEACH.pw;$("soonEdit").hidden=!TEACH.pw;$("soonSave").hidden=!TEACH.pw;soonMsg("");if(TEACH.pw)soonFill();else{$("soonPw").value="";setTimeout(()=>$("soonPw").focus(),50)}$("soonDlg").showModal()}
-function soonFill(){$("soonList").innerHTML=GAMES.map((x,i)=>`<div class="soon-item" draggable="true" data-t="${esc(x.t)}"><span class="grip" aria-hidden="true">⠿</span><span class="no"></span><label><input type="checkbox" ${isSoon(x)?"checked":""}><img src="${esc(x.img)}" alt=""><span><b>${esc(x.t)}</b><small>${esc(x.mode)} · ${gtxt(x.g)}</small></span></label><span class="soon-mv"><button type="button" data-mv="-1" aria-label="${esc(x.t)} 위로">▲</button><button type="button" data-mv="1" aria-label="${esc(x.t)} 아래로">▼</button></span></div>`).join("");soonNums();$("soonSee").checked=TEACH.on}
+function soonFill(){$("soonList").innerHTML=GAMES.map((x,i)=>`<div class="soon-item" draggable="true" data-t="${esc(x.t)}"><span class="grip" aria-hidden="true">⠿</span><span class="no"></span><label><input type="checkbox" class="sw-in" role="switch" aria-label="${esc(x.t)} 공개" ${isSoon(x)?"":"checked"}><img src="${esc(x.img)}" alt=""><span><b>${esc(x.t)}</b><small>${esc(x.mode)} · ${gtxt(x.g)}</small></span><span class="sw" aria-hidden="true"></span><em class="sw-t" aria-hidden="true"></em></label><span class="soon-mv"><button type="button" data-mv="-1" aria-label="${esc(x.t)} 위로">▲</button><button type="button" data-mv="1" aria-label="${esc(x.t)} 아래로">▼</button></span></div>`).join("");soonNums();$("soonSee").checked=TEACH.on}
 function soonNums(){const it=[...$("soonList").children];it.forEach((el,i)=>{el.querySelector(".no").textContent=i+1;const b=el.querySelectorAll("[data-mv]");b[0].disabled=i===0;b[1].disabled=i===it.length-1})}
 $("soonList").addEventListener("click",e=>{const b=e.target.closest("[data-mv]");if(!b)return;const el=b.closest(".soon-item"),L=$("soonList");
   if(b.dataset.mv==="-1"&&el.previousElementSibling)L.insertBefore(el,el.previousElementSibling);else if(b.dataset.mv==="1"&&el.nextElementSibling)L.insertBefore(el.nextElementSibling,el);
@@ -660,7 +704,7 @@ $("soonClose").onclick=()=>$("soonDlg").close();
 $("soonIn").onclick=async()=>{const pw=$("soonPw").value;if(!pw){soonMsg("비밀번호를 넣어 주세요",1);return}
   try{const j=await soonPost("check",{pw});if(!j.ok){soonMsg(j.error||"비밀번호가 달라요",1);return}TEACH.pw=pw;SOON=new Set(j.soon||[]);applyOrder(j.order);render();fanRender();soonOpen()}catch(e){soonMsg("설정 서버에 연결하지 못했어요. (GitHub 주소에서는 바꿀 수 없어요 · 현게임 주소에서 열어 주세요)",1)}};
 $("soonPw").addEventListener("keydown",e=>{if(e.key==="Enter")$("soonIn").click()});
-$("soonSave").onclick=async()=>{const items=[...$("soonList").children];const order=items.map(el=>el.dataset.t);const soon=items.filter(el=>el.querySelector("input").checked).map(el=>el.dataset.t);const newPw=$("soonNew").value.trim();
+$("soonSave").onclick=async()=>{const items=[...$("soonList").children];const order=items.map(el=>el.dataset.t);const soon=items.filter(el=>!el.querySelector(".sw-in").checked).map(el=>el.dataset.t);const newPw=$("soonNew").value.trim();
   try{const j=await soonPost("config",{pw:TEACH.pw,soon,order,newPw});if(!j.ok){soonMsg(j.error||"저장하지 못했어요",1);return}if(newPw){TEACH.pw=newPw;$("soonNew").value=""}
    SOON=new Set(j.soon||soon);applyOrder(j.order||order);TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render();fanRender();soonMsg("저장했어요! 순서도 바뀌었어요 · 공개 예정 "+SOON.size+"개"+(newPw?" · 비밀번호도 바꿨어요":""))}catch(e){soonMsg("설정 서버에 연결하지 못했어요",1)}};
 $("soonSee").onchange=()=>{TEACH.on=$("soonSee").checked;try{sessionStorage.setItem("arcade-teach",TEACH.on?"1":"0")}catch(e){}render()};
@@ -926,6 +970,29 @@ $("manClose").onclick=()=>$("man").close();
 $("man").addEventListener("click",e=>{if(e.target===$("man"))$("man").close()});
 $("manQr").onclick=()=>{$("man").close();if(manGame)openQR(manGame.t,link(manGame.url))};
 
+/* ── 끌어서 게임 순서 바꾸기 (공개 관리 비밀번호로 들어온 선생님만) ── */
+var ORD=false;
+function ordBarState(){const b=$("ordBar");if(!b)return;b.hidden=!TEACH.pw;b.classList.toggle("on",!!ORD);
+  $("ordGo").style.display=ORD?"none":"";$("ordSave").style.display=ORD?"":"none";$("ordCancel").style.display=ORD?"":"none";
+  $("ordMsg").textContent=ORD?"카드를 끌어다 원하는 자리에 놓으세요. 다 옮겼으면 [순서 저장]을 눌러요.":"✋ 선생님 모드예요. 카드를 끌어서 게임 순서를 바꿀 수 있어요."}
+function ordNums(){[...$("grid").children].forEach((el,i)=>{if(el.dataset)el.dataset.no=i+1})}
+$("ordGo").onclick=()=>{grade=0;mode="전체";world=false;$("q").value="";ORD=true;render();toast("카드를 끌어서 순서를 바꿔 보세요")};
+$("ordCancel").onclick=()=>{ORD=false;render()};
+$("ordSave").onclick=async()=>{const order=[...$("grid").querySelectorAll(".item")].map(el=>el.dataset.t);
+  try{const j=await soonPost("config",{pw:TEACH.pw,soon:[...SOON],order,newPw:""});if(!j.ok){toast(j.error||"저장하지 못했어요");return}
+    SOON=new Set(j.soon||[...SOON]);applyOrder(j.order||order);ORD=false;render();fanRender();toast("순서를 저장했어요!")}
+  catch(e){toast("설정 서버에 연결하지 못했어요")}};
+$("grid").addEventListener("dragstart",e=>{if(ORD)e.preventDefault()});
+$("grid").addEventListener("pointerdown",e=>{if(!ORD||e.button>0)return;const el=e.target.closest(".item");if(!el)return;e.preventDefault();
+  const G=$("grid"),sx=e.clientX,sy=e.clientY;let on=false;
+  const mv=ev=>{if(!on){if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<6)return;on=true;el.classList.add("lift")}
+    if(ev.clientY<70)scrollBy(0,-14);else if(ev.clientY>innerHeight-70)scrollBy(0,14);
+    el.style.visibility="hidden";const o=document.elementFromPoint(ev.clientX,ev.clientY);el.style.visibility="";
+    const t=o&&o.closest(".item");if(!t||t===el||t.parentNode!==G)return;const r=t.getBoundingClientRect();
+    const before=ev.clientX<r.left+r.width/2;G.insertBefore(el,before?t:t.nextElementSibling);ordNums()};
+  const up=()=>{el.classList.remove("lift");ordNums();removeEventListener("pointermove",mv);removeEventListener("pointerup",up);removeEventListener("pointercancel",up)};
+  addEventListener("pointermove",mv);addEventListener("pointerup",up);addEventListener("pointercancel",up)});
+
 /* ── 게임별 Q&A·후기: 서버(/arcade/api/board)에 저장. 누구나 쓰고, 답변·삭제는 공개 관리 비밀번호로 들어온 선생님만 ── */
 let BSUM={};const RV={g:null,tab:"r",items:[],star:0};
 const rvBtn=x=>{const b=BSUM[x.t]||{};const n=(b.r||0)+(b.q||0);return `<button class="rvb" type="button" data-rv="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} Q&A·후기">Q&amp;A·후기${n?`<small>${b.r?`<b>★${b.avg}</b> `:""}${n}개</small>`:""}</button>`};
@@ -937,34 +1004,48 @@ function rvMsg(t,bad){const m=$("rvMsg");m.textContent=t||"";m.style.color=bad?"
 function rvHead(){const r=RV.items.filter(x=>x.k==="r"),q=RV.items.filter(x=>x.k==="q");const avg=r.length?(r.reduce((a,x)=>a+x.stars,0)/r.length).toFixed(1):0;
   $("rvSc").innerHTML=r.length?`<b>★ ${avg}</b> · 후기 ${r.length} · 질문 ${q.length}`:`후기 0 · 질문 ${q.length}`;$("rvTabR").textContent=`후기 ${r.length}`;$("rvTabQ").textContent=`Q&A ${q.length}`}
 function rvDraw(){rvHead();const T=RV.tab;$("rvTabR").setAttribute("aria-selected",T==="r");$("rvTabQ").setAttribute("aria-selected",T==="q");
-  $("rvStars").hidden=T!=="r";$("rvText").placeholder=T==="r"?"이 게임 해 보니 어땠나요?":"궁금한 점을 물어보세요";$("rvSend").textContent=T==="r"?"후기 올리기":"질문 올리기";
+  $("rvStars").hidden=T!=="r";$("rvSecRow").hidden=T!=="q";$("rvText").placeholder=T==="r"?"이 게임 해 보니 어땠나요?":"궁금한 점을 물어보세요";$("rvSend").textContent=T==="r"?"후기 올리기":"질문 올리기";
   const L=RV.items.filter(x=>x.k===T);const adm=!!TEACH.pw;
-  $("rvList").innerHTML=L.length?L.map(x=>`<div class="post" data-id="${esc(x.id)}"><div class="who"><b>${esc(x.name)}</b>${x.k==="r"?`<span class="st">${starTxt(x.stars)}</span>`:""}<span>${rvAgo(x.t)}</span></div>
-    <p class="tx">${x.k==="q"?'<span class="qk">Q.</span>':""}${esc(x.text)}</p>
-    ${x.ans?`<div class="an"><b>현쌤 답변 · ${rvAgo(x.at)}</b>${esc(x.ans)}</div>`:x.k==="q"?'<div class="wait">답변을 기다리고 있어요</div>':""}
-    ${adm?`<div class="adm">${x.k==="q"?`<textarea placeholder="답변">${esc(x.ans||"")}</textarea><button type="button" data-act="ans">${x.ans?"답변 고치기":"답변 달기"}</button>`:""}<button type="button" class="del" data-act="del">삭제</button></div>`:""}</div>`).join("")
-   :`<p class="none">${T==="r"?"아직 후기가 없어요. 첫 후기를 남겨 주세요!":"아직 질문이 없어요."}</p>`}
-function rvStarsDraw(){$("rvStars").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-s="${n}" class="${n<=RV.star?"on":""}" aria-label="별 ${n}개">★</button>`).join("")}
+  $("rvList").innerHTML=L.length?L.map(x=>{const lock=x.secret&&!x.text;const nm=x.name||"익명";const hue=[...nm].reduce((a,c)=>a+c.charCodeAt(0),0)%360;
+   return `<div class="post" data-id="${esc(x.id)}"><div class="av" style="background:hsl(${hue} 55% 46%)" aria-hidden="true">${esc(nm.slice(0,1))}</div><div class="who"><b>${esc(nm)}</b>${x.k==="r"?`<span class="st">${starTxt(x.stars)}</span>`:""}${x.secret?'<span class="lockb">🔒 비밀글</span>':""}<span>${rvAgo(x.t)}</span></div>
+    ${lock?`<div class="sec">선생님과 글쓴이만 볼 수 있어요.<input type="password" maxlength="12" placeholder="비밀번호" aria-label="비밀글 비밀번호"><button type="button" data-act="open">열어 보기</button></div>${x.hasAns?'<div class="wait">✅ 답변이 달렸어요</div>':'<div class="wait">답변을 기다리고 있어요</div>'}`
+     :`<p class="tx">${x.k==="q"?'<span class="qk">Q.</span>':""}${esc(x.text)}</p>
+    ${x.ans?`<div class="an"><b>현쌤 답변 · ${rvAgo(x.at)}</b>${esc(x.ans)}</div>`:x.k==="q"?'<div class="wait">답변을 기다리고 있어요</div>':""}`}
+    ${adm?`<div class="adm">${x.k==="q"?`<textarea placeholder="답변">${esc(x.ans||"")}</textarea><button type="button" data-act="ans">${x.ans?"답변 고치기":"답변 달기"}</button>`:""}<button type="button" class="del" data-act="del">삭제</button></div>`:""}</div>`}).join("")
+   :`<p class="none">${T==="r"?"아직 후기가 없어요. 첫 후기를 남겨 주세요!":"아직 질문이 없어요. 궁금한 점을 물어보세요!"}</p>`}
+/* 내가 쓴 비밀글은 이 기기에 비밀번호를 기억해 두고 자동으로 열어요 */
+function rvMine(){try{return JSON.parse(localStorage.getItem("arcade-secret")||"{}")}catch(e){return {}}}
+function rvMineSet(id,pw){try{const m=rvMine();m[id]=pw;localStorage.setItem("arcade-secret",JSON.stringify(m))}catch(e){}}
+async function rvOpenSecret(id,pw){const j=await fetch(SOON_API+"board/view",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,id,spw:pw}),cache:"no-store"}).then(r=>r.json());
+  if(j.ok){const i=RV.items.findIndex(x=>x.id===id);if(i>=0)RV.items[i]=j.item}return j}
+async function rvAutoOpen(){const m=rvMine();const L=RV.items.filter(x=>x.secret&&!x.text&&m[x.id]);for(const x of L){try{await rvOpenSecret(x.id,m[x.id])}catch(e){}}if(L.length)rvDraw()}
+function rvStarsDraw(){$("rvStars").innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-s="${n}" class="${n<=RV.star?"on":""}" aria-label="별 ${n}개">★</button>`).join("")+`<span class="sl">${RV.star?["","별로예요","아쉬워요","괜찮아요","좋아요","최고예요"][RV.star]:"별점을 골라 주세요"}</span>`}
 async function openRv(x,tab){RV.g=x.t;RV.tab=tab||RV.tab||"r";RV.items=[];RV.star=0;rvStarsDraw();
-  $("rvT").textContent=x.t;$("rvImg").src=x.img;$("rvText").value="";rvMsg("");
+  $("rvT").textContent=x.t;$("rvImg").src=x.img;$("rvText").value="";$("rvCnt").textContent="0 / 500";$("rvSec").checked=false;$("rvSpw").hidden=true;$("rvSpw").value="";rvMsg("");
   try{$("rvName").value=localStorage.getItem("arcade-name")||""}catch(e){}
   $("rvList").innerHTML='<p class="none">불러오는 중…</p>';rvHead();$("rv").showModal();
-  try{const j=await fetch(SOON_API+"board?g="+encodeURIComponent(x.t),{cache:"no-store"}).then(r=>r.json());if(RV.g!==x.t)return;RV.items=j.items||[];rvDraw()}
+  try{const j=TEACH.pw?await soonPost("board/list",{pw:TEACH.pw,g:x.t}):await fetch(SOON_API+"board?g="+encodeURIComponent(x.t),{cache:"no-store"}).then(r=>r.json());if(RV.g!==x.t)return;RV.items=j.items||[];rvDraw();if(!TEACH.pw)rvAutoOpen()}
   catch(e){$("rvList").innerHTML='<p class="none">게시판 서버에 연결하지 못했어요. 현게임 주소(hyungame.duckdns.org)에서 열어 주세요.</p>'}}
 function rvSync(){const r=RV.items.filter(x=>x.k==="r");BSUM[RV.g]={r:r.length,q:RV.items.filter(x=>x.k==="q").length,avg:r.length?Math.round(r.reduce((a,x)=>a+x.stars,0)/r.length*10)/10:0};render()}
 $("rvClose").onclick=()=>$("rv").close();
 $("rv").addEventListener("click",e=>{if(e.target===$("rv"))$("rv").close()});
 $("rvTabR").onclick=()=>{RV.tab="r";rvMsg("");rvDraw()};$("rvTabQ").onclick=()=>{RV.tab="q";rvMsg("");rvDraw()};
+$("rvText").addEventListener("input",()=>{$("rvCnt").textContent=$("rvText").value.length+" / 500"});
+$("rvList").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches(".sec input")){e.preventDefault();e.target.parentNode.querySelector("button").click()}});
+$("rvSec").onchange=()=>{$("rvSpw").hidden=!$("rvSec").checked;if($("rvSec").checked)$("rvSpw").focus()};
 $("rvStars").onclick=e=>{const b=e.target.closest("[data-s]");if(b){RV.star=+b.dataset.s;rvStarsDraw()}};
 $("rvForm").onsubmit=async e=>{e.preventDefault();const text=$("rvText").value.trim(),name=$("rvName").value.trim();
   if(RV.tab==="r"&&!RV.star){rvMsg("별점을 골라 주세요",1);return}if(text.length<2){rvMsg("두 글자 이상 써 주세요",1);return}
+  const sec=RV.tab==="q"&&$("rvSec").checked,spw=$("rvSpw").value.trim();if(sec&&spw.length<4){rvMsg("비밀글 비밀번호를 4자 이상 정해 주세요",1);$("rvSpw").focus();return}
   let last=0;try{localStorage.setItem("arcade-name",name);last=+localStorage.getItem("arcade-posted")||0}catch(e){}
   const wait=Math.ceil(15-(Date.now()-last)/1000);if(wait>0){rvMsg(wait+"초 뒤에 다시 올릴 수 있어요",1);return}
   $("rvSend").disabled=true;
-  try{const j=await fetch(SOON_API+"board/post",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,k:RV.tab,name,text,stars:RV.star}),cache:"no-store"}).then(r=>r.json());
-   if(!j.ok){rvMsg(j.error||"올리지 못했어요",1);return}try{localStorage.setItem("arcade-posted",Date.now())}catch(e){}RV.items.unshift(j.item);$("rvText").value="";RV.star=0;rvStarsDraw();rvDraw();rvSync();rvMsg(RV.tab==="r"?"후기를 올렸어요. 고마워요!":"질문을 올렸어요. 답변을 기다려 주세요!")}
+  try{const j=await fetch(SOON_API+"board/post",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({g:RV.g,k:RV.tab,name,text,stars:RV.star,secret:sec,spw:sec?spw:""}),cache:"no-store"}).then(r=>r.json());
+   if(!j.ok){rvMsg(j.error||"올리지 못했어요",1);return}try{localStorage.setItem("arcade-posted",Date.now())}catch(e){}if(sec)rvMineSet(j.item.id,spw);RV.items.unshift(j.item);$("rvText").value="";$("rvCnt").textContent="0 / 500";$("rvSec").checked=false;$("rvSpw").hidden=true;$("rvSpw").value="";RV.star=0;rvStarsDraw();rvDraw();rvSync();rvMsg(RV.tab==="r"?"후기를 올렸어요. 고마워요!":sec?"비밀글을 올렸어요. 이 기기에서는 바로 볼 수 있어요":"질문을 올렸어요. 답변을 기다려 주세요!")}
   catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}finally{$("rvSend").disabled=false}};
-$("rvList").addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b||!TEACH.pw)return;const post=b.closest(".post"),id=post.dataset.id;
+$("rvList").addEventListener("click",async e=>{const o=e.target.closest('[data-act="open"]');if(o){const post=o.closest(".post"),pw=post.querySelector(".sec input").value.trim();if(!pw){rvMsg("비밀번호를 넣어 주세요",1);return}
+   try{const j=await rvOpenSecret(post.dataset.id,pw);if(!j.ok){rvMsg(j.error||"열지 못했어요",1);return}rvMineSet(post.dataset.id,pw);rvDraw();rvMsg("비밀글을 열었어요")}catch(e){rvMsg("게시판 서버에 연결하지 못했어요",1)}return}
+  const b=e.target.closest("[data-act]");if(!b||!TEACH.pw)return;const post=b.closest(".post"),id=post.dataset.id;
   const del=b.dataset.act==="del";
   if(del&&b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="정말 삭제?";setTimeout(()=>{if(b.isConnected){b.dataset.sure="";b.textContent="삭제"}},3000);return}
   try{const body={pw:TEACH.pw,g:RV.g,id};if(!del)body.text=post.querySelector("textarea").value;
