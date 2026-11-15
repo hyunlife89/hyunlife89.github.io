@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>엑스탱크 스쿨 소개</title>
+<meta name="description" content="현게임 게임 12개 소개 — 버튼 한 번으로 복사해 학교 홈페이지·인디스쿨·블로그에 그대로 붙여넣기">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky copy toolbar on top, the paste-ready article below on a white sheet */
+:root{--bg:#eef1f6;--sheet:#fff;--ink:#1b2130;--muted:#5a6375;--line:#d9dde5;--blue:#2f6bff;--yel:#ffd23f;--ok:#14915a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+.bar{position:sticky;top:0;z-index:10;background:#151a26;color:#fff;padding:12px max(16px,env(safe-area-inset-left,0px)) 12px max(16px,env(safe-area-inset-right,0px));box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.bar .in{max-width:860px;margin:0 auto;display:grid;gap:10px}
+.bar .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar h1{margin:0 auto 0 0;font-size:17px;font-weight:900}
+.big{font:inherit;font-weight:900;font-size:15px;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.big.main{background:var(--yel);color:#14171f}.big.sub{background:#2a3247;color:#fff;border:1.5px solid #4a5677}
+.big:hover{filter:brightness(1.06)}.big:focus-visible,.one:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.games{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.games span{flex:none;font-size:12.5px;color:#aab3c8;align-self:center;margin-right:2px}
+.one{flex:none;font:inherit;font-size:13px;font-weight:700;border:1.5px solid #4a5677;background:transparent;color:#e7ebf5;border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+.one:hover{background:#2a3247}a.one{text-decoration:none;display:inline-block}a.one.on{background:#ffd23f;color:#14171f;border-color:#ffd23f}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ok);color:#fff;font-weight:800;padding:12px 18px;border-radius:12px;transition:.25s;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.wrap{padding:22px max(16px,env(safe-area-inset-left,0px)) 60px max(16px,env(safe-area-inset-right,0px))}
+.tip{max-width:860px;margin:0 auto 16px;background:#fff8e1;border:1.5px solid #f2d27a;border-radius:12px;padding:12px 16px;font-size:14.5px;line-height:1.7}
+.tip b{font-weight:900}
+.sheet{max-width:860px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:32px clamp(16px,4vw,44px);box-shadow:0 6px 24px rgba(20,30,60,.06)}
+.sheet section{scroll-margin-top:150px}
+.sheet table{display:block;overflow-x:auto}
+@media (max-width:560px){.bar h1{width:100%}.big{font-size:14px;padding:9px 12px}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style></head>
+<body>
+<div class="bar"><div class="in">
+  <div class="row"><h1>엑스탱크 스쿨 소개</h1>
+    <button class="big main" type="button" id="cpAll">📋 이 소개 복사</button>
+    <button class="big sub" type="button" id="cpHtml">&lt;/&gt; HTML 코드 복사</button></div>
+  <div class="games"><span>다른 게임:</span><a class="one" href="../island/">과학섬 생활</a><a class="one" href="../story/">이어쓰기 교실</a><a class="one" href="../draw/">이어그리기 교실</a><a class="one" href="../relay/">과학 이어달리기</a><a class="one" href="../marble/">과학섬 마블</a><a class="one" href="../alkkagi/">알까기 명인전</a><a class="one" href="../fortress/">과학 포트리스</a><a class="one on" href="../xtank/">엑스탱크 스쿨</a><a class="one" href="../escape/">밤의 과학실 탈출</a><a class="one" href="../fridge/">내 냉장고를 부탁해</a><a class="one" href="../pilsa/">명심 필사실</a></div>
+</div></div>
+<div class="wrap">
+  <div class="tip"><b>쓰는 법</b> · [📋 이 소개 복사]를 누른 뒤, 붙여 넣을 게시판 글쓰기 창에서 <b>Ctrl+V</b> 하면 제목·목록·사진이 그대로 들어가요. 사진은 현게임 서버에 올라가 있는 주소로 연결돼서 따로 올리지 않아도 돼요.<br>
+  게시판에 'HTML 편집(소스 보기)'이 있다면 [&lt;/&gt; HTML 코드 복사]가 더 정확해요. 플레이 영상은 붙여 넣으면 <b>움직이는 그림(GIF)</b>으로 들어가서 어느 게시판에서도 보여요. 그림을 누르면 전체 영상이 열려요. HTML 코드 복사는 영상 플레이어 그대로 들어가요.</div>
+  <article class="sheet" id="sheet">
+<section data-game="xtank" id="g-xtank">
+<h2 style="margin:44px 0 6px;font-size:24px;font-weight:800;color:#1b2130;border-bottom:3px solid #2f6bff;padding-bottom:6px">엑스탱크 스쿨</h2>
+<p style="margin:0 0 10px;font-size:14px;font-weight:700;color:#2f6bff">대전 · 3~6학년 · 최대 40명</p>
+<p style="margin:10px 0 12px;font-size:17.5px;line-height:1.75;font-weight:700;color:#1b2130">교실 책상 위, 과학실, 급식실을 누비는 3D 미니어처 탱크 대전이에요. 반 전체 40명이 한 판에 들어와요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130">학교 곳곳이 맵이에요. 책상 위를 오르고, 비커 숲 사이로 숨고, 급식실 식탁 위에서 싸워요. 싸우는 중에 <b>T</b>를 누르면 도전 문제가 나오고, 맞히면 마나가 차고 아이템을 얻어요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130">선생님 방이 이 게임의 핵심이에요. 학생끼리 여는 방은 8명까지지만, 선생님 방은 교실 컴퓨터가 방이 되어 40명을 한 번에 받아요. 수업 흐름을 선생님이 쥐고 갈 수 있어요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130"><a style="display:inline-block;margin:6px 0 4px;padding:8px 14px;background:#2f6bff;color:#fff;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none" href="https://hyunstock.duckdns.org/xtank/">▶ 게임 바로 열기</a></p>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">플레이 영상</h3><div class="v-live"><p style="margin:0 0 6px"><video controls playsinline preload="metadata" poster="https://hyunstock.duckdns.org/arcade/intro/img/xtank_1.jpg" style="display:block;width:100%;max-width:760px;border-radius:8px;border:1px solid #d9dde5;background:#000" src="https://hyunstock.duckdns.org/arcade/intro/video/xtank.mp4"></video></p></div><template class="v-copy"><p style="margin:0 0 6px"><a href="https://hyunstock.duckdns.org/arcade/intro/video/xtank.mp4"><img src="https://hyunstock.duckdns.org/arcade/intro/gif/xtank.gif" alt="엑스탱크 스쿨 플레이 장면" style="display:block;width:100%;max-width:760px;height:auto;border-radius:8px;border:1px solid #d9dde5"></a></p></template><p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">▶ <a style="color:#2f6bff;text-decoration:underline" href="https://hyunstock.duckdns.org/arcade/intro/video/xtank.mp4">눌러서 전체 플레이 영상 보기</a></p><h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">한눈에 보기</h3>
+<ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>인원:</b> 선생님 방 최대 40명, 학생 방 8명, 혼자 연습(봇)</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>기기:</b> 크롬북·웨일북(화질 '낮음' 권장), 휴대폰 터치도 돼요</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>모드:</b> 개인전, 팀전, 깃발 뺏기, 영역 대전</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>주소:</b> <a style="color:#2f6bff;text-decoration:underline" href="https://hyunstock.duckdns.org/xtank/">hyunstock.duckdns.org/xtank/</a></li></ul>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">수업에서 이렇게 해요</h3><ol style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">교실 컴퓨터에서 <b>설정 (선생님)</b>(9999)으로 문제 단원을 정해요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>선생님</b> 버튼으로 대전 방을 만들고 <b>접속 QR</b>을 TV에 띄워요. 이 창은 수업 중에 닫지 마세요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">아이들은 <b>교실 대전</b> → 방 번호 → 탱크 고르기. 선생님이 시작하면 바로 출격해요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">WASD 이동, 마우스 조준, 클릭 발사, Q/E 특수 무기, Shift 어빌리티, <b>T 도전 문제</b>.</li></ol>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">아이들이 좋아하는 포인트</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>맵 10곳:</b> 교실 책상 위, 과학실 실험대, 운동장 모래밭, 급식실, 영어실, 복도, 강당, 그리고 40명용 대운동장·학교 정원·도서관</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>탱크 8종:</b> X·M·R·A·S·D·H·O탱크. 니트로, 디펜스, 액셀, 레이더, 투명 같은 어빌리티가 달라요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>보급 상자:</b> 특수 무기와 실드 충전, 속도·공격력 강화, 연막, 순간이동 등</li></ul>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">선생님이 고를 수 있는 것</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>정비 불량:</b> 90초 동안 정답이 없으면 체력이 줄어요(약하게 −20% / 보통 −30%). 문제를 맞히면 바로 회복돼요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>학생에게 문제 보내기:</b> 학생 이름을 누르면 그 학생에게 바로 문제가 뜨고, '모두 문제 풀기'도 있어요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>방 여러 개:</b> '방 하나 더 열기'로 방을 늘리고, '모든 방 한눈에 보기'에서 한 화면으로 보며 한마디 보내기·모두 시작·모두 끝내기</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>항공뷰로 보기:</b> 경기장을 3D로 내려다볼 수 있어 TV 중계에 좋아요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">팀 수, 팀 고르게 섞기, 학생끼리 방 만들기 허용, 제한 시간, 창을 실수로 닫았을 때 같은 번호로 이어서 열기</li></ul>
+<p style="margin:14px 0;padding:12px 16px;background:#fff8e1;border-left:5px solid #f2b705;border-radius:6px;font-size:15.5px;line-height:1.75;color:#1b2130">💡 <b>문제는 바꿀 수 있어요.</b> <b>설정 (선생님)</b>에서 엑셀을 올리면 단원 고르기에 '우리 반' 묶음이 생기고, 선생님 방에서는 아이들 기기로도 함께 보내져요. <a style="color:#2f6bff;text-decoration:underline" href="https://hyunstock.duckdns.org/arcade/teacher/question-template.xlsx">엑셀 양식 받기</a></p>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">이럴 때 써 보세요</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">반 전체가 한 번에 하는 단원 마무리 대전</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">팀전·깃발 뺏기로 협동을 연습하는 학급 행사</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">과제를 일찍 끝낸 아이의 개인 연습(봇 대전)</li></ul>
+<div style="margin:14px 0;padding:12px 16px;background:#f3f6ff;border-left:5px solid #2f6bff;border-radius:6px;font-size:15.5px;line-height:1.75;color:#1b2130"><b>써 보니 이런 팁이 있어요</b><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">모둠별로 따로 하고 싶으면 학생 방(8명), 반 전체가 함께하거나 흐름을 잡고 싶으면 선생님 방을 쓰세요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">수업 중에는 '학생끼리 방 만들기 허용'을 꺼 두면 다들 선생님 방에만 들어와요.</li></ul></div>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">실제 화면</h3>
+<p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">첫 화면: START(혼자 연습), 교실 대전, 선생님, 접속 QR</p><p style="margin:0"><img style="display:block;width:100%;max-width:760px;height:auto;border:1px solid #d9dde5;border-radius:8px;margin:0 0 6px" src="https://hyunstock.duckdns.org/arcade/intro/img/xtank_1.jpg" alt="엑스탱크 스쿨 화면 - 첫 화면" width="1280" height="720" loading="lazy"></p>
+<p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">대전 화면: 오른쪽 위에 미니맵과 실시간 순위가 나와요.</p><p style="margin:0"><img style="display:block;width:100%;max-width:760px;height:auto;border:1px solid #d9dde5;border-radius:8px;margin:0 0 6px" src="https://hyunstock.duckdns.org/arcade/intro/img/xtank_2.jpg" alt="엑스탱크 스쿨 화면 - 대전 화면" width="1280" height="720" loading="lazy"></p>
+<p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">도전 문제: T를 누르면 문제가 뜨고, 맞히면 마나와 아이템을 얻어요.</p><p style="margin:0"><img style="display:block;width:100%;max-width:760px;height:auto;border:1px solid #d9dde5;border-radius:8px;margin:0 0 6px" src="https://hyunstock.duckdns.org/arcade/intro/img/xtank_3.jpg" alt="엑스탱크 스쿨 화면 - 도전 문제" width="1280" height="720" loading="lazy"></p>
+</section>
+<p style="margin:40px 0 0;font-size:13px;color:#4a5263">© 2026 현게임 · 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용 금지</p>
+  </article>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=id=>document.getElementById(id);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600)}
+function pack(nodes,mode){const box=document.createElement("div");nodes.forEach(n=>{const c=n.cloneNode(true);
+  c.querySelectorAll(".v-live").forEach(v=>{const t=c.querySelector("template.v-copy");if(mode!=="html"&&t){v.replaceWith(t.content.cloneNode(true))}else{v.replaceWith(...v.childNodes)}});c.querySelectorAll("template").forEach(t=>t.remove());
+  c.querySelectorAll('a[href^="#"]').forEach(a=>a.replaceWith(document.createTextNode(a.textContent)));
+  c.removeAttribute("id");c.removeAttribute("data-game");box.appendChild(c)});return box}
+function nodesFor(key){return key==="all"?[...$("sheet").children]:[document.querySelector(`[data-game="${key}"]`)]}
+async function copyRich(key,label){const box=pack(nodesFor(key));const htmlStr=box.innerHTML,text=box.innerText||box.textContent;
+  try{if(!window.ClipboardItem)throw 0;await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([htmlStr],{type:"text/html"}),"text/plain":new Blob([text],{type:"text/plain"})})]);toast(label+" 복사했어요. 글쓰기 창에서 Ctrl+V 하세요")}
+  catch(e){box.style.cssText="position:fixed;left:-9999px;top:0";document.body.appendChild(box);const r=document.createRange();r.selectNodeContents(box);const s=getSelection();s.removeAllRanges();s.addRange(r);
+    let ok=false;try{ok=document.execCommand("copy")}catch(_){}s.removeAllRanges();box.remove();toast(ok?label+" 복사했어요. 글쓰기 창에서 Ctrl+V 하세요":"복사가 막혔어요. 내용을 드래그해서 직접 복사해 주세요")}}
+$("cpAll").onclick=()=>copyRich("all","소개를");
+$("cpHtml").onclick=async()=>{const code=pack(nodesFor("all"),"html").innerHTML;try{await navigator.clipboard.writeText(code);toast("HTML 코드를 복사했어요. 게시판의 HTML 편집 창에 붙여 넣으세요")}
+  catch(e){const ta=document.createElement("textarea");ta.value=code;ta.style.cssText="position:fixed;left:-9999px";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();toast(ok?"HTML 코드를 복사했어요":"복사가 막혔어요")}};
+
+</script>
+</body></html>
