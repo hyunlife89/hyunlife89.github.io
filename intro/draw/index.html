@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>이어그리기 교실 소개</title>
+<meta name="description" content="현게임 게임 12개 소개 — 버튼 한 번으로 복사해 학교 홈페이지·인디스쿨·블로그에 그대로 붙여넣기">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky copy toolbar on top, the paste-ready article below on a white sheet */
+:root{--bg:#eef1f6;--sheet:#fff;--ink:#1b2130;--muted:#5a6375;--line:#d9dde5;--blue:#2f6bff;--yel:#ffd23f;--ok:#14915a}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+.bar{position:sticky;top:0;z-index:10;background:#151a26;color:#fff;padding:12px max(16px,env(safe-area-inset-left,0px)) 12px max(16px,env(safe-area-inset-right,0px));box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.bar .in{max-width:860px;margin:0 auto;display:grid;gap:10px}
+.bar .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar h1{margin:0 auto 0 0;font-size:17px;font-weight:900}
+.big{font:inherit;font-weight:900;font-size:15px;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.big.main{background:var(--yel);color:#14171f}.big.sub{background:#2a3247;color:#fff;border:1.5px solid #4a5677}
+.big:hover{filter:brightness(1.06)}.big:focus-visible,.one:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.games{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.games span{flex:none;font-size:12.5px;color:#aab3c8;align-self:center;margin-right:2px}
+.one{flex:none;font:inherit;font-size:13px;font-weight:700;border:1.5px solid #4a5677;background:transparent;color:#e7ebf5;border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+.one:hover{background:#2a3247}a.one{text-decoration:none;display:inline-block}a.one.on{background:#ffd23f;color:#14171f;border-color:#ffd23f}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ok);color:#fff;font-weight:800;padding:12px 18px;border-radius:12px;transition:.25s;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.wrap{padding:22px max(16px,env(safe-area-inset-left,0px)) 60px max(16px,env(safe-area-inset-right,0px))}
+.tip{max-width:860px;margin:0 auto 16px;background:#fff8e1;border:1.5px solid #f2d27a;border-radius:12px;padding:12px 16px;font-size:14.5px;line-height:1.7}
+.tip b{font-weight:900}
+.sheet{max-width:860px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:32px clamp(16px,4vw,44px);box-shadow:0 6px 24px rgba(20,30,60,.06)}
+.sheet section{scroll-margin-top:150px}
+.sheet table{display:block;overflow-x:auto}
+@media (max-width:560px){.bar h1{width:100%}.big{font-size:14px;padding:9px 12px}}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style></head>
+<body>
+<div class="bar"><div class="in">
+  <div class="row"><h1>이어그리기 교실 소개</h1>
+    <button class="big main" type="button" id="cpAll">📋 이 소개 복사</button>
+    <button class="big sub" type="button" id="cpHtml">&lt;/&gt; HTML 코드 복사</button></div>
+  <div class="games"><span>다른 게임:</span><a class="one" href="../island/">과학섬 생활</a><a class="one" href="../story/">이어쓰기 교실</a><a class="one on" href="../draw/">이어그리기 교실</a><a class="one" href="../relay/">과학 이어달리기</a><a class="one" href="../marble/">과학섬 마블</a><a class="one" href="../alkkagi/">알까기 명인전</a><a class="one" href="../fortress/">과학 포트리스</a><a class="one" href="../xtank/">엑스탱크 스쿨</a><a class="one" href="../escape/">밤의 과학실 탈출</a><a class="one" href="../fridge/">내 냉장고를 부탁해</a><a class="one" href="../pilsa/">명심 필사실</a></div>
+</div></div>
+<div class="wrap">
+  <div class="tip"><b>쓰는 법</b> · [📋 이 소개 복사]를 누른 뒤, 붙여 넣을 게시판 글쓰기 창에서 <b>Ctrl+V</b> 하면 제목·목록·사진이 그대로 들어가요. 사진은 현게임 서버에 올라가 있는 주소로 연결돼서 따로 올리지 않아도 돼요.<br>
+  게시판에 'HTML 편집(소스 보기)'이 있다면 [&lt;/&gt; HTML 코드 복사]가 더 정확해요. 플레이 영상은 붙여 넣으면 <b>움직이는 그림(GIF)</b>으로 들어가서 어느 게시판에서도 보여요. 그림을 누르면 전체 영상이 열려요. HTML 코드 복사는 영상 플레이어 그대로 들어가요.</div>
+  <article class="sheet" id="sheet">
+<section data-game="draw" id="g-draw">
+<h2 style="margin:44px 0 6px;font-size:24px;font-weight:800;color:#1b2130;border-bottom:3px solid #2f6bff;padding-bottom:6px">이어그리기 교실</h2>
+<p style="margin:0 0 10px;font-size:14px;font-weight:700;color:#2f6bff">수업 도구 · 반 전체 · 3~6학년</p>
+<p style="margin:10px 0 12px;font-size:17.5px;line-height:1.75;font-weight:700;color:#1b2130">반 전체가 한 장면씩 이어 그려서 그림책 한 권을 만들어요. 캐치마인드식 그림 맞히기도 들어 있어요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130">이어쓰기 교실의 그림 버전이에요. 첫 문장을 고르면 '새로운 인물이 나타나요', '날씨가 바뀌어요' 같은 장면 카드가 나오고, 아이들이 각자 다음 장면을 그려 보내요. 뽑힌 그림이 그림책의 다음 쪽이 돼요. 글이 부담스러운 아이도 그림으로 참여할 수 있어요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130"><b>그림 맞히기</b>는 뽑힌 출제자에게만 비밀 낱말이 보이고, 그리는 과정이 모두의 화면에 실시간으로 나와요. 과학 3~6학년 낱말 묶음이 있어서 용어 복습용으로도 좋아요.</p>
+<p style="margin:8px 0;font-size:16px;line-height:1.8;color:#1b2130"><a style="display:inline-block;margin:6px 0 4px;padding:8px 14px;background:#2f6bff;color:#fff;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none" href="https://hyunstock.duckdns.org/draw/">▶ 게임 바로 열기</a></p>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">플레이 영상</h3><div class="v-live"><p style="margin:0 0 6px"><video controls playsinline preload="metadata" poster="https://hyunstock.duckdns.org/arcade/intro/img/draw_1.jpg" style="display:block;width:100%;max-width:760px;border-radius:8px;border:1px solid #d9dde5;background:#000" src="https://hyunstock.duckdns.org/arcade/intro/video/draw.mp4"></video></p></div><template class="v-copy"><p style="margin:0 0 6px"><a href="https://hyunstock.duckdns.org/arcade/intro/video/draw.mp4"><img src="https://hyunstock.duckdns.org/arcade/intro/gif/draw.gif" alt="이어그리기 교실 플레이 장면" style="display:block;width:100%;max-width:760px;height:auto;border-radius:8px;border:1px solid #d9dde5"></a></p></template><p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">▶ <a style="color:#2f6bff;text-decoration:underline" href="https://hyunstock.duckdns.org/arcade/intro/video/draw.mp4">눌러서 전체 플레이 영상 보기</a></p><h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">한눈에 보기</h3>
+<ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>인원:</b> 반 전체</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>기기:</b> 선생님 컴퓨터 + 아이들 폰·태블릿 (펜이 있으면 더 좋아요)</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>과목:</b> 국어·미술·과학·창체</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>주소:</b> <a style="color:#2f6bff;text-decoration:underline" href="https://hyunstock.duckdns.org/draw/">hyunstock.duckdns.org/draw/</a></li></ul>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">수업에서 이렇게 해요</h3><ol style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">교실 컴퓨터에서 열면 방 번호와 QR이 생겨요. 아이들은 QR을 찍거나 방 번호를 넣어요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">오른쪽 위에서 <b>이어그리기</b> 또는 <b>그림 맞히기</b>를 골라요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">이어그리기: 첫 문장 고르기 → <b>이야기 시작</b> → 장면 카드 뽑기 → 다 같이 그리기 → 한 장 뽑아 그림책에 붙이기.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">그림 맞히기: 낱말 묶음과 시간을 고르고 시작해요. 먼저 맞힌 순서대로 10·8·7·6·5점, 출제자도 한 명 맞힐 때마다 점수를 받아요.</li></ol>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">아이들이 좋아하는 포인트</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>붓 7가지:</b> 연필·크레용·형광펜·물감·스프레이·반짝이·무지개, 별·하트·꽃·구름·나비 도장도 있어요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>그림 아래 글쓰기:</b> 자유·권하기·꼭 쓰기 중에서 정할 수 있어요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>뽑기:</b> 이어쓰기 교실과 같은 심플형 4가지·3D 다이나믹형 12가지를 써요.</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130"><b>체험 모드:</b> 가상 친구 9명과 함께 미리 돌려 볼 수 있어서 수업 전에 혼자 연습해 보기 좋아요.</li></ul>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">선생님이 고를 수 있는 것</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">낱말 묶음: 기본, 과학 3·4·5·6학년, 이번 단원 낱말 직접 넣기</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">한 문제 시간 60·90·120·180초</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">선생님 힌트: 첫 글자 → 초성 순서로</li></ul>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">이럴 때 써 보세요</h3><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">그림책 만들기, 상상 이야기 수업</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">과학 용어 복습: 단원 낱말로 그림 맞히기</li><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">학기 초 반 분위기 만들기, 쉬는 시간 전 5분 놀이</li></ul>
+<div style="margin:14px 0;padding:12px 16px;background:#f3f6ff;border-left:5px solid #2f6bff;border-radius:6px;font-size:15.5px;line-height:1.75;color:#1b2130"><b>써 보니 이런 팁이 있어요</b><ul style="margin:8px 0;padding-left:22px"><li style="margin:6px 0;font-size:16px;line-height:1.75;color:#1b2130">글자·숫자를 쓰면 안 되고 그림으로만 설명하는 규칙을 먼저 알려 주세요.</li></ul></div>
+<h3 style="margin:22px 0 8px;font-size:18px;font-weight:800;color:#1b2130">실제 화면</h3>
+<p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">이어그리기 시작 화면: 첫 문장과 방 번호·QR, 진행 순서가 나와요.</p><p style="margin:0"><img style="display:block;width:100%;max-width:760px;height:auto;border:1px solid #d9dde5;border-radius:8px;margin:0 0 6px" src="https://hyunstock.duckdns.org/arcade/intro/img/draw_1.jpg" alt="이어그리기 교실 화면 - 이어그리기 시작 화면" width="1280" height="720" loading="lazy"></p>
+<p style="margin:16px 0 6px;font-size:15.5px;line-height:1.6;color:#1b2130">그림 맞히기 설정: 낱말 묶음과 문제 시간을 골라요.</p><p style="margin:0"><img style="display:block;width:100%;max-width:760px;height:auto;border:1px solid #d9dde5;border-radius:8px;margin:0 0 6px" src="https://hyunstock.duckdns.org/arcade/intro/img/draw_2.jpg" alt="이어그리기 교실 화면 - 그림 맞히기 설정" width="1280" height="720" loading="lazy"></p>
+</section>
+<p style="margin:40px 0 0;font-size:13px;color:#4a5263">© 2026 현게임 · 교실 내 비영리 사용 외 복제·수정·재배포·상업적 이용 금지</p>
+  </article>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $=id=>document.getElementById(id);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600)}
+function pack(nodes,mode){const box=document.createElement("div");nodes.forEach(n=>{const c=n.cloneNode(true);
+  c.querySelectorAll(".v-live").forEach(v=>{const t=c.querySelector("template.v-copy");if(mode!=="html"&&t){v.replaceWith(t.content.cloneNode(true))}else{v.replaceWith(...v.childNodes)}});c.querySelectorAll("template").forEach(t=>t.remove());
+  c.querySelectorAll('a[href^="#"]').forEach(a=>a.replaceWith(document.createTextNode(a.textContent)));
+  c.removeAttribute("id");c.removeAttribute("data-game");box.appendChild(c)});return box}
+function nodesFor(key){return key==="all"?[...$("sheet").children]:[document.querySelector(`[data-game="${key}"]`)]}
+async function copyRich(key,label){const box=pack(nodesFor(key));const htmlStr=box.innerHTML,text=box.innerText||box.textContent;
+  try{if(!window.ClipboardItem)throw 0;await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([htmlStr],{type:"text/html"}),"text/plain":new Blob([text],{type:"text/plain"})})]);toast(label+" 복사했어요. 글쓰기 창에서 Ctrl+V 하세요")}
+  catch(e){box.style.cssText="position:fixed;left:-9999px;top:0";document.body.appendChild(box);const r=document.createRange();r.selectNodeContents(box);const s=getSelection();s.removeAllRanges();s.addRange(r);
+    let ok=false;try{ok=document.execCommand("copy")}catch(_){}s.removeAllRanges();box.remove();toast(ok?label+" 복사했어요. 글쓰기 창에서 Ctrl+V 하세요":"복사가 막혔어요. 내용을 드래그해서 직접 복사해 주세요")}}
+$("cpAll").onclick=()=>copyRich("all","소개를");
+$("cpHtml").onclick=async()=>{const code=pack(nodesFor("all"),"html").innerHTML;try{await navigator.clipboard.writeText(code);toast("HTML 코드를 복사했어요. 게시판의 HTML 편집 창에 붙여 넣으세요")}
+  catch(e){const ta=document.createElement("textarea");ta.value=code;ta.style.cssText="position:fixed;left:-9999px";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}ta.remove();toast(ok?"HTML 코드를 복사했어요":"복사가 막혔어요")}};
+
+</script>
+</body></html>
