@@ -463,6 +463,50 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
 @media (max-width:860px){.hero{grid-template-columns:1fr;gap:22px}.sortbox{margin-left:0}}
 @media (max-width:560px){.grid{grid-template-columns:1fr 1fr;gap:20px 12px}.item .pc .nm{font-size:15px}.under .bts{grid-template-columns:1fr 1fr}.under .bts .qrb{grid-column:1/-1}.rank li a{grid-template-columns:22px 52px 1fr auto;gap:9px}.rank img{width:52px;height:39px}.filters .sep{display:none}}
 @media (prefers-reduced-motion:reduce){.live::before{animation:none}}
+
+/* ── 2026.11 UI 정리: 수업 상황별 묶음 · 촘촘한 카드 · 즐겨찾기 ── */
+.grid{grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:30px 20px}
+#grid.grouped{display:block}
+.grp{margin:0 0 34px}
+.grp-h,.soonbox summary{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding-bottom:10px;border-bottom:1.5px solid var(--ink)}
+.grp-i{font-size:20px;align-self:center}
+.grp-h b,.soonbox summary b{font-size:22px;font-weight:900;letter-spacing:-.03em}
+.grp-n{font-size:13px;font-weight:900;background:var(--ink);color:var(--bg);border-radius:999px;padding:1px 9px;align-self:center}
+.grp-h small,.soonbox summary small{font-size:13.5px;color:var(--muted);font-weight:600}
+.grp-more{margin-left:auto;font:inherit;font-size:13px;font-weight:800;border:0;background:none;color:var(--blue);cursor:pointer;padding:2px 0}
+.grp-more:hover{text-decoration:underline}
+.soonbox summary{cursor:pointer;list-style:none;border-bottom-style:dashed;border-color:var(--line)}
+.soonbox summary::-webkit-details-marker{display:none}
+.soonbox[open] summary{border-bottom-style:solid;border-color:var(--ink)}
+.soonbox summary b{color:var(--muted)}
+.pc{padding:8px 8px 11px}
+.pc .meta{font-size:11.5px;margin:8px 2px 1px}
+.pc .nm{font-size:16.5px}
+.pc::after{width:11px;height:11px;right:10px;bottom:12px}
+.item:nth-child(3n+1) .pc,.item:nth-child(3n+2) .pc,.item:nth-child(3n) .pc{transform:none}
+.item .pc:hover{transform:translateY(-4px)}
+.under{gap:8px;margin:10px 1px 0}
+.item .desc{font-size:13.5px;-webkit-line-clamp:2;line-clamp:2}
+@media (min-width:561px){.item .desc{min-height:2.95em}}
+.item .use{margin:0;font-size:12px;color:var(--muted)}
+.under .bts{gap:5px}
+.bts .qrb,.bts .mnb,.bts .rvb{height:34px;font-size:12.5px;border-radius:8px;padding:0 4px}
+.bts .soon-note{height:34px}
+.fav{position:absolute;right:6px;top:6px;z-index:3;width:34px;height:34px;border-radius:50%;border:1.5px solid #14171f;background:rgba(255,255,255,.92);color:#14171f;font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .15s,transform .15s}
+.item:hover .fav,.fav.on,.fav:focus-visible{opacity:1}
+.fav.on{background:var(--yellow);color:#14171f}
+.fav:hover{transform:scale(1.08)}
+@media (hover:none){.fav{opacity:1}}
+.mine-row{display:flex;flex-direction:column;gap:10px;margin:0 0 26px;padding:14px 16px;border:1.5px solid var(--ink);border-radius:14px;background:var(--paper)}
+.mine-row[hidden]{display:none}
+.mg{display:flex;align-items:center;gap:12px;min-width:0}
+.mg>b{font-size:14px;font-weight:900;white-space:nowrap;flex:none;width:118px}
+.mps{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:2px 0;min-width:0}
+.mp{display:flex;align-items:center;gap:8px;flex:none;border:1.5px solid var(--line);border-radius:999px;padding:3px 13px 3px 3px;text-decoration:none;color:var(--ink);font-weight:800;font-size:14px;background:var(--bg)}
+.mp:hover{border-color:var(--ink)}
+.mp.f{border-color:#e0a800;background:color-mix(in srgb,var(--yellow) 22%,var(--paper))}
+.mp img{width:34px;height:34px;border-radius:50%;object-fit:cover;display:block}
+@media (max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}.mg{flex-direction:column;align-items:flex-start;gap:6px}.mg>b{width:auto}.mps{width:100%}.grp-h small{display:none}.bts .qrb .ic{display:none}.pc .nm{font-size:15px}}
 </style>
 </head>
 <body>
@@ -511,6 +555,7 @@ dialog .cls{color:var(--green);font-weight:900;margin:6px 0 0}
     </div>
     <div class="isl-note" id="islNote" hidden><b>🏝️ 과학섬 세계관</b> 과학섬 생활에서 꾸민 내 캐릭터가 함께 나오는 게임이에요. 과학섬을 한 기기로 <b>현게임 주소</b>에서 들어오면 캐릭터가 그대로 따라가요.</div>
     <div class="ord-bar" id="ordBar" hidden><span class="ord-msg" id="ordMsg">✋ 선생님 모드예요. 카드를 끌어서 게임 순서를 바꿀 수 있어요.</span><button class="btn" type="button" id="ordGo">순서 바꾸기</button><button class="btn main" type="button" id="ordSave" style="display:none">순서 저장</button><button class="btn" type="button" id="ordCancel" style="display:none">취소</button></div>
+    <div class="mine-row" id="mineRow" hidden></div>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -736,7 +781,16 @@ const GAMES=[
  {t:"명심 필사실",img:"thumbs/pilsa.jpg?v=1",url:SRV+"/pilsa/",g:[3,4,5,6],mode:"수업 도구",kind:"도구",unit:"생활지도 · 인성",d:"명심보감 구절을 따라 쓰며 반성해요"}
 
 ];
-const MODES=["전체","혼자","협동","대전","반 전체","수업 도구"];
+const MODES=["전체","반 전체","모둠","대전","혼자","수업 도구"];
+/* 수업 상황별 묶음 — 게임의 mode 글자를 보고 자동으로 나눠요 (새 카드도 mode만 적으면 알아서 들어가요) */
+const CATS={"반 전체":["🏫","반 전체 함께","전자칠판 + 학생 기기로 반 모두가 같이"],"모둠":["🤝","모둠 · 협동","2~4명이 힘을 합쳐요"],"대전":["⚔️","대전","친구와 겨루는 게임"],"혼자":["🎮","혼자 탐험","각자 기기로 자유롭게"],"수업 도구":["🧰","수업 도구","게임이 아닌 교실 도구"]};
+const catOf=x=>{const m=String(x.mode||"").replace(/\s/g,"");if(m.includes("도구"))return "수업 도구";if(m.includes("대전"))return "대전";if(m.includes("협동")||m.includes("모둠"))return "모둠";if(m.includes("반전체"))return "반 전체";if(m.includes("혼자"))return "혼자";return "반 전체"};
+const inCat=(x,c)=>c=="전체"||catOf(x)==c||(c=="혼자"&&String(x.mode||"").includes("혼자"));
+/* 즐겨찾기 · 최근 연 게임 (이 기기에만 저장) */
+const MY={get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return []}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const isFav=x=>MY.get("arcade-fav").includes(x.t);
+function favToggle(t){let f=MY.get("arcade-fav");f=f.includes(t)?f.filter(v=>v!==t):[t,...f];MY.set("arcade-fav",f);render()}
+function recentAdd(t){MY.set("arcade-recent",[t,...MY.get("arcade-recent").filter(v=>v!==t)].slice(0,8))}
 /* 과학섬 세계관: 과학섬에서 꾸민 캐릭터가 함께 나오는 게임 (서버가 나중에 넣은 카드도 주소로 알아봐요) */
 const isIsland=x=>x.world==="island"||/\/(island|relay)\//.test(x.url||"");
 let world=false;
@@ -786,24 +840,46 @@ function chips(el,items,cur,label,onPick){
   el.innerHTML=items.map(v=>`<button class="chip" type="button" data-v="${v}" aria-pressed="${v==cur}">${label(v)}</button>`).join("");
   el.onclick=e=>{const b=e.target.closest(".chip");if(b)onPick(b.dataset.v)};
 }
+function itemHtml(x,i){return `<div class="item" data-t="${esc(x.t)}" data-no="${i+1}">${card(x)}${isSoon(x)&&!TEACH.on||ORD?"":`<button class="fav${isFav(x)?" on":""}" type="button" data-fav="${GAMES.indexOf(x)}" aria-pressed="${isFav(x)}" aria-label="${esc(x.t)} 즐겨찾기" title="즐겨찾기">${isFav(x)?"★":"☆"}</button>`}
+    <div class="under"><p class="desc" title="${esc(x.d)}">${esc(x.d)}</p>${RANK_ON?`<p class="use">${useTxt(x)}</p>`:""}<div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기"><span class="ic" aria-hidden="true">▦</span>QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`}
+function mineRender(){const el=$("mineRow");if(!el)return;const by=t=>GAMES.find(x=>x.t===t);
+  const fav=MY.get("arcade-fav").map(by).filter(x=>x&&!(isSoon(x)&&!TEACH.on));
+  const rec=MY.get("arcade-recent").map(by).filter(x=>x&&!(isSoon(x)&&!TEACH.on)&&!fav.includes(x)).slice(0,6);
+  const pill=(x,k)=>`<a class="mp ${k}" href="${esc(link(x.url))}" data-go="${esc(x.t)}"><img src="${esc(x.img)}" alt="" loading="lazy"><span>${esc(x.t)}</span></a>`;
+  el.hidden=ORD||(!fav.length&&!rec.length);if(el.hidden){el.innerHTML="";return}
+  el.innerHTML=(fav.length?`<div class="mg"><b>⭐ 즐겨찾기</b><div class="mps">${fav.map(x=>pill(x,"f")).join("")}</div></div>`:"")+
+    (rec.length?`<div class="mg"><b>🕘 최근 연 게임</b><div class="mps">${rec.map(x=>pill(x,"r")).join("")}</div></div>`:"")}
 function render(){
   chips($("grades"),[0,3,4,5,6],grade,v=>v==0?"모든 학년":v+"학년",v=>{grade=+v;try{localStorage.setItem("arcade-grade",grade)}catch(e){}render()});
-  chips($("modes"),MODES,mode,v=>v,v=>{mode=v;render()});
+  if(!MODES.includes(mode))mode="전체";
+  chips($("modes"),MODES,mode,v=>v=="전체"?"전체":CATS[v][0]+" "+(v=="모둠"?"모둠·협동":v),v=>{mode=v;render()});
   const q=$("q").value.trim().replace(/학년/,"");
   $("worldChip").setAttribute("aria-pressed",String(world));$("islNote").hidden=!world;
-  const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&(mode=="전체"||x.mode==mode)&&(!world||isIsland(x))&&
+  const list=GAMES.filter(x=>(!grade||x.g.includes(grade))&&inCat(x,mode)&&(!world||isIsland(x))&&
     (!q||(x.t+(x.unit||"")+x.d+x.mode).includes(q)||(/^[3-6]$/.test(q)&&x.g.includes(+q))));
   if(Object.keys(RANK).length)rankRender();
-  sortChips();
-  if(!ORD){const so=x=>isSoon(x)&&!TEACH.on?1:0;if(sortBy==="pop"&&RANK_ON)list.sort((a,b)=>so(a)-so(b)||rkP(b)-rkP(a)||GAMES.indexOf(a)-GAMES.indexOf(b));else list.sort((a,b)=>so(a)-so(b))}
-  $("grid").innerHTML=list.length?list.map((x,i)=>`<div class="item" data-t="${esc(x.t)}" data-no="${i+1}">${card(x)}
-    <div class="under"><p class="desc" title="${esc(x.d)}">${esc(x.d)}</p>${RANK_ON?`<p class="use">${useTxt(x)}</p>`:""}<div class="bts">${isSoon(x)&&!TEACH.on?'<span class="soon-note">곧 열려요</span>':`<button class="qrb" type="button" data-qr="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} QR 띄우기"><span class="ic" aria-hidden="true">▦</span>QR</button>${MANUALS[x.t]?`<button class="mnb" type="button" data-man="${GAMES.indexOf(x)}" aria-label="${esc(x.t)} 선생님 설명서">설명서</button>`:""}${rvBtn(x)}`}</div></div></div>`).join(""):`<p class="empty">조건에 맞는 게임이 없어요.</p>`;
+  sortChips();mineRender();
+  const locked=x=>isSoon(x)&&!TEACH.on;
+  if(!ORD){if(sortBy==="pop"&&RANK_ON)list.sort((a,b)=>rkP(b)-rkP(a)||GAMES.indexOf(a)-GAMES.indexOf(b))}
+  const G=$("grid");
+  /* 기본 화면(전체 · 검색 없음): 수업 상황별로 묶어서 보여 주고, 공개 예정은 맨 아래에 접어 둬요 */
+  const grouped=!ORD&&mode=="전체"&&!q;
+  G.classList.toggle("grouped",grouped);
+  if(!list.length){G.innerHTML=`<p class="empty">조건에 맞는 게임이 없어요.</p>`}
+  else if(grouped){
+    const open=list.filter(x=>!locked(x)),soon=list.filter(locked);let n=0,h="";
+    for(const c of MODES.slice(1)){const L=open.filter(x=>catOf(x)==c);if(!L.length)continue;const C=CATS[c];
+      h+=`<section class="grp" aria-label="${esc(C[1])}"><div class="grp-h"><span class="grp-i" aria-hidden="true">${C[0]}</span><b>${esc(C[1])}</b><span class="grp-n">${L.length}</span><small>${esc(C[2])}</small><button class="grp-more" type="button" data-cat="${esc(c)}">이것만 보기 →</button></div><div class="grid">${L.map(x=>itemHtml(x,n++)).join("")}</div></section>`}
+    if(soon.length)h+=`<details class="grp soonbox"><summary><span class="grp-i" aria-hidden="true">🔒</span><b>공개 예정</b><span class="grp-n">${soon.length}</span><small>곧 열려요 · 눌러서 펼치기</small></summary><div class="grid">${soon.map(x=>itemHtml(x,n++)).join("")}</div></details>`;
+    G.innerHTML=h}
+  else{if(!ORD)list.sort((a,b)=>(locked(a)?1:0)-(locked(b)?1:0));G.innerHTML=list.map((x,i)=>itemHtml(x,i)).join("")}
   $("grid").classList.toggle("ordering",!!ORD);ordBarState();
 }
 $("q").addEventListener("input",render);
+document.addEventListener("click",e=>{const a=e.target.closest("#mineRow a[data-go],#rankList a");if(!a)return;const t=a.dataset.go||(a.querySelector(".tt b")||{}).textContent;if(t)recentAdd(t)});
 $("worldChip").onclick=()=>{world=!world;render()};
 $("findForm").addEventListener("submit",e=>{e.preventDefault();grade=0;mode="전체";world=false;render();$("all").scrollIntoView()});
-$("grid").addEventListener("click",e=>{if(ORD){e.preventDefault();return}if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m){openMan(GAMES[+m.dataset.man]);return}const v=e.target.closest("[data-rv]");if(v)openRv(GAMES[+v.dataset.rv])});
+$("grid").addEventListener("click",e=>{if(ORD){e.preventDefault();return}const fv=e.target.closest("[data-fav]");if(fv){e.preventDefault();favToggle(GAMES[+fv.dataset.fav].t);return}const ct=e.target.closest("[data-cat]");if(ct){mode=ct.dataset.cat;render();$("all").scrollIntoView();return}const go=e.target.closest("a.pc");if(go){const it=go.closest(".item");if(it)recentAdd(it.dataset.t)}if(e.target.closest(".pc.soon")){toast("🔒 아직 공개 전인 게임이에요. 곧 열려요!");return}const b=e.target.closest("[data-qr]");if(b){const x=GAMES[+b.dataset.qr];openQR(x.t,link(x.url));return}const m=e.target.closest("[data-man]");if(m){openMan(GAMES[+m.dataset.man]);return}const v=e.target.closest("[data-rv]");if(v)openRv(GAMES[+v.dataset.rv])});
 
 /* ── 공개 예정 관리 창 ── */
 function soonMsg(t,bad){const m=$("soonMsg");m.textContent=t||"";m.style.color=bad?"#c0392b":""}
