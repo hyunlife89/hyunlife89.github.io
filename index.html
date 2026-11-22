@@ -539,6 +539,8 @@ body{background:var(--bg)}
 .isl-note{margin:-6px 0 18px}
 /* 옆으로 넘기는 줄 */
 #grid.shelves{display:block}
+.b-new{position:absolute;left:8px;top:8px;z-index:2;font-size:11.5px;font-weight:900;letter-spacing:.06em;color:#fff;background:linear-gradient(135deg,#ff4d2e,#ff2e7e);padding:3px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(255,46,94,.45)}
+.shelf.fresh .sh-h b{background:linear-gradient(90deg,#ff4d2e,#ff2e7e);-webkit-background-clip:text;background-clip:text;color:transparent}
 .shelf{margin:0 0 30px}
 .sh-h{display:flex;align-items:center;gap:9px;margin:0 0 12px}
 .sh-i{font-size:21px}
@@ -906,6 +908,7 @@ const TEMPLATE_COPY_URL='';
    img: public/thumbs 안의 그림 (가로:세로 4:3)   hc:true → 우리 반 문제가 들어가는 게임 */
 const SRV=/duckdns\.org$/.test(location.hostname)?location.origin:'https://hyungame.duckdns.org';
 const GAMES=[
+ {t:"별 지키기 가위바위보",img:"thumbs/rps.jpg?v=1",url:SRV+"/rps/",g:[5,6],mode:"반 전체",kind:"게임",world:"island",d:"카이지 한정 가위바위보 학생판! 묵·찌·빠 카드를 다 쓰고 별을 지켜요. 선생님 TV가 방, 학생은 각자 기기로."},
  {t:"과학 포트리스",img:"thumbs/fortress.jpg?v=1794014000",url:SRV+"/fortress/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"각도·힘을 맞춰 쏘는 턴제 탱크 대전 (2~8명)"},
  {t:"알까기 명인전",img:"thumbs/alkkagi.jpg",url:SRV+"/alkkagi/",g:[3,4,5,6],mode:"대전",kind:"게임",world:"island",d:"바둑돌 튕기기 대결! 이기면 티어가 올라가요"},
  {t:"엑스탱크 스쿨",img:"thumbs/xtank.jpg?v=1794014000",url:SRV+"/xtank/",g:[3,4,5,6],mode:"대전",kind:"게임",hc:true,d:"교실을 누비는 3D 탱크 대전 (최대 40명)"},
@@ -952,10 +955,14 @@ const SOON_API="/arcade/api/";
 /* 게임 순서: 서버에 저장된 이름 순서대로. 목록에 없는(새로 생긴) 게임은 원래 순서대로 맨 뒤에 */
 const BASE=GAMES.map(x=>x.t);
 function applyOrder(order){if(!Array.isArray(order))return;const pos=t=>{const i=order.indexOf(t);return i<0?1000+BASE.indexOf(t):i};GAMES.sort((a,b)=>pos(a.t)-pos(b.t))}
-fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);applyOrder(j.order);render();fanRender()}}).catch(()=>{});
+fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);if(j.opened)OPENED=j.opened;applyOrder(j.order);render();fanRender()}}).catch(()=>{});
 
 /* ── 실시간 인기 순위: 서버가 접속 기록에서 센 '최근 7일 실행한 곳 수' (/arcade/api/rank). 서버가 없으면(GitHub) 예전 화면 그대로 ── */
 let RANK={},RANK_ON=false,RANK_T=0,sortBy="pop";
+/* ── 새로 나온 게임: 서버가 '처음 실행된 날'(born)과 '공개 예정을 푼 날'(opened)을 기억해요. 둘 중 늦은 날부터 NEW_DAYS일 동안 '새로 나온 게임' ── */
+let BORN={},OPENED={};const NEW_DAYS=10;
+const newDay=x=>{const a=BORN[rkKey(x)]||"",b=OPENED[x.t]||"";return a>b?a:b};
+const isNew=x=>{const d=newDay(x);if(!d||(isSoon(x)&&!TEACH.on))return false;return (Date.now()-new Date(d+"T00:00:00+09:00").getTime())/864e5<NEW_DAYS};
 try{if(localStorage.getItem("arcade-sort")==="base")sortBy="base"}catch(e){}
 const rkKey=x=>{try{const p=new URL(x.url,location.href).pathname.replace(/index\.html$/,"");if(p==="/")return "ROOT";const s=p.split("/").filter(Boolean);if(s[0]==="arcade"&&s[1]==="games"&&s[2])return s[2];return s[0]||"ROOT"}catch(e){return ""}};
 const rkOf=x=>RANK[rkKey(x)]||null;
@@ -969,7 +976,7 @@ function rankRender(){const L=rkList().slice(0,5),box=$("rankBox");RANK_ON=L.len
   box.hidden=!RANK_ON;document.querySelector(".hero").classList.toggle("ranked",RANK_ON);if(!RANK_ON)return;
   $("rankList").innerHTML=L.map((x,i)=>{const r=rkOf(x);return `<li><a href="${esc(link(x.url))}"><span class="no">${i+1}</span><img src="${esc(x.img)}" alt="" loading="lazy"><span class="tt"><b>${esc(x.t)}</b><small>${r.now?`<span class="live">지금 ${r.now}곳 플레이 중</span>`:esc(x.mode)+" · "+gtxt(x.g)}</small></span><span class="cnt">${r.p.toLocaleString()}곳<small>최근 7일</small></span></a></li>`}).join("");
   const d=new Date(RANK_T*1000);$("rankAt").textContent=RANK_T?`${d.getHours()}:${String(d.getMinutes()).padStart(2,"0")} 기준`:""}
-function rankLoad(){fetch(SOON_API+"rank",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.ok||!j.games)return;RANK=j.games;RANK_T=j.t||0;if(ORD)rankRender();else render()}).catch(()=>{})}
+function rankLoad(){fetch(SOON_API+"rank",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.ok||!j.games)return;RANK=j.games;RANK_T=j.t||0;if(j.born)BORN=j.born;if(ORD)rankRender();else render()}).catch(()=>{})}
 rankLoad();setInterval(()=>{if(!document.hidden)rankLoad()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()/1000-RANK_T>90)rankLoad()});
 /* ── 게임 카드 ── */
@@ -985,7 +992,7 @@ const liveOf=x=>{const r=rkOf(x);return r&&r.now?r.now:0};
 function tile(x,i){const k=GAMES.indexOf(x),L=isSoon(x)&&!TEACH.on,lv=L?0:liveOf(x);
   const rk=rkBadge(x);
   return `<div class="item${L?" locked":""}" data-t="${esc(x.t)}" data-no="${i+1}"><button class="tile" type="button" data-open="${k}" aria-label="${esc(x.t)}${L?" 공개 예정":""}">
-  <span class="th"><img src="${esc(x.img)}" alt="" loading="lazy">${rk}${isIsland(x)?'<span class="b-isl">🏝️ 과학섬</span>':""}${x.hc?'<span class="b-hc">우리 반 문제</span>':""}${lv?`<span class="b-live"><i></i>${lv}곳 플레이 중</span>`:""}${L?'<span class="b-soon">🔒 공개 예정</span>':isSoon(x)?'<span class="b-soon t">🔒 선생님만</span>':""}${isFav(x)?'<span class="b-fav" aria-label="즐겨찾기">★</span>':""}</span>
+  <span class="th"><img src="${esc(x.img)}" alt="" loading="lazy">${isNew(x)?'<span class="b-new">NEW</span>':rk}${isIsland(x)?'<span class="b-isl">🏝️ 과학섬</span>':""}${x.hc?'<span class="b-hc">우리 반 문제</span>':""}${lv?`<span class="b-live"><i></i>${lv}곳 플레이 중</span>`:""}${L?'<span class="b-soon">🔒 공개 예정</span>':isSoon(x)?'<span class="b-soon t">🔒 선생님만</span>':""}${isFav(x)?'<span class="b-fav" aria-label="즐겨찾기">★</span>':""}</span>
   <span class="tt">${esc(x.t)}</span><span class="tm">${gtxt(x.g)} · ${esc(String(x.mode||"").replace(/\s*·\s*/g,"·"))}${x.unit?" · "+esc(x.unit):""}</span></button>${L||ORD?"":`<button class="tq" type="button" data-qr="${k}" aria-label="${esc(x.t)} 학생 QR" title="학생 QR 띄우기">▦</button>`}</div>`}
 function shelf(key,icon,name,sub,L,n0,opt){opt=opt||{};
   return `<section class="shelf${opt.cls?" "+opt.cls:""}" aria-label="${esc(name)}"><div class="sh-h"><span class="sh-i" aria-hidden="true">${icon}</span><b>${esc(name)}</b><span class="sh-n">${L.length}</span>${sub?`<small>${esc(sub)}</small>`:""}${opt.all?`<button class="sh-all" type="button" data-cat="${esc(key)}">전체 보기</button>`:""}<span class="sh-nav"><button type="button" data-sc="-1" aria-label="왼쪽으로">‹</button><button type="button" data-sc="1" aria-label="오른쪽으로">›</button></span></div><div class="row">${L.map((x,i)=>tile(x,n0+i)).join("")}</div></section>`}
@@ -1018,11 +1025,13 @@ function render(){
     const fav=MY.get("arcade-fav").map(by).filter(x=>x&&open.includes(x));
     const rec=MY.get("arcade-recent").map(by).filter(x=>x&&open.includes(x)&&!fav.includes(x)).slice(0,8);
     const mine=[...fav,...rec];
+    const fresh=open.filter(isNew).sort((a,b)=>newDay(b).localeCompare(newDay(a))).slice(0,10);
+    if(fresh.length){h+=shelf("","🆕","새로 나온 게임",`최근 ${NEW_DAYS}일 안에 나왔어요`,fresh,n,{cls:"fresh"});n+=fresh.length}
     if(mine.length){h+=shelf("","⭐","내 게임","즐겨찾기 · 최근 연 게임",mine,n,{cls:"mine"});n+=mine.length}
-    for(const c of MODES.slice(1)){const L=open.filter(x=>catOf(x)==c);if(!L.length)continue;const C=CATS[c];h+=shelf(c,C[0],C[1],C[2],L,n,{all:true});n+=L.length}
+    for(const c of MODES.slice(1)){const L=open.filter(x=>catOf(x)==c);if(!L.length)continue;L.sort((a,b)=>(isNew(b)?1:0)-(isNew(a)?1:0));const C=CATS[c];h+=shelf(c,C[0],C[1],C[2],L,n,{all:true});n+=L.length}
     if(soon.length)h+=shelf("","🔒","공개 예정","곧 열려요",soon,n,{cls:"soon"});
     G.innerHTML=h;shelfArrows()}
-  else{if(!ORD)list.sort((a,b)=>(locked(a)?1:0)-(locked(b)?1:0));G.innerHTML=list.map((x,i)=>tile(x,i)).join("")}
+  else{if(!ORD)list.sort((a,b)=>(locked(a)?1:0)-(locked(b)?1:0)||(isNew(b)?1:0)-(isNew(a)?1:0));G.innerHTML=list.map((x,i)=>tile(x,i)).join("")}
   $("grid").classList.toggle("ordering",!!ORD);ordBarState();
 }
 function shelfArrows(){document.querySelectorAll("#grid .shelf").forEach(s=>{const r=s.querySelector(".row"),nv=s.querySelector(".sh-nav");if(!r||!nv)return;
@@ -1033,7 +1042,7 @@ addEventListener("resize",()=>{clearTimeout(shelfArrows.t);shelfArrows.t=setTime
 let GD=null;
 function openGame(x){GD=x;const L=isSoon(x)&&!TEACH.on;const r=rkOf(x);
   $("gdImg").src=x.img;$("gdT").textContent=x.t;$("gdD").textContent=x.d||"";
-  $("gdTags").innerHTML=[CATS[catOf(x)]?CATS[catOf(x)][0]+" "+CATS[catOf(x)][1]:x.mode,gtxt(x.g),x.unit||"",isIsland(x)?"🏝️ 과학섬 세계관":"",x.hc?"우리 반 문제 연결":""].filter(Boolean).map(t=>`<span>${esc(t)}</span>`).join("");
+  $("gdTags").innerHTML=[CATS[catOf(x)]?CATS[catOf(x)][0]+" "+CATS[catOf(x)][1]:x.mode,gtxt(x.g),x.unit||"",isIsland(x)?"🏝️ 과학섬 세계관":"",x.hc?"우리 반 문제 연결":"",isNew(x)?"🆕 새로 나온 게임":""].filter(Boolean).map(t=>`<span>${esc(t)}</span>`).join("");
   $("gdLive").innerHTML=r&&r.now&&!L?`<i></i>지금 ${r.now}곳 플레이 중`:"";$("gdLive").hidden=!(r&&r.now&&!L);
   $("gdU").textContent=r&&r.p?`최근 7일 ${r.p.toLocaleString()}곳에서 실행했어요`:"";
   $("gdGo").href=link(x.url);$("gdGo").hidden=L;$("gdQr").hidden=L;
