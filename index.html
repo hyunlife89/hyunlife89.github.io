@@ -1587,7 +1587,7 @@ $("testLog").onclick=()=>{
 };
 </script>
 <!-- allsubj-notice: 예전부터 오시던 선생님께 한 번만 보이는 안내 -->
-<div id="asNotice" hidden style="position:fixed;inset:0;z-index:99999;background:rgba(15,20,35,.55);display:flex;align-items:center;justify-content:center;padding:18px">
+<div id="asNotice" hidden style="position:fixed;inset:0;z-index:99999;background:rgba(15,20,35,.55);display:none;align-items:center;justify-content:center;padding:18px">
   <div role="dialog" aria-modal="true" aria-labelledby="asT" style="max-width:520px;width:100%;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.35);padding:26px 26px 20px;font-family:inherit;color:#1b2130;line-height:1.65">
     <div style="font-size:34px;line-height:1">📢</div>
     <h2 id="asT" style="margin:10px 0 8px;font-size:22px;font-weight:800">국어·수학·사회·과학·영어<br>전 과목으로 넓어졌어요!</h2>
@@ -1605,15 +1605,17 @@ $("testLog").onclick=()=>{
   </div>
 </div>
 <script>
-(function(){var K='arcade-notice-allsubj-1';try{
-  if(localStorage.getItem(K))return;
-  var back=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==K&&!/^hgb2\./.test(k)){back=true;break}}
-  if(!back){localStorage.setItem(K,'new');return}
-  var n=document.getElementById('asNotice');if(!n)return;n.hidden=false;n.style.display='flex';
-  var close=function(){n.hidden=true;n.style.display='none';try{if(document.getElementById('asNever').checked)localStorage.setItem(K,'never')}catch(e){}};
-  document.getElementById('asOk').onclick=close;n.addEventListener('click',function(e){if(e.target===n)close()});
+(function(){var K='arcade-notice-allsubj-1';var n=document.getElementById('asNotice');if(!n)return;
+  function close(){n.hidden=true;n.style.display='none';try{var c=document.getElementById('asNever');if(c&&c.checked)localStorage.setItem(K,'never')}catch(e){}}
+  var ok=document.getElementById('asOk');if(ok)ok.addEventListener('click',close);
+  n.addEventListener('click',function(e){if(e.target===n)close()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!n.hidden)close()});
-}catch(e){}})();
+  var show=false;try{
+    if(!localStorage.getItem(K)){var back=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==K&&!/^hgb2\./.test(k)){back=true;break}}
+      if(back)show=true;else localStorage.setItem(K,'new');}
+  }catch(e){}
+  if(show){n.hidden=false;n.style.display='flex'}
+})();
 </script>
 
 </body>
