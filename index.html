@@ -1598,8 +1598,9 @@ $("testLog").onclick=()=>{
       <li>우리 반 문제(구글 시트·엑셀) 넣기는 그대로 쓰실 수 있어요.</li>
     </ul>
     <p style="margin:0 0 16px;font-size:15.5px;color:#1b2130;font-weight:700">불편한 점 및 후기 남겨 주시면 즉각 반영하겠습니다. 감사합니다.</p>
-    <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button type="button" id="asOk" style="font:inherit;font-weight:800;font-size:16px;padding:10px 22px;border:0;border-radius:999px;background:#2f6bff;color:#fff;cursor:pointer">확인했어요</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:6px;font-size:15px;color:#4a5263;cursor:pointer"><input type="checkbox" id="asNever" style="width:18px;height:18px"> 다시 보지 않기</label>
+      <button type="button" id="asOk" style="font:inherit;font-weight:800;font-size:16px;padding:10px 22px;border:0;border-radius:999px;background:#2f6bff;color:#fff;cursor:pointer">닫기</button>
     </div>
   </div>
 </div>
@@ -1609,7 +1610,7 @@ $("testLog").onclick=()=>{
   var back=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==K&&!/^hgb2\./.test(k)){back=true;break}}
   if(!back){localStorage.setItem(K,'new');return}
   var n=document.getElementById('asNotice');if(!n)return;n.hidden=false;n.style.display='flex';
-  var close=function(){n.hidden=true;n.style.display='none';try{localStorage.setItem(K,String(Date.now()))}catch(e){}};
+  var close=function(){n.hidden=true;n.style.display='none';try{if(document.getElementById('asNever').checked)localStorage.setItem(K,'never')}catch(e){}};
   document.getElementById('asOk').onclick=close;n.addEventListener('click',function(e){if(e.target===n)close()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!n.hidden)close()});
 }catch(e){}})();
