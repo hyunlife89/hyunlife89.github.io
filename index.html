@@ -1586,5 +1586,34 @@ $("testLog").onclick=()=>{
   HC.flush().then(ok=>{$("after").textContent=ok?"보냈어요. 10초쯤 뒤 시트의 [기록] 탭에 줄이 생겼는지 확인해 주세요. 안 생기면 배포의 '액세스 권한: 모든 사용자'와 새 버전 배포 여부를 확인해 주세요.":"보내지 못했어요. 인터넷 연결을 확인해 주세요."});
 };
 </script>
+<!-- allsubj-notice: 예전부터 오시던 선생님께 한 번만 보이는 안내 -->
+<div id="asNotice" hidden style="position:fixed;inset:0;z-index:99999;background:rgba(15,20,35,.55);display:flex;align-items:center;justify-content:center;padding:18px">
+  <div role="dialog" aria-modal="true" aria-labelledby="asT" style="max-width:520px;width:100%;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.35);padding:26px 26px 20px;font-family:inherit;color:#1b2130;line-height:1.65">
+    <div style="font-size:34px;line-height:1">📢</div>
+    <h2 id="asT" style="margin:10px 0 8px;font-size:22px;font-weight:800">국어·수학·사회·과학·영어<br>전 과목으로 넓어졌어요!</h2>
+    <p style="margin:0 0 10px;font-size:16px">요청해 주신 선생님들이 많아서, 과학만 있던 문제를 <b>3~6학년 국어·수학·사회·과학·영어 1·2학기 전 과목</b>(198단원, 3,995문제)으로 넓혔어요.</p>
+    <ul style="margin:0 0 12px;padding-left:20px;font-size:15px">
+      <li>게임마다 <b>① 학년 → ② 학기 → ③ 과목</b>을 누르면 단원이 바로 나와요. 여러 단원을 골라도 되고, 「전체 섞기」도 있어요.</li>
+      <li>이름도 바뀌었어요. <b>과학섬 생활 → 모여봐요 초등섬</b>, 섬 세계관 게임은 <b>🏝️ 초등섬 시리즈</b>로 묶었어요. (과학 포트리스 → 포트리스, 밤의 과학실 탈출 → 밤의 교실 탈출 등)</li>
+      <li>우리 반 문제(구글 시트·엑셀) 넣기는 그대로 쓰실 수 있어요.</li>
+    </ul>
+    <p style="margin:0 0 16px;font-size:15.5px;color:#1b2130;font-weight:700">불편한 점 및 후기 남겨 주시면 즉각 반영하겠습니다. 감사합니다.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button type="button" id="asOk" style="font:inherit;font-weight:800;font-size:16px;padding:10px 22px;border:0;border-radius:999px;background:#2f6bff;color:#fff;cursor:pointer">확인했어요</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){var K='arcade-notice-allsubj-1';try{
+  if(localStorage.getItem(K))return;
+  var back=false;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==K&&!/^hgb2\./.test(k)){back=true;break}}
+  if(!back){localStorage.setItem(K,'new');return}
+  var n=document.getElementById('asNotice');if(!n)return;n.hidden=false;n.style.display='flex';
+  var close=function(){n.hidden=true;n.style.display='none';try{localStorage.setItem(K,String(Date.now()))}catch(e){}};
+  document.getElementById('asOk').onclick=close;n.addEventListener('click',function(e){if(e.target===n)close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!n.hidden)close()});
+}catch(e){}})();
+</script>
+
 </body>
 </html>
