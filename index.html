@@ -1619,9 +1619,9 @@ $("testLog").onclick=()=>{
 </script>
 
 /*hyun-bgm*/<script>
-/* 현게임 배경 음악 (수노로 만든 곡) — 오른쪽 아래 단추로 켜고 끄며, 고른 것은 기기에 기억해요 */
+/* 현게임 배경 음악 (수노로 만든 곡) — 처음엔 꺼져 있고, 오른쪽 아래 단추로 켜고 끄며, 고른 것은 기기에 기억해요 */
 (function(){
-  var KEY='hg_bgm',on=true;try{on=localStorage.getItem(KEY)!=='0'}catch(e){}
+  var KEY='hg_bgm2',on=false;try{on=localStorage.getItem(KEY)==='1'}catch(e){}   // 처음엔 꺼진 채로 시작, 켜면 기기에 기억
   var a=new Audio('/arcade/bgm/arcade.mp3');a.loop=true;a.volume=.22;a.preload='auto';
   var b=document.createElement('button');b.type='button';b.title='배경 음악 켜기/끄기';
   b.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;padding:7px 12px;border-radius:18px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.9);font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)';
