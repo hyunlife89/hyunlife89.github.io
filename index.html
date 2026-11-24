@@ -1618,5 +1618,22 @@ $("testLog").onclick=()=>{
 })();
 </script>
 
+/*hyun-bgm*/<script>
+/* 현게임 배경 음악 (수노로 만든 곡) — 오른쪽 아래 단추로 켜고 끄며, 고른 것은 기기에 기억해요 */
+(function(){
+  var KEY='hg_bgm',on=true;try{on=localStorage.getItem(KEY)!=='0'}catch(e){}
+  var a=new Audio('/arcade/bgm/arcade.mp3');a.loop=true;a.volume=.22;a.preload='auto';
+  var b=document.createElement('button');b.type='button';b.title='배경 음악 켜기/끄기';
+  b.style.cssText='position:fixed;right:14px;bottom:14px;z-index:9999;padding:7px 12px;border-radius:18px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.9);font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)';
+  function label(){b.textContent=on?'🎵 음악 켬':'🔇 음악 끔'}
+  function play(){if(!on||document.hidden)return;var p=a.play();if(p&&p.catch)p.catch(function(){})}
+  b.onclick=function(e){e.stopPropagation();on=!on;try{localStorage.setItem(KEY,on?'1':'0')}catch(err){}label();if(on)play();else a.pause()};
+  a.addEventListener('error',function(){b.remove()});
+  ['pointerdown','keydown','touchstart'].forEach(function(ev){addEventListener(ev,function(){if(a.paused)play()},{passive:true})});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)a.pause();else play()});
+  function mount(){label();document.body.appendChild(b);play()}
+  if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount);
+})();
+</script>
 </body>
 </html>
