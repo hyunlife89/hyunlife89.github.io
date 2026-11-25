@@ -1641,5 +1641,22 @@ $("testLog").onclick=()=>{
   if(document.body)mount();else document.addEventListener('DOMContentLoaded',mount);
 })();
 </script>
+<script>
+/* ── 소개 글에서 들어온 손님: ?g=게임주소 → 홈을 보여 주고 그 게임 상세 창을 띄워요 (2026-11-26) ── */
+(function(){
+  var g=(new URLSearchParams(location.search).get("g")||"").replace(/[^a-z0-9_-]/gi,"").toLowerCase();
+  if(!g)return;
+  function go(){
+    try{
+      var x=(typeof GAMES!=="undefined"?GAMES:[]).find(function(o){
+        try{return new URL(o.url,location.href).pathname.replace(/\/+$/,"").split("/").pop().toLowerCase()===g}catch(e){return false}});
+      if(x&&typeof openGame==="function")openGame(x);
+      else if(typeof toast==="function")toast("현게임에 오신 걸 환영해요! 아래 목록에서 게임을 골라 주세요.",4000);
+      var u=new URL(location.href);u.searchParams.delete("g");history.replaceState(null,"",u.pathname+u.search+u.hash);
+    }catch(e){}
+  }
+  if(document.readyState==="complete")setTimeout(go,300);else addEventListener("load",function(){setTimeout(go,300)});
+})();
+</script>
 </body>
 </html>
