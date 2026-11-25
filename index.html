@@ -517,6 +517,10 @@ body{background:var(--bg)}
 .live-total{margin:0 2px 8px;padding:9px 12px;border-radius:12px;background:color-mix(in srgb,var(--live) 11%,var(--paper));color:color-mix(in srgb,var(--live) 70%,var(--ink));font-size:13.5px;font-weight:700}
 .live-total b{font-weight:900}
 .live-total[hidden]{display:none}
+.live-total{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.live-total .lt-now{display:inline-flex;align-items:center;gap:6px}
+.live-total .lt-sum{font-size:12.5px;font-weight:600;opacity:.92}
+.live-total .lt-now+.lt-sum{padding-left:14px}
 .rank li a{border-radius:12px}
 .rank img{border-radius:9px}
 .rank-f{margin-top:auto;padding-top:8px}
@@ -659,7 +663,7 @@ dialog:not(#gd){border:0;border-radius:20px;box-shadow:0 30px 80px -20px rgba(0,
       <div class="rank-h"><b id="rankT">🔥 실시간 인기 순위</b><span id="rankAt"></span></div>
       <div class="live-total" id="liveTotal" hidden></div>
       <ol id="rankList"></ol>
-      <p class="rank-f">최근 7일 동안 게임을 실행한 학교·가정 수 기준 · 1분마다 새로 고쳐요</p>
+      <p class="rank-f">최근 7일 동안 게임을 실행한 학교·가정 수 기준 · 함께한 학생 수는 수업별 접속으로 센 최소 인원 · 1분마다 새로 고쳐요</p>
     </aside>
   </section>
 
@@ -959,7 +963,9 @@ function applyOrder(order){if(!Array.isArray(order))return;const pos=t=>{const i
 fetch(SOON_API+"config",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ok&&Array.isArray(j.soon)){SOON=new Set(j.soon);if(j.opened)OPENED=j.opened;applyOrder(j.order);render();fanRender()}}).catch(()=>{});
 
 /* ── 실시간 인기 순위: 서버가 접속 기록에서 센 '최근 7일 실행한 곳 수' (/arcade/api/rank). 서버가 없으면(GitHub) 예전 화면 그대로 ── */
-let RANK={},RANK_ON=false,RANK_T=0,sortBy="pop";
+let RANK={},RANK_ON=false,RANK_T=0,PEOPLE=0,sortBy="pop";
+/* 누적 학생 수: 천 단위로 내림 (1만 4,546 → 1만 4천) */
+const fmtP=n=>{n=Math.floor(n||0);if(n>=10000){const m=Math.floor(n/10000),c=Math.floor(n%10000/1000);return m+"만"+(c?" "+c+"천":"")}if(n>=1000)return (Math.floor(n/100)*100).toLocaleString();return (Math.floor(n/10)*10).toLocaleString()};
 /* ── 새로 나온 게임: 서버가 '처음 실행된 날'(born)과 '공개 예정을 푼 날'(opened)을 기억해요. 둘 중 늦은 날부터 NEW_DAYS일 동안 '새로 나온 게임' ── */
 let BORN={},OPENED={};const NEW_DAYS=10;
 const newDay=x=>{const a=BORN[rkKey(x)]||"",b=OPENED[x.t]||"";return a>b?a:b};
@@ -977,7 +983,7 @@ function rankRender(){const L=rkList().slice(0,5),box=$("rankBox");RANK_ON=L.len
   box.hidden=!RANK_ON;document.querySelector(".hero").classList.toggle("ranked",RANK_ON);if(!RANK_ON)return;
   $("rankList").innerHTML=L.map((x,i)=>{const r=rkOf(x);return `<li><a href="${esc(link(x.url))}"><span class="no">${i+1}</span><img src="${esc(x.img)}" alt="" loading="lazy"><span class="tt"><b>${esc(x.t)}</b><small>${r.now?`<span class="live">지금 ${r.now}곳 플레이 중</span>`:esc(x.mode)+" · "+gtxt(x.g)}</small></span><span class="cnt">${r.p.toLocaleString()}곳<small>최근 7일</small></span></a></li>`}).join("");
   const d=new Date(RANK_T*1000);$("rankAt").textContent=RANK_T?`${d.getHours()}:${String(d.getMinutes()).padStart(2,"0")} 기준`:""}
-function rankLoad(){fetch(SOON_API+"rank",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.ok||!j.games)return;RANK=j.games;RANK_T=j.t||0;if(j.born)BORN=j.born;if(ORD)rankRender();else render()}).catch(()=>{})}
+function rankLoad(){fetch(SOON_API+"rank",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.ok||!j.games)return;RANK=j.games;RANK_T=j.t||0;PEOPLE=+j.people||0;if(j.born)BORN=j.born;if(ORD)rankRender();else render()}).catch(()=>{})}
 rankLoad();setInterval(()=>{if(!document.hidden)rankLoad()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()/1000-RANK_T>90)rankLoad()});
 /* ── 게임 카드 ── */
@@ -1002,7 +1008,7 @@ function featRender(){const el=$("feat");if(!el)return;const ok=x=>!isSoon(x);
   const L=(RANK_ON?rkList():GAMES.filter(ok));const x=L[0]||GAMES.find(ok);if(!x){el.innerHTML="";return}
   const r=rkOf(x),k=GAMES.indexOf(x);const tot=Object.values(RANK).reduce((a,v)=>a+(v&&v.now||0),0);
   el.innerHTML=`<img class="ft-bg" src="${esc(x.img)}" alt=""><div class="ft-sh"></div><div class="ft-tx"><span class="ft-k">${RANK_ON?"🔥 지금 가장 많이 하는 게임":"⭐ 추천 게임"}</span><b class="ft-t">${esc(x.t)}</b><span class="ft-d">${esc(x.d)}</span><span class="ft-m">${r&&r.now?`<span class="ft-live"><i></i>지금 ${r.now}곳 플레이 중</span>`:""}${r&&r.p?`<span>최근 7일 ${r.p.toLocaleString()}곳</span>`:""}<span>${gtxt(x.g)} · ${esc(x.mode)}</span></span><span class="ft-acts"><a class="ft-go" href="${esc(link(x.url))}" data-go="${esc(x.t)}">▶ 게임 열기</a><button class="ft-btn" type="button" data-qr="${k}">▦ 학생 QR</button><button class="ft-btn" type="button" data-open="${k}">자세히</button></span></div>`;
-  const lt=$("liveTotal");if(lt){lt.hidden=!tot;lt.innerHTML=tot?`<i></i>지금 전국 <b>${tot.toLocaleString()}곳</b>에서 현게임을 하고 있어요`:""}}
+  const lt=$("liveTotal");if(lt){const sum=PEOPLE>=100;lt.hidden=!tot&&!sum;lt.innerHTML=(tot?`<span class="lt-now"><i></i>지금 전국 <b>${tot.toLocaleString()}곳</b>에서 현게임을 하고 있어요</span>`:"")+(sum?`<span class="lt-sum">지금까지 약 <b>${fmtP(PEOPLE)}명</b>이 함께했어요</span>`:"")}}
 function render(){
   chips($("grades"),[0,3,4,5,6],grade,v=>v==0?"모든 학년":v+"학년",v=>{grade=+v;try{localStorage.setItem("arcade-grade",grade)}catch(e){}render()});
   if(!MODES.includes(mode))mode="전체";
