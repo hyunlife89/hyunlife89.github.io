@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>현게임 기록 잇는 중</title>
+<style>body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#fff8ec;font-family:"Pretendard","Malgun Gothic",sans-serif;color:#6f5848;font-weight:800;font-size:18px}</style>
+</head><body><div>🏝️ 초등섬 기록을 가져오는 중이에요…</div>
+<script>
+/* 현게임 기록 잇기: 이 주소의 초등섬 기록을 원래 주소로 돌려보내요. © 현게임 */
+(function(){
+  var DOMAINS=['hyungame.com','hyungame.duckdns.org','hyunstock.duckdns.org'];
+  var q=new URLSearchParams(location.search),back=q.get('back')||'';
+  var ok=/^https:\/\/(www\.)?(hyungame\.com|hyungame\.duckdns\.org|hyunstock\.duckdns\.org)\//.test(back);
+  if(!ok){location.replace('/arcade/');return}
+  var tried=(q.get('tried')||'').split(',').filter(Boolean);tried.push(location.hostname.replace(/^www\./,''));
+  var data={},n=0;
+  try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^scienceIsland/.test(k)){data[k]=localStorage.getItem(k);n++}}}catch(e){}
+  var main=data['scienceIsland'+'.v1'];
+  if(main&&main.length>2){location.replace(back+'#hgsync='+encodeURIComponent(JSON.stringify(data)));return}
+  var next=DOMAINS.filter(function(d){return tried.indexOf(d)<0})[0];
+  var none=function(){location.replace(back+'#hgsync=none')};
+  if(next){var done=false,t=setTimeout(function(){if(!done){done=true;none()}},3500);
+    fetch('https://'+next+'/arcade/hg_sync.js?ping='+Date.now(),{mode:'no-cors',cache:'no-store'})
+      .then(function(){if(done)return;done=true;clearTimeout(t);location.replace('https://'+next+'/arcade/sync.html?back='+encodeURIComponent(back)+'&tried='+encodeURIComponent(tried.join(',')))})
+      .catch(function(){if(done)return;done=true;clearTimeout(t);none()});return}
+  none();
+})();
+</script></body></html>
