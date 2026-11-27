@@ -78,16 +78,19 @@
   /* 이 기기에서 보낸 글 id를 게임별로 기억해 두고, 선생님 답장이 달리면 '답장 왔어요'를 띄워요 */
   function mine() { try { return JSON.parse(localStorage.getItem("hf-mine") || "{}"); } catch (e) { return {}; } }
   function mineAdd(id) { try { var m = mine(), a = m[opt.game] || []; a.unshift(id); m[opt.game] = a.slice(0, 30); localStorage.setItem("hf-mine", JSON.stringify(m)); } catch (e) {} }
-  function seen() { try { return +localStorage.getItem("hf-seen:" + opt.game) || 0; } catch (e) { return 0; } }
-  function seenNow() { try { localStorage.setItem("hf-seen:" + opt.game, Math.floor(Date.now() / 1000)); } catch (e) {} }
+  /* 읽은 답장: 글 id → 읽은 답장의 시각 (선생님이 답을 고치면 다시 '새 답장') */
+  function seen() { try { return JSON.parse(localStorage.getItem("hf-seen") || "{}"); } catch (e) { return {}; } }
+  function seenSet(m) { try { var k = Object.keys(m); if (k.length > 300) k.slice(0, k.length - 300).forEach(function (x) { delete m[x]; }); localStorage.setItem("hf-seen", JSON.stringify(m)); } catch (e) {} }
+  function isNew(x, m) { return x.ans && (x.at || 0) > (m[x.id] || 0); }
+  function seenNow() { var m = seen(), ids = mine()[opt.game] || []; (BOARD || []).forEach(function (x) { if (ids.indexOf(x.id) >= 0 && x.ans) m[x.id] = x.at || 0; }); seenSet(m); }
   var BOARD = null;
   function loadBoard() {
     return fetch(SRV + "/arcade/api/board?g=" + encodeURIComponent(opt.game), { cache: "no-store" })
       .then(function (r) { return r.json(); }).then(function (j) { BOARD = (j && j.items) || []; return BOARD; });
   }
   function myNew() {           /* 내 글 가운데 아직 안 읽은 답장 수 */
-    var ids = mine()[opt.game] || [], t = seen();
-    return (BOARD || []).filter(function (x) { return ids.indexOf(x.id) >= 0 && x.ans && (x.at || 0) > t; }).length;
+    var ids = mine()[opt.game] || [], m = seen();
+    return (BOARD || []).filter(function (x) { return ids.indexOf(x.id) >= 0 && isNew(x, m); }).length;
   }
   function badge() {
     var b = document.getElementById("hf-btn"); if (!b) return;
@@ -97,6 +100,18 @@
     d.textContent = "답장 " + n;
     b.querySelector(".hf-lb").textContent = "선생님 답장이 왔어요!";
     b.setAttribute("aria-label", "선생님 답장이 왔어요");
+  }
+
+  /* 게임을 켜 둔 동안 90초마다 답장을 확인해요 (이 기기에서 보낸 글이 있을 때만, 화면이 보일 때만) */
+  var watchT = null, lastN = 0;
+  function check() {
+    if (opt.dry || !(mine()[opt.game] || []).length) return;
+    loadBoard().then(function () { var n = myNew(); badge(); if (n > lastN) peek(); lastN = n; }).catch(function () {});
+  }
+  function watch() {
+    if (watchT || opt.dry) return;
+    watchT = setInterval(function () { if (document.visibilityState !== "hidden") check(); }, 90000);
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") check(); });
   }
 
   function close() { var r = document.getElementById("hf-root"); if (r) r.remove(); }
@@ -137,18 +152,19 @@
     var bg = shell({ h: "📬 선생님 답장", body: '<div class="hf-list"><p class="hf-empty">불러오는 중…</p></div>' }, true);
     var box = bg.querySelector(".hf-list");
     (opt.dry ? Promise.resolve(BOARD || []) : loadBoard()).then(function (L) {
-      var ids = mine()[opt.game] || [], t0 = seen();
+      var ids = mine()[opt.game] || [], sm = seen();
       /* 내가 보낸 글(답장 없어도) + 답장이 달린 다른 학생 글. 내 글이 먼저 */
       var me = L.filter(function (x) { return ids.indexOf(x.id) >= 0; });
       var oth = L.filter(function (x) { return x.who === "s" && x.ans && ids.indexOf(x.id) < 0; }).slice(0, 20);
       var all = me.concat(oth);
       if (!all.length) { box.innerHTML = '<p class="hf-empty">아직 답장이 없어요.<br>궁금한 걸 물어보면 선생님이 답장해 줄 거예요!</p>'; }
       else box.innerHTML = all.map(function (x) {
-        var my = ids.indexOf(x.id) >= 0, nw = my && x.ans && (x.at || 0) > t0;
+        var my = ids.indexOf(x.id) >= 0, nw = my && isNew(x, sm);
         return '<div class="hf-it' + (my ? ' me' : '') + '"><div class="hf-meta">' + (my ? '<b>내가 보낸 글</b> · ' : '친구 글 · ') +
           (KIND[x.k] ? KIND[x.k].icon + ' ' + KIND[x.k].t : '') + (x.k === "r" && x.stars ? ' ' + "★★★★★".slice(0, x.stars) : '') + ' · ' + ago(x.t) + (nw ? ' · <b style="color:#e2483d">새 답장!</b>' : '') + '</div>' +
           '<div class="hf-q">' + esc(x.text || "") + '</div>' +
-          (x.ans ? '<div class="hf-a"><b>👩‍🏫 선생님 답장 · ' + ago(x.at || x.t) + '</b>' + esc(x.ans) + '</div>' : '<div class="hf-w">⏳ 선생님이 읽고 답장해 줄 거예요</div>') + '</div>';
+          (x.ans ? '<div class="hf-a"><b>' + (x.auto ? '💌 바로 답장' : '👩‍🏫 선생님 답장') + ' · ' + ago(x.at || x.t) + '</b>' + esc(x.ans) + '</div>' +
+            (x.auto && x.k === "q" ? '<div class="hf-w">⏳ 선생님이 진짜 답을 준비하고 있어요</div>' : '') : '<div class="hf-w">⏳ 선생님이 읽고 답장해 줄 거예요</div>') + '</div>';
       }).join("");
       seenNow(); badge();
     }).catch(function () { box.innerHTML = '<p class="hf-empty">인터넷이 잠깐 끊겼어요. 다시 열어 줘요</p>'; });
@@ -190,13 +206,16 @@
     go.then(function (j) {
       if (!j.ok) { msg.textContent = j.error || "보내지 못했어요. 조금 있다 다시 해 줘요"; send.disabled = false; return; }
       try { localStorage.setItem("hf-posted", Date.now()); } catch (e) {}
-      if (j.item && j.item.id) mineAdd(j.item.id);
+      var it = j.item || {};
+      if (it.id) { mineAdd(it.id); if (it.ans) { var sm = seen(); sm[it.id] = it.at || 0; seenSet(sm); } }
       shell({
         h: "보냈어요!",
         body: '<div class="hf-done"><i>' + (k === "r" ? "💛" : k === "q" ? "📮" : "🔧") + '</i><b>고마워요!</b><p>' +
           (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 답장해 주면 여기 '📬 선생님 답장'에서 볼 수 있어요." : "게임을 고칠 때 꼭 볼게요. 답장은 '📬 선생님 답장'에서 봐요.") +
-          '</p><button class="hf-send">게임으로 돌아가기</button></div>'
+          '</p>' + (it.ans ? '<div class="hf-it me" style="text-align:left;margin:0 0 14px"><div class="hf-a" style="margin:0"><b>💌 바로 답장</b>' + esc(it.ans) + '</div></div>' : '') +
+          '<button class="hf-send">게임으로 돌아가기</button></div>'
       });
+      watch();
       document.querySelector("#hf-root .hf-send").onclick = close;
     }).catch(function () { msg.textContent = "인터넷이 잠깐 끊겼어요. 다시 눌러 줘요"; send.disabled = false; });
   }
@@ -213,7 +232,7 @@
       b.addEventListener("keydown", function (e) { e.stopPropagation(); });
       document.body.appendChild(b);
       peek();
-      if (!opt.dry && (mine()[opt.game] || []).length) loadBoard().then(function () { badge(); if (myNew()) setTimeout(peek, 3500); }).catch(function () {});
+      if (!opt.dry && (mine()[opt.game] || []).length) { loadBoard().then(function () { badge(); lastN = myNew(); if (lastN) setTimeout(peek, 3500); }).catch(function () {}); watch(); }
     },
     peek: peek,
     answers: function (o) { opt = Object.assign(opt, o || {}); answers(); },
