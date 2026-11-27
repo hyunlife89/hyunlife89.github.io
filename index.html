@@ -944,7 +944,7 @@ const GAMES=[
 const MODES=["전체","반 전체","모둠","대전","혼자","수업 도구"];
 /* 수업 상황별 묶음 — 게임의 mode 글자를 보고 자동으로 나눠요 (새 카드도 mode만 적으면 알아서 들어가요) */
 const CATS={"반 전체":["🏫","반 전체 함께","전자칠판 + 학생 기기로 반 모두가 같이"],"모둠":["🤝","모둠 · 협동","2~4명이 힘을 합쳐요"],"대전":["⚔️","대전","친구와 겨루는 게임"],"혼자":["🎮","혼자 탐험","각자 기기로 자유롭게"],"수업 도구":["🧰","수업 도구","게임이 아닌 교실 도구"]};
-const catOf=x=>{const m=String(x.mode||"").replace(/\s/g,"");if(m.includes("도구"))return "수업 도구";if(m.includes("대전"))return "대전";if(m.includes("협동")||m.includes("모둠"))return "모둠";if(m.includes("반전체"))return "반 전체";if(m.includes("혼자"))return "혼자";return "반 전체"};
+const catOf=x=>{const m=String(x.mode||"").replace(/\s/g,"");if(/\/scidraw\//.test(x.url||""))return "수업 도구";/* 2026-11-27 그림 릴레이는 수업 도구 칸으로 */if(m.includes("도구"))return "수업 도구";if(m.includes("대전"))return "대전";if(m.includes("협동")||m.includes("모둠"))return "모둠";if(m.includes("반전체"))return "반 전체";if(m.includes("혼자"))return "혼자";return "반 전체"};
 const inCat=(x,c)=>c=="전체"||catOf(x)==c||(c=="혼자"&&String(x.mode||"").includes("혼자"));
 /* 즐겨찾기 · 최근 연 게임 (이 기기에만 저장) */
 const MY={get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return []}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
