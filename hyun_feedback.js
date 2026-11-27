@@ -163,7 +163,7 @@
         return '<div class="hf-it' + (my ? ' me' : '') + '"><div class="hf-meta">' + (my ? '<b>내가 보낸 글</b> · ' : '친구 글 · ') +
           (KIND[x.k] ? KIND[x.k].icon + ' ' + KIND[x.k].t : '') + (x.k === "r" && x.stars ? ' ' + "★★★★★".slice(0, x.stars) : '') + ' · ' + ago(x.t) + (nw ? ' · <b style="color:#e2483d">새 답장!</b>' : '') + '</div>' +
           '<div class="hf-q">' + esc(x.text || "") + '</div>' +
-          (x.ans ? '<div class="hf-a"><b>' + (x.auto ? '💌 바로 답장' : '👩‍🏫 선생님 답장') + ' · ' + ago(x.at || x.t) + '</b>' + esc(x.ans) + '</div>' +
+          (x.ans ? '<div class="hf-a"><b>' + (x.auto && x.k !== "r" ? '💌 바로 답장' : '👩‍🏫 선생님 답장') + ' · ' + ago(x.at || x.t) + '</b>' + esc(x.ans) + '</div>' +
             (x.auto && x.k === "q" ? '<div class="hf-w">⏳ 선생님이 진짜 답을 준비하고 있어요</div>' : '') : '<div class="hf-w">⏳ 선생님이 읽고 답장해 줄 거예요</div>') + '</div>';
       }).join("");
       seenNow(); badge();
@@ -212,7 +212,7 @@
         h: "보냈어요!",
         body: '<div class="hf-done"><i>' + (k === "r" ? "💛" : k === "q" ? "📮" : "🔧") + '</i><b>고마워요!</b><p>' +
           (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 답장해 주면 여기 '📬 선생님 답장'에서 볼 수 있어요." : "게임을 고칠 때 꼭 볼게요. 답장은 '📬 선생님 답장'에서 봐요.") +
-          '</p>' + (it.ans ? '<div class="hf-it me" style="text-align:left;margin:0 0 14px"><div class="hf-a" style="margin:0"><b>💌 바로 답장</b>' + esc(it.ans) + '</div></div>' : '') +
+          '</p>' + (it.ans ? '<div class="hf-it me" style="text-align:left;margin:0 0 14px"><div class="hf-a" style="margin:0"><b>' + (k === "r" ? '👩‍🏫 선생님 답장' : '💌 바로 답장') + '</b>' + esc(it.ans) + '</div></div>' : '') +
           '<button class="hf-send">게임으로 돌아가기</button></div>'
       });
       watch();
