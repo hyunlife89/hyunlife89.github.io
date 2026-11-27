@@ -58,6 +58,13 @@
     ".hf-send:disabled{background:#d9dce3;color:#fff;cursor:default}" +
     ".hf-note{font-size:12.5px;color:#6b7180;text-align:center;margin-top:10px;line-height:1.5}" +
     ".hf-msg{color:#e2483d;font-weight:700;font-size:14px;text-align:center;min-height:20px;margin-top:8px}" +
+    ".hf-btn .hf-dot{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e2483d;color:#fff;font:900 11px/20px 'Noto Sans KR',sans-serif;box-shadow:0 0 0 2px #fff;animation:hfPop 1.6s ease-in-out infinite}.hf-btn.r .hf-dot{right:auto;left:-8px}" +
+    "@keyframes hfPop{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}" +
+    ".hf-k.ans{border-color:#16b364;background:#effbf4}.hf-k .hf-new{margin-left:auto;flex:none;background:#e2483d;color:#fff;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:900}" +
+    ".hf-list{display:grid;gap:10px}.hf-it{border:2px solid #e6e8ee;border-radius:16px;padding:12px 14px}.hf-it.me{border-color:#2f5bff;background:#f5f7ff}" +
+    ".hf-it .hf-q{font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word}.hf-it .hf-meta{font-size:12px;color:#6b7180;margin-bottom:4px}.hf-it .hf-meta b{color:#2f5bff}" +
+    ".hf-it .hf-a{margin-top:8px;border-left:4px solid #16b364;background:#effbf4;border-radius:10px;padding:8px 11px;font-size:15px;line-height:1.55;white-space:pre-wrap;word-break:break-word}.hf-it .hf-a b{display:block;font-size:12px;color:#16b364;margin-bottom:2px}" +
+    ".hf-it .hf-w{margin-top:6px;font-size:13px;color:#6b7180}.hf-empty{text-align:center;color:#6b7180;padding:20px 6px;line-height:1.6}" +
     ".hf-done{text-align:center;padding:18px 4px 6px}.hf-done i{font-style:normal;font-size:56px;display:block}.hf-done b{display:block;font-size:20px;margin:8px 0 4px}.hf-done p{margin:0 0 16px;color:#6b7180}";
 
   function css() { if (document.getElementById("hf-css")) return; var s = document.createElement("style"); s.id = "hf-css"; s.textContent = CSS; document.head.appendChild(s); }
@@ -68,6 +75,30 @@
     b.classList.add("peek"); clearTimeout(peekT);
     peekT = setTimeout(function () { b.classList.remove("peek"); }, 3000);
   }
+  /* 이 기기에서 보낸 글 id를 게임별로 기억해 두고, 선생님 답장이 달리면 '답장 왔어요'를 띄워요 */
+  function mine() { try { return JSON.parse(localStorage.getItem("hf-mine") || "{}"); } catch (e) { return {}; } }
+  function mineAdd(id) { try { var m = mine(), a = m[opt.game] || []; a.unshift(id); m[opt.game] = a.slice(0, 30); localStorage.setItem("hf-mine", JSON.stringify(m)); } catch (e) {} }
+  function seen() { try { return +localStorage.getItem("hf-seen:" + opt.game) || 0; } catch (e) { return 0; } }
+  function seenNow() { try { localStorage.setItem("hf-seen:" + opt.game, Math.floor(Date.now() / 1000)); } catch (e) {} }
+  var BOARD = null;
+  function loadBoard() {
+    return fetch(SRV + "/arcade/api/board?g=" + encodeURIComponent(opt.game), { cache: "no-store" })
+      .then(function (r) { return r.json(); }).then(function (j) { BOARD = (j && j.items) || []; return BOARD; });
+  }
+  function myNew() {           /* 내 글 가운데 아직 안 읽은 답장 수 */
+    var ids = mine()[opt.game] || [], t = seen();
+    return (BOARD || []).filter(function (x) { return ids.indexOf(x.id) >= 0 && x.ans && (x.at || 0) > t; }).length;
+  }
+  function badge() {
+    var b = document.getElementById("hf-btn"); if (!b) return;
+    var n = myNew(), d = b.querySelector(".hf-dot");
+    if (!n) { if (d) d.remove(); b.querySelector(".hf-lb").textContent = "학생 의견 보내기"; b.setAttribute("aria-label", "학생 의견 보내기"); return; }
+    if (!d) { d = document.createElement("span"); d.className = "hf-dot"; b.style.position = "fixed"; b.appendChild(d); }
+    d.textContent = "답장 " + n;
+    b.querySelector(".hf-lb").textContent = "선생님 답장이 왔어요!";
+    b.setAttribute("aria-label", "선생님 답장이 왔어요");
+  }
+
   function close() { var r = document.getElementById("hf-root"); if (r) r.remove(); }
 
   function shell(inner, back) {
@@ -91,9 +122,36 @@
       h: "🧒 학생 의견 보내기",
       body: '<div class="hf-pick">' + ["r", "q", "i"].map(function (k) {
         return '<button class="hf-k" data-k="' + k + '"><i>' + KIND[k].icon + '</i><div><b>' + KIND[k].t + '</b><span>' + KIND[k].s + '</span></div></button>';
-      }).join("") + '</div><p class="hf-note">이 게임을 해 본 <b>여러분의 생각</b>을 들려주세요!<br>이름은 안 남아요. 게임을 만든 선생님이 읽고 고쳐요.</p>'
+      }).join("") + '<button class="hf-k' + (myNew() ? ' ans' : '') + '" data-k="a"><i>📬</i><div><b>선생님 답장</b><span>내 글과 친구들 글에 달린 답장 보기</span></div>' + (myNew() ? '<span class="hf-new">새 답장 ' + myNew() + '</span>' : '') + '</button>' +
+        '</div><p class="hf-note">이 게임을 해 본 <b>여러분의 생각</b>을 들려주세요!<br>이름은 안 남아요. 게임을 만든 선생님이 읽고 고쳐요.</p>'
     });
-    [].forEach.call(bg.querySelectorAll(".hf-k"), function (b) { b.onclick = function () { write(b.dataset.k); }; });
+    [].forEach.call(bg.querySelectorAll(".hf-k"), function (b) { b.onclick = function () { if (b.dataset.k === "a") answers(); else write(b.dataset.k); }; });
+  }
+
+  function ago(t) {
+    var d = Date.now() / 1000 - t; if (d < 60) return "방금"; if (d < 3600) return Math.floor(d / 60) + "분 전";
+    if (d < 86400) return Math.floor(d / 3600) + "시간 전"; if (d < 86400 * 30) return Math.floor(d / 86400) + "일 전";
+    var D = new Date(t * 1000); return (D.getMonth() + 1) + "월 " + D.getDate() + "일";
+  }
+  function answers() {
+    var bg = shell({ h: "📬 선생님 답장", body: '<div class="hf-list"><p class="hf-empty">불러오는 중…</p></div>' }, true);
+    var box = bg.querySelector(".hf-list");
+    (opt.dry ? Promise.resolve(BOARD || []) : loadBoard()).then(function (L) {
+      var ids = mine()[opt.game] || [], t0 = seen();
+      /* 내가 보낸 글(답장 없어도) + 답장이 달린 다른 학생 글. 내 글이 먼저 */
+      var me = L.filter(function (x) { return ids.indexOf(x.id) >= 0; });
+      var oth = L.filter(function (x) { return x.who === "s" && x.ans && ids.indexOf(x.id) < 0; }).slice(0, 20);
+      var all = me.concat(oth);
+      if (!all.length) { box.innerHTML = '<p class="hf-empty">아직 답장이 없어요.<br>궁금한 걸 물어보면 선생님이 답장해 줄 거예요!</p>'; }
+      else box.innerHTML = all.map(function (x) {
+        var my = ids.indexOf(x.id) >= 0, nw = my && x.ans && (x.at || 0) > t0;
+        return '<div class="hf-it' + (my ? ' me' : '') + '"><div class="hf-meta">' + (my ? '<b>내가 보낸 글</b> · ' : '친구 글 · ') +
+          (KIND[x.k] ? KIND[x.k].icon + ' ' + KIND[x.k].t : '') + (x.k === "r" && x.stars ? ' ' + "★★★★★".slice(0, x.stars) : '') + ' · ' + ago(x.t) + (nw ? ' · <b style="color:#e2483d">새 답장!</b>' : '') + '</div>' +
+          '<div class="hf-q">' + esc(x.text || "") + '</div>' +
+          (x.ans ? '<div class="hf-a"><b>👩‍🏫 선생님 답장 · ' + ago(x.at || x.t) + '</b>' + esc(x.ans) + '</div>' : '<div class="hf-w">⏳ 선생님이 읽고 답장해 줄 거예요</div>') + '</div>';
+      }).join("");
+      seenNow(); badge();
+    }).catch(function () { box.innerHTML = '<p class="hf-empty">인터넷이 잠깐 끊겼어요. 다시 열어 줘요</p>'; });
   }
 
   function write(k) {
@@ -132,10 +190,11 @@
     go.then(function (j) {
       if (!j.ok) { msg.textContent = j.error || "보내지 못했어요. 조금 있다 다시 해 줘요"; send.disabled = false; return; }
       try { localStorage.setItem("hf-posted", Date.now()); } catch (e) {}
+      if (j.item && j.item.id) mineAdd(j.item.id);
       shell({
         h: "보냈어요!",
         body: '<div class="hf-done"><i>' + (k === "r" ? "💛" : k === "q" ? "📮" : "🔧") + '</i><b>고마워요!</b><p>' +
-          (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 현게임에 답을 달아 줄 거예요." : "게임을 고칠 때 꼭 볼게요.") +
+          (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 답장해 주면 여기 '📬 선생님 답장'에서 볼 수 있어요." : "게임을 고칠 때 꼭 볼게요. 답장은 '📬 선생님 답장'에서 봐요.") +
           '</p><button class="hf-send">게임으로 돌아가기</button></div>'
       });
       document.querySelector("#hf-root .hf-send").onclick = close;
@@ -154,8 +213,10 @@
       b.addEventListener("keydown", function (e) { e.stopPropagation(); });
       document.body.appendChild(b);
       peek();
+      if (!opt.dry && (mine()[opt.game] || []).length) loadBoard().then(function () { badge(); if (myNew()) setTimeout(peek, 3500); }).catch(function () {});
     },
     peek: peek,
+    answers: function (o) { opt = Object.assign(opt, o || {}); answers(); },
     open: function (o) { opt = Object.assign(opt, o || {}); pick(); },
     write: function (k, o) { opt = Object.assign(opt, o || {}); write(k); },
     close: close
