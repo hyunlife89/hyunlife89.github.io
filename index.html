@@ -156,7 +156,9 @@ body.connected .pc .mine{display:block}
 #rv .rh img{width:92px;aspect-ratio:4/3;object-fit:cover;border:1.5px solid var(--ink);background:#fff;flex:none}
 #rv .rh h3{margin:0;font-size:21px;text-align:left}
 #rv .rh .sc{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px}#rv .rh .sc b{color:#e0a800;font-size:16px}
-#rv .tabs{display:flex;border-bottom:1.5px solid var(--ink)}
+#rv .tabs{display:flex;border-bottom:1.5px solid var(--ink);flex:none;overflow:visible;border-radius:0;padding:0;gap:0;min-height:46px}
+/* 2026-11-27 휴대폰에서 후기·Q&A·바꿔 주세요 탭이 눌려서 안 보이던 문제 — 위아래 칸은 줄어들지 않게 */
+#rv .rh,#rv .who-f,#rv form{flex:none}#rv .who-f[hidden]{display:none}
 #rv .tabs button{flex:1;font:inherit;font-weight:900;font-size:15px;padding:11px;border:0;background:var(--paper);color:var(--muted);cursor:pointer;border-bottom:4px solid transparent}
 #rv .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue)}
 #rv .rbody{overflow:auto;flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:10px;min-height:120px}
