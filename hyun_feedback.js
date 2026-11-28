@@ -7,6 +7,7 @@
  *
  * 학생이 보낸 글은 현게임 카드의 '후기·Q&A' 창에 쌓여요 (🧒 학생 표시, '학생' 버튼으로 모아 보기).
  *   ⭐ 별점 주기   → 후기 탭      ❓ 궁금해요 → Q&A 탭      🛠️ 바꿔 주세요 → 바꿔 주세요 탭
+ *   💡 새 게임 만들어 주세요 → 게임 카드가 아니라 서버의 '_새게임아이디어' 칸 (과목·아이디어·비슷한 게임, Claude가 매주 정리)
  * 이름 칸은 없어요. 모두 '학생'으로 올라가요 (아이 이름이 공개 게시판에 남지 않게).
  *
  * 버튼 모양: 화면 왼쪽 가장자리에 붙은 작은 노란 탭(말풍선 + '학생 의견').
@@ -23,10 +24,12 @@
   var KIND = {
     r: { icon: "⭐", t: "별점 주기", s: "이 게임 몇 점이야?", ph: "어떤 점이 좋았어? (안 써도 돼요)", send: "별점 보내기" },
     q: { icon: "❓", t: "궁금해요", s: "모르는 게 있으면 물어봐요", ph: "예) 별조각은 어디에 써요?", send: "질문 보내기" },
-    i: { icon: "🛠️", t: "바꿔 주세요", s: "이렇게 되면 더 재밌겠어요", ph: "예) 캐릭터 색깔을 고를 수 있으면 좋겠어요", send: "의견 보내기" }
+    i: { icon: "🛠️", t: "바꿔 주세요", s: "이렇게 되면 더 재밌겠어요", ph: "예) 캐릭터 색깔을 고를 수 있으면 좋겠어요", send: "의견 보내기" },
+    n: { icon: "💡", t: "새 게임 만들어 주세요", s: "이런 게임이 있으면 좋겠어요", ph: "어떤 게임이면 좋겠어? 한두 줄로 써 줘요\n예) 분수를 피자 조각으로 나눠 주는 피자 가게 게임", send: "아이디어 보내기" }
   };
+  var SUBJ = ["국어", "수학", "사회", "과학", "영어", "기타"];
   var FACE = ["", "😣 별로예요", "😕 아쉬워요", "🙂 괜찮아요", "😄 재밌어요", "🤩 최고예요"];
-  var S = { k: null, star: 0 };
+  var S = { k: null, star: 0, subj: "" };
 
   var CSS =
     ".hf-btn{position:fixed;top:var(--hf-top,45%);left:0;z-index:2147482500;display:flex;align-items:center;gap:0;min-height:58px;padding:6px 9px 6px 7px;border:0;border-radius:0 14px 14px 0;background:#ffd23f;color:#14171f;font:800 14px 'Noto Sans KR','Malgun Gothic',sans-serif;box-shadow:2px 4px 14px -4px rgba(0,0,0,.45),inset -2px 0 0 rgba(0,0,0,.08);cursor:pointer;opacity:.92;transform:translateY(-50%);transition:opacity .2s,padding .25s}" +
@@ -53,6 +56,8 @@
     ".hf-face{text-align:center;font-weight:800;font-size:16px;min-height:24px;margin-bottom:10px}" +
     ".hf textarea{width:100%;min-height:96px;resize:vertical;border:2px solid #d9dce3;border-radius:14px;padding:12px;font:16px/1.5 inherit;font-family:inherit;box-sizing:border-box}" +
     ".hf textarea:focus{outline:none;border-color:#2f5bff}" +
+    ".hf-sub{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}.hf-sub button{min-height:46px;border:2px solid #d9dce3;border-radius:12px;background:#fff;font-family:inherit;font-weight:800;font-size:16px;color:#14171f;cursor:pointer}.hf-sub button.on{border-color:#2f5bff;background:#2f5bff;color:#fff}" +
+    ".hf-lab{font-weight:800;font-size:14px;margin:0 2px 6px}.hf-like{width:100%;min-height:46px;border:2px solid #d9dce3;border-radius:12px;padding:0 12px;font-family:inherit;font-size:16px;box-sizing:border-box;margin-bottom:12px}.hf-like:focus{outline:none;border-color:#2f5bff}" +
     ".hf-cnt{text-align:right;font-size:12px;color:#6b7180;margin:4px 2px 10px}" +
     ".hf-send{width:100%;min-height:52px;border:0;border-radius:14px;background:#14171f;color:#fff;font:800 17px inherit;font-family:inherit;cursor:pointer}" +
     ".hf-send:disabled{background:#d9dce3;color:#fff;cursor:default}" +
@@ -135,7 +140,7 @@
   function pick() {
     var bg = shell({
       h: "🧒 학생 의견 보내기",
-      body: '<div class="hf-pick">' + ["r", "q", "i"].map(function (k) {
+      body: '<div class="hf-pick">' + ["r", "q", "i", "n"].map(function (k) {
         return '<button class="hf-k" data-k="' + k + '"><i>' + KIND[k].icon + '</i><div><b>' + KIND[k].t + '</b><span>' + KIND[k].s + '</span></div></button>';
       }).join("") + '<button class="hf-k' + (myNew() ? ' ans' : '') + '" data-k="a"><i>📬</i><div><b>선생님 답장</b><span>내 글과 친구들 글에 달린 답장 보기</span></div>' + (myNew() ? '<span class="hf-new">새 답장 ' + myNew() + '</span>' : '') + '</button>' +
         '</div><p class="hf-note">이 게임을 해 본 <b>여러분의 생각</b>을 들려주세요!<br>이름은 안 남아요. 게임을 만든 선생님이 읽고 고쳐요.</p>'
@@ -171,6 +176,7 @@
   }
 
   function write(k) {
+    if (k === "n") return idea();
     S.k = k; S.star = 0; var K = KIND[k];
     var bg = shell({
       h: K.icon + " " + K.t,
@@ -193,10 +199,31 @@
     setTimeout(function () { if (k !== "r") ta.focus(); }, 50);
   }
 
+  /* 💡 새 게임 아이디어: 과목 버튼 → 한두 줄 아이디어 → (안 써도 되는) 비슷한 게임 */
+  function idea() {
+    S.k = "n"; S.subj = ""; var K = KIND.n;
+    var bg = shell({
+      h: K.icon + " " + K.t,
+      body: '<div class="hf-lab">어떤 과목 게임이야?</div><div class="hf-sub">' + SUBJ.map(function (x) { return '<button data-j="' + x + '">' + x + '</button>'; }).join("") + '</div>' +
+        '<div class="hf-lab">어떤 게임이면 좋겠어?</div><textarea maxlength="150" placeholder="' + esc(K.ph) + '"></textarea><div class="hf-cnt">0 / 150</div>' +
+        '<div class="hf-lab">비슷한 게임이 있다면? <span style="font-weight:400;color:#6b7180">(안 써도 돼요)</span></div><input class="hf-like" maxlength="40" placeholder="예) 모두의 마블, 쿠키런">' +
+        '<button class="hf-send" disabled>' + K.send + '</button><div class="hf-msg"></div>' +
+        '<p class="hf-note">모든 아이디어가 게임이 되지는 않아요.<br>그래도 선생님이 <b>하나도 빼놓지 않고</b> 읽어요!</p>'
+    }, true);
+    var ta = bg.querySelector("textarea"), send = bg.querySelector(".hf-send"), like = bg.querySelector(".hf-like");
+    function ready() { send.disabled = !(S.subj && ta.value.trim().length >= 2); }
+    ta.oninput = function () { bg.querySelector(".hf-cnt").textContent = ta.value.length + " / 150"; ready(); };
+    [].forEach.call(bg.querySelectorAll(".hf-sub button"), function (b) {
+      b.onclick = function () { S.subj = b.dataset.j; [].forEach.call(bg.querySelectorAll(".hf-sub button"), function (x) { x.classList.toggle("on", x === b); }); ready(); ta.focus(); };
+    });
+    send.onclick = function () { S.like = like.value.trim(); submit(ta.value.trim(), bg, send); };
+  }
+
   function submit(text, bg, send) {
     var k = S.k, msg = bg.querySelector(".hf-msg");
     if (k === "r" && !text) text = FACE[S.star].replace(/^\S+\s/, "");        /* 별점만 눌러도 '재밌어요' 같은 한마디로 올라가요 */
     var body = { g: opt.game, k: k, who: "s", name: "학생", text: text, stars: k === "r" ? S.star : 0 };
+    if (k === "n") { body.subj = S.subj; body.like = S.like || ""; }
     var last = 0; try { last = +localStorage.getItem("hf-posted") || 0; } catch (e) {}
     var wait = Math.ceil(20 - (Date.now() - last) / 1000);           /* 한 기기에서 연달아 보내지 않게 */
     if (wait > 0 && !opt.dry) { msg.textContent = wait + "초 뒤에 다시 보낼 수 있어요"; return; }
@@ -207,12 +234,12 @@
       if (!j.ok) { msg.textContent = j.error || "보내지 못했어요. 조금 있다 다시 해 줘요"; send.disabled = false; return; }
       try { localStorage.setItem("hf-posted", Date.now()); } catch (e) {}
       var it = j.item || {};
-      if (it.id) { mineAdd(it.id); if (it.ans) { var sm = seen(); sm[it.id] = it.at || 0; seenSet(sm); } }
+      if (it.id && k !== "n") { mineAdd(it.id); if (it.ans) { var sm = seen(); sm[it.id] = it.at || 0; seenSet(sm); } }
       shell({
         h: "보냈어요!",
-        body: '<div class="hf-done"><i>' + (k === "r" ? "💛" : k === "q" ? "📮" : "🔧") + '</i><b>고마워요!</b><p>' +
-          (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 답장해 주면 여기 '📬 선생님 답장'에서 볼 수 있어요." : "게임을 고칠 때 꼭 볼게요. 답장은 '📬 선생님 답장'에서 봐요.") +
-          '</p>' + (it.ans ? '<div class="hf-it me" style="text-align:left;margin:0 0 14px"><div class="hf-a" style="margin:0"><b>' + (k === "r" ? '👩‍🏫 선생님 답장' : '💌 바로 답장') + '</b>' + esc(it.ans) + '</div></div>' : '') +
+        body: '<div class="hf-done"><i>' + (k === "r" ? "💛" : k === "q" ? "📮" : k === "n" ? "💡" : "🔧") + '</i><b>고마워요!</b><p>' +
+          (k === "r" ? "별점이 현게임 후기에 올라갔어요." : k === "q" ? "선생님이 답장해 주면 여기 '📬 선생님 답장'에서 볼 수 있어요." : k === "n" ? "아이디어가 선생님께 잘 전해졌어요." : "게임을 고칠 때 꼭 볼게요. 답장은 '📬 선생님 답장'에서 봐요.") +
+          '</p>' + (it.ans ? '<div class="hf-it me" style="text-align:left;margin:0 0 14px"><div class="hf-a" style="margin:0"><b>' + (k === "r" ? '👩‍🏫 선생님 답장' : k === "n" ? '💌 선생님이 보내는 말' : '💌 바로 답장') + '</b>' + esc(it.ans) + '</div></div>' : '') +
           '<button class="hf-send">게임으로 돌아가기</button></div>'
       });
       watch();
